@@ -1163,6 +1163,7 @@ a.article-title:hover {
 @media screen and (max-width: 479px) {
   .article-entry pre,
   .article-entry .highlight {
+    margin: 0 -10px 0 -20px;
     padding: 15px 10px;
   }
 }
