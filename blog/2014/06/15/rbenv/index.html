@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ruby 実行環境の構築 - rbenvの使い方とその仕組み | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,ruby, rbenv">
+  
+  <meta name="description" content="rbenvとruby-buildのインストール方法12345$ git clone https://github.com/sstephenson/rbenv.git ~/.rbenv$ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build$ echo &apos;export PATH=&quot;$HO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ruby 実行環境の構築 - rbenvの使い方とその仕組み">
+<meta property="og:url" content="http://blog.chopschips.net/blog/2014/06/15/rbenv/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="rbenvとruby-buildのインストール方法12345$ git clone https://github.com/sstephenson/rbenv.git ~/.rbenv$ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build$ echo &apos;export PATH=&quot;$HO">
+<meta property="og:updated_time" content="2015-08-17T15:44:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ruby 実行環境の構築 - rbenvの使い方とその仕組み">
+<meta name="twitter:description" content="rbenvとruby-buildのインストール方法12345$ git clone https://github.com/sstephenson/rbenv.git ~/.rbenv$ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build$ echo &apos;export PATH=&quot;$HO">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-rbenv" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/06/15/rbenv/" class="article-date">
+  <time datetime="2014-06-15T09:00:00.000Z" itemprop="datePublished">2014-06-15</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ruby 実行環境の構築 - rbenvの使い方とその仕組み
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/06/15/rbenv/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/06/15/rbenv/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/06/15/rbenv/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/06/15/rbenv/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+        <h1 id="rbenvとruby-buildのインストール方法">rbenvとruby-buildのインストール方法</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/rbenv.git ~/.rbenv</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$HOME/.rbenv/bin:$PATH"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'eval "$(rbenv init -)"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p><code>.bash_profile</code>は自分の使っているシェルに応じて<code>.zshrc</code>などに読み替えてください。</p>
+<a id="more"></a>
+<h2 id="インストール可能なrubyバージョンの一覧表示">インストール可能なrubyバージョンの一覧表示</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rbenv install <span class="operator">-l</span></span><br></pre></td></tr></table></figure>
+<pre><code>Available versions:
+  <span class="number">1.8</span><span class="number">.6</span>-p383
+  <span class="number">1.8</span><span class="number">.6</span>-p420
+  <span class="number">1.8</span><span class="number">.7</span>-p249
+  <span class="number">1.8</span><span class="number">.7</span>-p302
+  <span class="number">1.8</span><span class="number">.7</span>-p334
+  (省略)
+</code></pre><h2 id="指定したバージョンのrubyをインストール">指定したバージョンのrubyをインストール</h2><p>下記はバージョン2.1.2をインストールする例です。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rbenv install <span class="number">2.1</span>.<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用するrubyのバージョンを指定する">使用するrubyのバージョンを指定する</h2><p>rbenvでは、ディレクトリ階層ごとに使用するrubyのバージョンを指定できます。<br>下記はカレントディレクトリ以下で2.1.2を使用する例です。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rbenv <span class="built_in">local</span> <span class="number">2.1</span>.<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>rbenvによる指定が意図したように行われているかどうかは以下のように確認できます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ruby --version</span><br><span class="line">ruby <span class="number">2.1</span>.<span class="number">2</span>p95 (<span class="number">2014</span>-<span class="number">05</span>-<span class="number">08</span> revision <span class="number">45877</span>) [x86_64-darwin13.<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="インストール済みrubyバージョンの一覧表示">インストール済みrubyバージョンの一覧表示</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rbenv versions</span><br></pre></td></tr></table></figure>
+<pre><code>  system
+  <span class="number">2.0</span><span class="number">.0</span>-p353
+  <span class="number">2.1</span><span class="number">.0</span>
+* <span class="number">2.1</span><span class="number">.2</span> (<span class="built_in">set</span> by ~/projects/xxx/.ruby-version)
+</code></pre><p>systemは、<code>/usr/bin/ruby</code>のようにrbenv以外の方法でシステムへインストールされたrubyです。<br>どのパスのコマンドが実行されるかは<code>PATH</code>環境変数によって決まります。</p>
+<p>アスタリスクの付いているバージョンが選択されたバージョンです。<br>カッコの内容はrbenvがそのバージョンを選択した理由です(後述)。</p>
+<h1 id="rbenvとは">rbenvとは</h1><p>rbenvは複数のバージョンのruby実行環境を切り替えるための仕組みです。</p>
+<p><a href="https://github.com/sstephenson/rbenv" target="_blank" rel="external">https://github.com/sstephenson/rbenv</a></p>
+<p>rbenvには、同一の作者による ruby-build というプラグインがあります。<br>これは指定したrubyのソースをダウンロードして、ローカルでビルドするための仕組みです。</p>
+<p><a href="https://github.com/sstephenson/ruby-build" target="_blank" rel="external">https://github.com/sstephenson/ruby-build</a></p>
+<p>rbnevの類似のものとして rvm があります。</p>
+<p><a href="https://rvm.io/" target="_blank" rel="external">https://rvm.io/</a></p>
+<h1 id="rbenvの仕組み">rbenvの仕組み</h1><p>rbenvでは<code>PATH</code>環境変数とシンボリックリンクを用いて、<br>rubyやirbのようなコマンドの呼出経路に割り込むことでバージョンの切り替えを行っています。</p>
+<p>ruby、irb、gem、およびrspecやrakeなどgemによってインストールされるコマンド群は、<br>以下のパスにシンボリックリンクが作られます。</p>
+<p><code>~/.rbenv/shims/</code></p>
+<p>これらのシンボリックリンクは、<code>rbenv rehash</code>が実行されるたびに更新されます。</p>
+<p>また、インストールの際にシェルのrcスクリプトに追加した<code>eval &quot;$(rbenv init -)&quot;</code>というコマンドでは、下記が行われています。</p>
+<ul>
+<li><code>PATH</code> 環境変数の更新(<code>export PATH=&quot;~/.rbenv/shims:${PATH}&quot;</code>)</li>
+<li>rbenv rehashの実行</li>
+</ul>
+<p>これにより、ruby、irbなどのruby関連コマンドはrbenvの影響下にある~/.rbenv/shims/以下のシンボリックリンクに置き換えられています。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">which</span> irb</span><br><span class="line">~/.rbenv/shims/irb</span><br></pre></td></tr></table></figure>
+<h2 id="バージョン決定の仕組み">バージョン決定の仕組み</h2><p>shims以下のコマンドでは以下のように起動するrubyインタプリタのバージョンを決定します。</p>
+<ol>
+<li><code>RBENV_VERSION</code>環境変数の中身。</li>
+<li>スクリプトの置いてあるディレクトリから上位にさかのぼって最初に見つかった<code>.ruby-version</code>ファイルの中身。</li>
+<li>カレントディレクトリから上位にさかのぼって最初に見つかった<code>.ruby-version</code>ファイルの中身。<br>このファイルは<code>rbenv local</code>コマンドで作成することができます。</li>
+<li><code>~/.rbenv/version</code> ファイルの中身。<br>このファイルは<code>rbenv global</code>コマンドで作成することができます。</li>
+</ol>
+<p>つまり、シェルのカレントディレクトリとスクリプト自体が置いてあるディレクトリが異なり、<br>それぞれ.ruby-versionファイルが存在するような場合、後者が優先されます。<br>また、<code>RBENV_VERSION</code>環境変数は常に優先されます。</p>
+<p>例えば製品環境でgodとrbenvを使ってデーモンプロセスのrubyバージョンを指定するような場合にはこの点に注意する必要があります。</p>
+<h2 id="各バージョンの実体">各バージョンの実体</h2><p><code>rbenv install</code>でインストールしたruby実行環境は<code>~/.rbenv/versions</code>ディレクトリの下に保存されます。</p>
+<pre><code>~/.rbenv/versions/
+├── 2.0.<span class="operator">0-p353
+│   ├── <span class="keyword">bin</span>
+│   ├── <span class="keyword">include</span>
+│   ├── lib
+│   └── <span class="keyword">share</span>
+├── <span class="number">2.1</span><span class="number">.0</span>
+│   ├── <span class="keyword">bin</span>
+│   ├── <span class="keyword">include</span>
+│   ├── lib
+│   └── <span class="keyword">share</span>
+└── <span class="number">2.1</span><span class="number">.2</span>
+    ├── <span class="keyword">bin</span>
+    ├── <span class="keyword">include</span>
+    ├── lib
+    └── <span class="keyword">share</span></span>
+</code></pre><p>gemもこのディレクトリ以下に保存され、例えば2.1.2にインストールした<code>nokogiri</code>1.6.1の中身を見たければ以下のディレクトリにあります。</p>
+<pre><code>~/.rbenv/versions/<span class="number">2.1</span><span class="number">.2</span>/lib/ruby/gems/<span class="number">2.1</span><span class="number">.0</span>/gems/nokogiri-<span class="number">1.6</span><span class="number">.1</span>/
+</code></pre><h2 id="rbenv_install(ruby-build)の動作">rbenv install(ruby-build)の動作</h2><p><code>rbenv install</code>は概ね以下の様な動作をします。</p>
+<ol>
+<li>CDNで配布されているrubyのソースコードをダウンロード</li>
+<li>ダウンロードしたソースコードを展開してビルド</li>
+</ol>
+<p>このCDNは本稿執筆時点ではAmazon CloudFrontが使用されており、そのスポンサーはBasecampです。(<a href="https://github.com/sstephenson/ruby-build#package-download-mirrors" target="_blank" rel="external">参考</a>)</p>
+<p>BasecampはRailsを開発した<a href="http://david.heinemeierhansson.com/" target="_blank" rel="external">DHH</a>がCTOをやっている会社です。ありがとうBasecampのみなさん。</p>
+<p>なおBasecampは去年まで37signalsという名前でした。こちらの方が馴染みが深い人が多いかもしれません。</p>
+<p>ソースコードの配布URLは<code>ruby-build</code>に記述されています。</p>
+<p>具体的には以下のパスに1ファイル1バージョンで書かれています。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ ls -<span class="number">1</span> ~/.rbenv/plugins/ruby-build/share/ruby-build/</span><br><span class="line"><span class="number">1.8</span>.<span class="number">6</span>-p383</span><br><span class="line"><span class="number">1.8</span>.<span class="number">6</span>-p420</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p249</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p302</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p334</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p352</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p357</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p358</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p370</span><br><span class="line"><span class="number">1.8</span>.<span class="number">7</span>-p371</span><br><span class="line">(省略)</span><br></pre></td></tr></table></figure>
+<p><code>openssl</code>など依存パッケージが同時に配布されている場合もあり、ビルド環境に応じてそれらもダウンロードされます。<br>またコードのURLにはSHA2のチェックサムが含まれており、<code>shasum</code>などのツールが利用できる環境であれば自動的に改ざん検知が行われます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat ~/.rbenv/plugins/ruby-build/share/ruby-build/<span class="number">2.1</span>.<span class="number">2</span></span><br><span class="line">install_package <span class="string">"openssl-1.0.1h"</span> <span class="string">"https://www.openssl.org/source/openssl-1.0.1h.tar.gz#9d1c8a9836aa63e2c6adb684186cbd4371c9e9dcc01d6e3bb447abf2d4d3d093"</span> mac_openssl --if has_broken_mac_openssl</span><br><span class="line">install_package <span class="string">"ruby-2.1.2"</span> <span class="string">"http://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.2.tar.gz#f22a6447811a81f3c808d1c2a5ce3b5f5f0955c68c9a749182feb425589e6635"</span> ldflags_<span class="built_in">dirs</span> standard verify_openssl</span><br></pre></td></tr></table></figure>
+<p>新しいバージョンのrubyがリリースされたら下記のように更新すれば反映されます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.rbenv/plugins/ruby-build</span><br><span class="line">$ git pull</span><br></pre></td></tr></table></figure>
+<p>環境変数<code>RUBY_BUILD_CACHE_PATH</code>でキャッシュディレクトリが指定されている場合、<br><code>rbenv install</code>はコードをダウンロードする代わりにそのパスに置いてあるファイルを使用します。<br>キャッシュディレクトリに該当するファイルがない場合にはCDNからダウンロードしたファイルをキャッシュディレクトリに保存します。</p>
+<p>あらかじめ取得しておいたソースを使用することで、<br>インターネットへの接続が制限されている環境でもrbenvを使用することができます。</p>
+<p>また、製品環境でrbenvを利用する場合にもキャッシュを用いることで外的要因に依存せずプロビジョニングを行うことができるようになります。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/06/15/rbenv/" data-id="cidkeohtj0000fgrcbhg5jz5r" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rbenv/">rbenv</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2014/06/16/octopress-toc/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Octopressで見出しの目次を作る方法
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2015/04/27/errbit/">RailsのエラーモニタリングツールErrbitのChefレシピ</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/chef/" style="font-size: 16.67px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 16.67px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 10px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/research/">research</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発/">開発</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2015 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

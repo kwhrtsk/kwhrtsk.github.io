@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介">
+  
+  <meta name="description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="割り箸ポテチ">
+<meta property="og:url" content="http://blog.chopschips.net/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="割り箸ポテチ">
+<meta name="twitter:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-errbit" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/04/27/errbit/" class="article-date">
+  <time datetime="2015-04-27T14:00:00.000Z" itemprop="datePublished">2015-04-27</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発/">開発</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/04/27/errbit/">RailsのエラーモニタリングツールErrbitのChefレシピ</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/04/27/errbit/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/04/27/errbit/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/04/27/errbit/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/04/27/errbit/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>4/17に大阪で開催されたRailsの勉強会でLTしてきました。</p>
+<ul>
+<li><a href="https://riding-rails.doorkeeper.jp/events/22793">Railsをのりこなせ！ - Riding Rails勉強会</a></li>
+<li><a href="http://www.techscore.com/blog/2015/04/23/riding-rails-vol1-yattayo/">» Riding Rails 勉強会 #1 Rails をのりこなせ！やりました！発表資料も！ TECHSCORE BLOG</a></li>
+</ul>
+<p>自分の発表資料をちょっと加筆修正したものを以下に公開しました。</p>
+<p><iframe src="https://www.slideshare.net/slideshow/embed_code/key/oDPA7cITu1ZJBy" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/secret/oDPA7cITu1ZJBy" title="Railsのエラーログとの付き合い方" target="_blank">Railsのエラーログとの付き合い方</a> </strong> from <strong><a href="http://www.slideshare.net/kwhrtsk" target="_blank">Taisuke Kawahara</a></strong> </div></p>
+<p>テーマはRailsのエラーモニタリングです。</p>
+<p>通知先はSlackという前提で、<br><a href="https://github.com/smartinez87/exception_notification">exception_notification</a>というgemで直接Slackに通知する方法と、<br>New RelicやAirbrakeといったWebサービス経由で通知する方法、<br><a href="https://github.com/errbit/errbit">Errbit</a> というOSSのAirbrakクローン経由でSlackに通知する方法を紹介しました。</p>
+<p>ErrbitはHerokuの無料枠で運用することが可能で、詳細なセットアップの情報が日本語でも見つかります。</p>
+<p><a href="http://morizyun.github.io/blog/errbit-heroku-rails-error-ruby/">Errbit - Railsアプリの本番エラーをherokuで管理、メール通知する【無料枠】 - 酒と泪とRubyとRailsと</a></p>
+<p>今回はHerokuを使わずにオンプレやAmazon EC2のようなIaaSに自分でセットアップする方法を検討しました。</p>
+<p>まずErrbitをセットアップするChefのレシピを探してみたのですが、見つかったものは対応しているErrbitのバージョンが古く、サポートもUbuntuのみでした。</p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit">errbit Cookbook - Chef Supermarket</a></p>
+<p>自分はCentOSも好きなので、2015-04-17時点の最新のErrbitに対応していて、かつUbuntuとCentOSのどちらもサポートしているものを作成して公開しました。</p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit-server">errbit-server Cookbook - Chef Supermarket</a></p>
+<p>今回はコミュニティクックブックを多めに使ってやってみました。大まかな構成は下記のとおりです。</p>
+<ul>
+<li>コミュニティクックブックでやっていること<ul>
+<li>mongodbのインストール</li>
+<li>rbenvとruby_buildのインストール</li>
+<li>ruby 2.2.2のインストール(attributeで変更可能)</li>
+<li>Errbitのチェックアウトと初期化<ul>
+<li>applicationクックブックを利用</li>
+<li>application_rubyはマイグレーションでbundlerのrakeを使おうとせずにエラーになるのでスルー</li>
+</ul>
+</li>
+<li>ErrbitにバンドルされているUnicornをservice_factoryでサービス化(SysV or Upstart)</li>
+<li>Unicornのlogrotate</li>
+</ul>
+</li>
+<li>自前で追加した分<ul>
+<li>Errbitのデプロイ先のディレクトリレイアウト</li>
+<li>Errbitの初期化処理(<code>rake errbit:bootstrap</code>)</li>
+<li>ErrbitのUnicornを起動するためのラッパ作成</li>
+<li>Errbitの設定値のための環境変数をattributeで設定する仕組み</li>
+</ul>
+</li>
+</ul>
+<p>Vagrantで動作を確認するための手順をsampleディレクトリに置いています。下記のバージョンの組み合わせで動作を確認しています。</p>
+<ul>
+<li>OSX Yosemite</li>
+<li>Ruby 2.2.2</li>
+<li>Vagrant 1.7.2</li>
+<li>VirtualBox 4.3.26</li>
+<li>CentOS 6.6 or Ubuntu 14.10</li>
+</ul>
+<p>CentOSで試すのであれば、ターミナルで下記のようなコマンドを入力すると、最終的に <code>http://192.168.33.10:3000/</code> でローカルVM上のErrbitにログインできます。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/04/27/errbit/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/04/27/errbit/" data-id="cidkeohua000hfgrc68f88q1f" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chef/">chef</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/errbit/">errbit</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-funcy-methods-in-sidekiq" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/" class="article-date">
+  <time datetime="2015-04-04T13:50:00.000Z" itemprop="datePublished">2015-04-04</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/research/">research</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p><br/></p>
+<p>少し前にRails4.2のActiveJobのバックエンドについて調べました。</p>
+<p><a href="http://blog.chopschips.net/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a></p>
+<p>このとき<a href="https://github.com/mperham/sidekiq">Sidekiq</a>のコードを読んで、<a href="https://github.com/celluloid/celluloid">Celluloid</a>によるアクターモデルで並行処理を実装していることを知りました。<br>ちょうどScalaやErlangでアクターを使う方法を調べていたところだったので興味がわき、Celluloidを利用したアプリケーションのサンプルとして読んでみることにしました。</p>
+<p>その時見つけた愉快なメソッドを紹介します。</p>
+<p>今回読んだSidekiqのバージョンは3.3.3です。</p>
+<h2 id="注意事項">注意事項</h2><ul>
+<li>本エントリはSidekiqやアクターの解説記事ではありません。</li>
+<li>記事に機種依存文字が含まれています。<ul>
+<li>OSXのChromeとFirefox、iOSのSafariとChromeでのみ表示を確認しています。</li>
+<li>iOSのブラウザではGithubから引用しているコードの一部が化けます。</li>
+</ul>
+</li>
+</ul>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-id="cidkeohue000pfgrcmw325zpb" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/emoji/">emoji</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sidekiq/">sidekiq</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-rails-panel" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/03/06/rails-panel/" class="article-date">
+  <time datetime="2015-03-06T14:38:45.000Z" itemprop="datePublished">2015-03-06</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/research/">research</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/03/06/rails-panel/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/03/06/rails-panel/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/">7 must have Development Gems to install on every project</a></p>
+<p>この記事を読んでいて、Rails PanelというChrome拡張を知りました。</p>
+<ul>
+<li><a href="https://github.com/qqshfox/meta_request">qqshfox/meta_request</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg">RailsPanel - Chrome ウェブストア</a></li>
+</ul>
+<h1 id="Rails_Panelでできること">Rails Panelでできること</h1><p>デベロッパーツールにRailsというパネルが追加されます。<br>このパネルでは、ページリクエスト単位で下記のような情報を表示することができます。</p>
+<ul>
+<li>Breakdown: 処理時間の内訳(ActiveRecord, Rendering, Other)</li>
+<li>Params: コントローラから参照できるparamsの内容</li>
+<li>ActiveRecord: そのリクエストを処理する際に発行したSQLと処理時間</li>
+<li>Rendering: ビューテンプレートごとの描画時間</li>
+</ul>
+<img src="/images/post_20150306_rails_panel/ss_01.png">
+<p>要するに <code>rails server</code> の標準出力(あるいは <code>log/${RAILS_ENV}.log</code>)の情報を見やすく表示してくれます。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/03/06/rails-panel/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-id="cidkeohuj000xfgrcs26ezox1" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-active-job" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/02/26/active-job/" class="article-date">
+  <time datetime="2015-02-26T13:11:00.000Z" itemprop="datePublished">2015-02-26</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/research/">research</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/02/26/active-job/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/02/26/active-job/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/02/26/active-job/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/02/26/active-job/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由">ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
+<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、<br>ActiveJobはジョブを記述するためのインタフェースを抽象化して、<br>ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。<br>なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
+<p>Rails 4.2.0時点では、ActiveJobのバックエンドとして以下のページにある9つのいずれかを使用できます。</p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html">ActiveJob::QueueAdapters</a></p>
+<ul>
+<li>Backburner</li>
+<li>Delayed Job</li>
+<li>Qu</li>
+<li>Que</li>
+<li>queue_classic</li>
+<li>Resque 1.x</li>
+<li>Sidekiq</li>
+<li>Sneakers</li>
+<li>Sucker Punch</li>
+</ul>
+<p>ちなみにRuby ToolboxのBackground Jobsというカテゴリの上位3つは、Resque、Sidekiq、Delayed Jobでした。この3つがよく使われている印象です。</p>
+<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
+<p>特にResque、Sidekiqは、ジョブの情報を永続化する先としてRedisを必須としています。</p>
+<p>情報の保存先ならActiveRecord(RDBMS)でも良さそうなものですが、あえてRedisを必須としている理由は何だろうか考えてみました。</p>
+<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、<br>Redisの<a href="http://redis.io/topics/pubsub">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP">BLPOP</a>/<a href="http://redis.io/commands/brpop">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
+<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、<br>RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
+<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、<br>ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
+<p>9つの中で特にSucker Punchはジョブの保存先もワーカープロセスの起動も必要とせずに非同期処理を行えるので、簡単に作りたいならおすすめです。詳細は後述。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/02/26/active-job/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/02/26/active-job/" data-id="cidkeohuo0012fgrc1af0ieg9" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-macports-mysql2-gem" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/02/15/macports-mysql2-gem/" class="article-date">
+  <time datetime="2015-02-15T14:55:00.000Z" itemprop="datePublished">2015-02-15</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/02/15/macports-mysql2-gem/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cidkeohux0016fgrci0gw4uc9" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yosemite/">Yosemite</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-chef-12" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/09/10/chef-12/" class="article-date">
+  <time datetime="2014-09-09T15:10:00.000Z" itemprop="datePublished">2014-09-10</time>
+</a>
+
+    
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2014/09/10/chef-12/">Chef 12のオープンソース版と25ノード制限について</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/09/10/chef-12/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/09/10/chef-12/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/09/10/chef-12/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/09/10/chef-12/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+        <p>Chef バージョン12がリリースされました。</p>
+<p>ところで下記のニュースで気になる記述がありました。</p>
+<blockquote><p>ビジネスモデル面でも変更があり、<br>オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、<br>新たにフリーミアムサブスクリプションモデルを導入した。<br>新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（ホステッド版では5ノードまで）の設定管理が可能となっている。</p>
+<footer><strong>Source Forge.JP Magazine</strong><cite><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化</a></cite></footer></blockquote>
+<p><strong>オープンソース版のライセンスが変わって、25ノードまでの台数制限が入った</strong><br>ようにも読めます。</p>
+<p><strong>マジか。</strong></p>
+<p>さすがにそれは無いだろうと思ったけど念の為に本家の情報を確認。</p>
+<p><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></p>
+<p>上記のページより、ライセンスと価格についての表示を引用します。</p>
+<img src="/images/post_20140910_chef_12/ss_01.png">
+<p>CHEF Essentialsというのがオープンソース版ですね。ここに下記のような記述があります。</p>
+<blockquote><p>Premium Features</p>
+<p>・Access to premium features for up to 25 nodes<br>・Hosting available for up to 5 nodes</p>
+<footer><strong>Chef</strong><cite><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Plans and Pricing</a></cite></footer></blockquote>
+<p>つまり25ノードに制限されるのは、Essentials版そのものではなく、<br>SubscriptionとEnterprise Subscriptionの欄に書かれている<br><strong>Premium Features</strong>だけです。</p>
+<blockquote><p>Premium Features</p>
+<p>・Management console with reporting and role-based access control<br>・Analytics platform<br>・High availability<br>・Replication<br>・Available as hosted service</p>
+</blockquote>
+<p>以下の機能はEssentials版でも無制限に利用できます。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">✔ Chef server</span><br><span class="line"></span><br><span class="line">    ✔ Manage <span class="number">10</span>,<span class="number">000</span>+ Nodes <span class="operator">with</span> <span class="operator">a</span> single Chef server</span><br><span class="line">    ✔ Maintain <span class="operator">a</span> searchable blueprint <span class="operator">of</span> your infrastructure</span><br><span class="line">    ✔ Easy Installation <span class="operator">with</span> Omnibus installer</span><br><span class="line"></span><br><span class="line">✔ Chef client</span><br><span class="line"></span><br><span class="line">    ✔ Easily manage Linux, Windows, Mac OS, Solaris, <span class="operator">and</span> FreeBSD</span><br><span class="line"></span><br><span class="line">✔ Chef development kit</span><br><span class="line"></span><br><span class="line">    ✔ Everything you need <span class="built_in">to</span> <span class="built_in">start</span> managing applications <span class="operator">and</span> infrastructure <span class="operator">with</span> Chef</span><br><span class="line">    ✔ Download <span class="operator">and</span> install <span class="operator">in</span> just <span class="operator">a</span> few clicks</span><br><span class="line"></span><br><span class="line">✔ Integration <span class="operator">with</span> all major cloud providers</span><br><span class="line">✔ Easily manage containers <span class="operator">in</span> <span class="operator">a</span> versionable, testable <span class="operator">and</span> repeatable way.</span><br></pre></td></tr></table></figure>
+<p>ありえないと思ったんだけどドキドキした。</p>
+<p>何か勘違いがあれば <a href="https://twitter.com/KawaharaTaisuke" target="_blank" rel="external">@KawaharaTaisuke</a> 宛までご指摘いただけましたら幸いです。</p>
+<h2 id="リンク">リンク</h2><ul>
+<li><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化 | SourceForge.JP Magazine</a></li>
+<li><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/09/10/chef-12/" data-id="cidkeohv5001hfgrcj3nvom7u" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chef/">chef</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-chef-alpha" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/09/09/chef-alpha/" class="article-date">
+  <time datetime="2014-09-08T15:32:43.000Z" itemprop="datePublished">2014-09-09</time>
+</a>
+
+    
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2014/09/09/chef-alpha/">knife solo prepareでエラー</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>knife-soloをインストールしたら何故かchef 12.0.0.alphaがインストールされてしまいました。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ gem install knife-solo</span><br><span class="line">Fetching: chef-zero-<span class="number">2.2</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-zero-<span class="number">2.2</span></span><br><span class="line">Fetching: chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Thanks <span class="keyword">for</span> installing knife-solo!</span><br><span class="line"></span><br><span class="line">If you run into any issues please let us know at:</span><br><span class="line">  https:<span class="comment">//github.com/matschaffer/knife-solo/issues</span></span><br><span class="line"></span><br><span class="line">If you are upgrading knife-solo please uninstall any old versions by</span><br><span class="line">running `gem clean knife-solo` to avoid any errors.</span><br><span class="line"></span><br><span class="line">See http:<span class="comment">//bit.ly/CHEF-3255 for more information on the knife bug</span></span><br><span class="line">that causes <span class="keyword">this</span>.</span><br><span class="line">Successfully installed knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Done installing documentation <span class="keyword">for</span> chef, chef-zero, knife-solo after <span class="number">20</span> seconds</span><br><span class="line"><span class="number">3</span> gems installed</span><br></pre></td></tr></table></figure>
+<p>opscodeのchefのインストーラはまだ未対応なのか、<code>knife solo prepare</code>が失敗するようになってしまいました。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2014/09/09/chef-alpha/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" data-id="cidkeohv2001ffgrcaq23d11n" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chef/">chef</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-vagrant-problem-with-yum-update" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/09/08/vagrant-problem-with-yum-update/" class="article-date">
+  <time datetime="2014-09-08T14:50:00.000Z" itemprop="datePublished">2014-09-08</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2014/09/08/vagrant-problem-with-yum-update/">Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
+<p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2014/09/08/vagrant-problem-with-yum-update/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cidkeohv6001jfgrc19vbrbo3" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VirtualBox/">VirtualBox</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vagrant/">vagrant</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-scala-get-started" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/09/07/scala-get-started/" class="article-date">
+  <time datetime="2014-09-07T08:50:00.000Z" itemprop="datePublished">2014-09-07</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2014/09/07/scala-get-started/">Scala 開発環境構築(IntelliJ IDEA, SBT, scalaenv)</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/09/07/scala-get-started/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <h1 id="前提と目標">前提と目標</h1><p>下記のような開発環境の構築手順をメモしておきます。</p>
+<ul>
+<li>Mac OSX 10.9.4</li>
+<li>Scala 2.11.0</li>
+<li>SBT 0.13 (ビルドツール)</li>
+<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA 13.1</a> のCommunity Edition</li>
+<li>IdeaVIMの設定(操作をvimライクに)</li>
+<li>ターミナル用のScala環境の構築(scalaenv)</li>
+</ul>
+<p>IntelliJ IDEA上でHello Worldを動かすところまでの手順を説明します。</p>
+<p>ScalaとSBTはIntelliJのプラグインによって自動的にインストールされるため、個別にインストールする必要はありません。</p>
+<p>現時点では、デフォルトのScalaのバージョンは2.10.4ですが、<br>SBTのビルド定義にバージョンを書けば、プロジェクトごとに異なるバージョンのScalaコンパイラでビルドできます。<br>具体例として2.11.0を使う方法を後述します。</p>
+<p>また、上記の方法はIntelliJ IDEAのプラグインがScala一式をインストールしてしまうので、<br>ターミナル用の実行環境としてscalaenvを少し紹介します。</p>
+<p>大半がIDEでの設定なので画像多め。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2014/09/07/scala-get-started/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/" data-id="cidkeohv8001pfgrcvl2q5vkh" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/">scala</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-octopress-toc-improved" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/07/08/octopress-toc-improved/" class="article-date">
+  <time datetime="2014-07-07T16:30:43.000Z" itemprop="datePublished">2014-07-08</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/blog/">blog</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2014/07/08/octopress-toc-improved/">Octopressで見出しの目次を作る方法 改</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>以前このような記事を書きました。</p>
+<p><a href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
+<p>この記事を読まれた方から、より良い方法を教えて頂きました。</p>
+<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
+<p><a href="https://github.com/dafi/jekyll-toc-generator">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。<br>修正する理由は下記で解説されています。<br><a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
+<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。<br>勉強になりました。その手があったか。</p>
+<p>で、試してみたところ概ね自分の望むとおりに動いていました。素晴らしいです。</p>
+<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、<br>カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、<br>オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
+<p>修正した後のコードは下記です。</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2014/07/08/octopress-toc-improved/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cidkeohvb001tfgrcyh8bp7if" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/octopress/">octopress</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2015/04/27/errbit/">RailsのエラーモニタリングツールErrbitのChefレシピ</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/chef/" style="font-size: 16.67px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 16.67px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 10px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/research/">research</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発/">開発</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2015 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Octopressで見出しの目次を作る方法 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,octopress,目次,見出し">
+  
+  <meta name="description" content="調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。
+最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。
+
+日本語の見出しでもエラーにならず出力される。
+OctopressデフォルトのMarkdownパーサであるrdiscountを使用している。
+リンクが絶対パスになる(記事一覧画面のような">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Octopressで見出しの目次を作る方法">
+<meta property="og:url" content="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。
+最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。
+
+日本語の見出しでもエラーにならず出力される。
+OctopressデフォルトのMarkdownパーサであるrdiscountを使用している。
+リンクが絶対パスになる(記事一覧画面のような">
+<meta property="og:updated_time" content="2015-08-17T15:39:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Octopressで見出しの目次を作る方法">
+<meta name="twitter:description" content="調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。
+最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。
+
+日本語の見出しでもエラーにならず出力される。
+OctopressデフォルトのMarkdownパーサであるrdiscountを使用している。
+リンクが絶対パスになる(記事一覧画面のような">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-octopress-toc" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2014/06/16/octopress-toc/" class="article-date">
+  <time datetime="2014-06-16T13:00:01.000Z" itemprop="datePublished">2014-06-16</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/blog/">blog</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Octopressで見出しの目次を作る方法
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/06/16/octopress-toc/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+        <p>調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。</p>
+<p>最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。</p>
+<ol>
+<li>日本語の見出しでもエラーにならず出力される。</li>
+<li>OctopressデフォルトのMarkdownパーサであるrdiscountを使用している。</li>
+<li>リンクが絶対パスになる(記事一覧画面のような「続きを読む(Read On)」で目次のリンク先が省略されるような状況でも有効なリンクになる)</li>
+<li>リンクが重複しない(後述)</li>
+</ol>
+<p>前半はアプローチのメモです。実現方法は解決案以降に書いています。</p>
+<a id="more"></a>
+<h1 id="前提条件">前提条件</h1><ol>
+<li><a href="https://github.com/imathis/octopress/commit/9bc4bb02ee3318d07b6b1ecd838a09461eff627b" target="_blank" rel="external">2014-05-22のコミット</a> 以降のoctopressをcloneしていること。</li>
+<li>Markdownパーサとして<a href="https://github.com/davidfstr/rdiscount" target="_blank" rel="external">rdiscount</a>を使用していること。</li>
+</ol>
+<h1 id="目次のサンプルと見出しの生成に失敗するまで">目次のサンプルと見出しの生成に失敗するまで</h1><p>gemはvendor/bundle以下にインストールしてあると仮定します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> git://github.com/imathis/octopress.git octopress</span><br><span class="line">$ bundle install --path=vendor/bundle</span><br><span class="line">$ bundle <span class="built_in">exec</span> rake install</span><br></pre></td></tr></table></figure>
+<p>見出し機能を有効にします。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">diff --git _config.yml _config.yml</span><br><span class="line">index e51e7c3..0969488 100644</span><br><span class="line"><span class="header">--- _config.yml</span></span><br><span class="line"><span class="header">+++ _config.yml</span></span><br><span class="line">@@ -39,6 +39,8 @@ rdiscount:</span><br><span class="line">     - autolink</span><br><span class="line">     - footnotes</span><br><span class="line">     - smart</span><br><span class="line"><span class="addition">+    - generate_toc</span></span><br><span class="line"><span class="addition">+  toc_token: "&#123;!TOC&#125;"</span></span><br><span class="line"> pygments: false # default python pygments have been replaced by pygments.rb</span><br><span class="line"></span><br><span class="line"> paginate: 10          # Posts per page on the blog index</span><br></pre></td></tr></table></figure>
+<p>以下、投稿例です。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ bundle <span class="built_in">exec</span> rake <span class="string">'new_post[octopress_toc]'</span></span><br><span class="line">$ cat &lt;&lt;<span class="string">'EOF'</span> &gt; <span class="built_in">source</span>/_posts/<span class="number">2014</span>-<span class="number">06</span>-<span class="number">16</span>-octopress-toc.markdown</span><br><span class="line">layout: post</span><br><span class="line">title: <span class="string">"octopress_toc"</span></span><br><span class="line">date: <span class="number">2014</span>-<span class="number">06</span>-<span class="number">16</span> <span class="number">09</span>:<span class="number">54</span>:<span class="number">31</span> +<span class="number">0900</span></span><br><span class="line">comments: <span class="literal">true</span></span><br><span class="line">categories:</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">&#123;!TOC&#125;</span><br><span class="line"></span><br><span class="line">見出し目次のテストです。</span><br><span class="line"></span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 見出し１</span></span><br><span class="line"></span><br><span class="line">本文</span><br><span class="line"></span><br><span class="line"><span class="comment">## 見出し２</span></span><br><span class="line"></span><br><span class="line">本文</span><br><span class="line"></span><br><span class="line"><span class="comment">## 見出し３</span></span><br><span class="line"></span><br><span class="line">本文</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>このままgenerateしようとするとエラーになります。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ bundle <span class="built_in">exec</span> rake generate</span><br><span class="line"><span class="comment">## Generating Site with Jekyll</span></span><br><span class="line">identical <span class="built_in">source</span>/stylesheets/screen.css</span><br><span class="line">Configuration from octopress/_config.yml</span><br><span class="line">Building site: <span class="built_in">source</span> -&gt; public</span><br><span class="line">octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/converters/markdown.rb:<span class="number">140</span>:<span class="keyword">in</span> `gsub!<span class="string">': incompatible character encodings: ASCII-8BIT and UTF-8 (Encoding::CompatibilityError)</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/gems/jekyll-0.12.0/lib/jekyll/converters/markdown.rb:140:in `convert'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/convertible.rb:<span class="number">46</span>:<span class="keyword">in</span> `transform<span class="string">'</span><br><span class="line">        from octopress/plugins/post_filters.rb:150:in `transform'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/convertible.rb:<span class="number">88</span>:<span class="keyword">in</span> `<span class="keyword">do</span>_layout<span class="string">'</span><br><span class="line">        from octopress/plugins/post_filters.rb:167:in `do_layout'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/post.rb:<span class="number">195</span>:<span class="keyword">in</span> `render<span class="string">'</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/gems/jekyll-0.12.0/lib/jekyll/site.rb:200:in `block in render'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/site.rb:<span class="number">199</span>:<span class="keyword">in</span> `each<span class="string">'</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/gems/jekyll-0.12.0/lib/jekyll/site.rb:199:in `render'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/jekyll-<span class="number">0.12</span>.<span class="number">0</span>/lib/jekyll/site.rb:<span class="number">41</span>:<span class="keyword">in</span> `process<span class="string">'</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/gems/jekyll-0.12.0/bin/jekyll:264:in `&lt;top (required)&gt;'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/bin/jekyll:<span class="number">23</span>:<span class="keyword">in</span> `load<span class="string">'</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/bin/jekyll:23:in `&lt;main&gt;'</span></span><br></pre></td></tr></table></figure>
+<h1 id="既知のパッチ">既知のパッチ</h1><p>前述のエラーについてはパッチがあります。</p>
+<p>参考：<a href="http://tokkonopapa.github.io/blog/2013/02/23/octopress-toc/" target="_blank" rel="external">octopressで見出しの目次を記事に埋め込む方法 - T.I.D.</a></p>
+<p>jekyll本体に手を入れることになるので、ローカルにチェックアウトします。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir vendor/github</span><br><span class="line">$ git <span class="built_in">clone</span> git@github.com:jekyll/jekyll -b v0.<span class="number">12.0</span> vendor/github/jekyll</span><br></pre></td></tr></table></figure>
+<p>Gemfileを修正して、<code>bundle install --path=vendor/bundle</code>します。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">diff --git Gemfile Gemfile</span><br><span class="line">index cd8ce57..c87d7ec 100644</span><br><span class="line"><span class="header">--- Gemfile</span></span><br><span class="line"><span class="header">+++ Gemfile</span></span><br><span class="line">@@ -2,7 +2,7 @@ source "https://rubygems.org"</span><br><span class="line"></span><br><span class="line"> group :development do</span><br><span class="line">   gem 'rake', '~&gt; 0.9'</span><br><span class="line"><span class="deletion">-  gem 'jekyll', '~&gt; 0.12'</span></span><br><span class="line"><span class="addition">+  gem 'jekyll', :path =&gt; "vendor/github/jekyll"</span></span><br><span class="line">   gem 'rdiscount', '~&gt; 2.0.7'</span><br><span class="line">   gem 'pygments.rb', '~&gt; 0.3.4'</span><br><span class="line">   gem 'RedCloth', '~&gt; 4.2.9'</span><br></pre></td></tr></table></figure>
+<p>jekyllのコードを修正します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> vendor/github/jekyll</span><br></pre></td></tr></table></figure>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">diff --git lib/jekyll/converters/markdown.rb lib/jekyll/converters/markdown.rb</span><br><span class="line">index 3c6ba53..b866617 100644</span><br><span class="line"><span class="header">--- lib/jekyll/converters/markdown.rb</span></span><br><span class="line"><span class="header">+++ lib/jekyll/converters/markdown.rb</span></span><br><span class="line">@@ -137,7 +137,7 @@ module Jekyll</span><br><span class="line">           rd = RDiscount.new(content, *@rdiscount_extensions)</span><br><span class="line">           html = rd.to_html</span><br><span class="line">           if rd.generate_toc and html.include?(@config['rdiscount']['toc_token'])</span><br><span class="line"><span class="deletion">-            html.gsub!(@config['rdiscount']['toc_token'], rd.toc_content)</span></span><br><span class="line"><span class="addition">+            html.gsub!(@config['rdiscount']['toc_token'], rd.toc_content.force_encoding("utf-8"))</span></span><br><span class="line">           end</span><br><span class="line">           html</span><br><span class="line">         when 'maruku'</span><br></pre></td></tr></table></figure>
+<p>もう一度generateしてみます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">% bundle <span class="built_in">exec</span> rake generate</span><br><span class="line"><span class="comment">## Generating Site with Jekyll</span></span><br><span class="line">identical <span class="built_in">source</span>/stylesheets/screen.css</span><br><span class="line">Configuration from octopress/_config.yml</span><br><span class="line">Building site: <span class="built_in">source</span> -&gt; public</span><br><span class="line">octopress/plugins/raw.rb:<span class="number">11</span>:<span class="keyword">in</span> `gsub<span class="string">': invalid byte sequence in UTF-8 (ArgumentError)</span><br><span class="line">        from octopress/plugins/raw.rb:11:in `unwrap'</span></span><br><span class="line">        from octopress/plugins/octopress_filters.rb:<span class="number">18</span>:<span class="keyword">in</span> `post_filter<span class="string">'</span><br><span class="line">        from octopress/plugins/octopress_filters.rb:33:in `post_render'</span></span><br><span class="line">        from octopress/plugins/post_filters.rb:<span class="number">124</span>:<span class="keyword">in</span> `block <span class="keyword">in</span> post_render<span class="string">'</span><br><span class="line">        from octopress/plugins/post_filters.rb:123:in `each'</span></span><br><span class="line">        from octopress/plugins/post_filters.rb:<span class="number">123</span>:<span class="keyword">in</span> `post_render<span class="string">'</span><br><span class="line">        from octopress/plugins/post_filters.rb:151:in `transform'</span></span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/convertible.rb:<span class="number">88</span>:<span class="keyword">in</span> `<span class="keyword">do</span>_layout<span class="string">'</span><br><span class="line">        from octopress/plugins/post_filters.rb:167:in `do_layout'</span></span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/post.rb:<span class="number">195</span>:<span class="keyword">in</span> `render<span class="string">'</span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/site.rb:200:in `block in render'</span></span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/site.rb:<span class="number">199</span>:<span class="keyword">in</span> `each<span class="string">'</span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/site.rb:199:in `render'</span></span><br><span class="line">        from octopress/vendor/github/jekyll/lib/jekyll/site.rb:<span class="number">41</span>:<span class="keyword">in</span> `process<span class="string">'</span><br><span class="line">        from octopress/vendor/github/jekyll/bin/jekyll:264:in `&lt;top (required)&gt;'</span></span><br><span class="line">        from octopress/vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/bin/jekyll:<span class="number">23</span>:<span class="keyword">in</span> `load<span class="string">'</span><br><span class="line">        from octopress/vendor/bundle/ruby/2.1.0/bin/jekyll:23:in `&lt;main&gt;'</span></span><br></pre></td></tr></table></figure>
+<p>別のエラーが出ました。</p>
+<h1 id="次の一手">次の一手</h1><p>いくつかの方法が考えられます。</p>
+<ol>
+<li>別のパーサを使う。(redcarpet, kramdown)</li>
+<li>rdiscount, jekyllのバージョンを上げる。</li>
+</ol>
+<p>redcarpetについては別の問題が発生してうまく行きませんでした。<br><a href="http://octopress.org" target="_blank" rel="external">octopressのドキュメント</a>自体がredcarpetに移行しているみたいなので本命だったのですが諦めて別の方法を探しました。</p>
+<p>kramdownはcodeblockの利用に制限がかかりそうだったので見送りました。</p>
+<p>rdiscountとjekyllのバージョンをあげたら解決する可能性があるかと思ったのですが、両方ともmasterのHEADに持っていくだけではダメでした。<br>そもそもoctopressが使っているjekyllのバージョンはかなり古いので、互換性の面で不安もありました。</p>
+<p>というわけで諦めて強引に修正することにしました。(今回は多少汚い手を使っても困るのは俺だけだし)</p>
+<h1 id="問題点は何か">問題点は何か</h1><p>そもそもの問題点は2つあります。</p>
+<ol>
+<li>rdiscountの出力するtocをクリーンなutf-8に変換できない。</li>
+<li>rdiscountが出力する見出しのアンカータグのname属性が重複する可能性がある。</li>
+</ol>
+<p>前者はjekyllのコード修正後に発生したエラーの原因です。<code>force_encoding</code>するだけでは不十分でした。</p>
+<p>ただ、後者のほうがより重要で、これがあるかぎり頑張って前者を解決してもダメです。<br>わかり易い例を示します。</p>
+<figure class="highlight ruby"><figcaption><span>toc_test.rb</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">'rdiscount'</span></span><br><span class="line"></span><br><span class="line">rd = <span class="constant">RDiscount</span>.new(&lt;&lt;-<span class="constant">EOF</span>, <span class="symbol">:autolink</span>, <span class="symbol">:footnotes</span>, <span class="symbol">:smart</span>, <span class="symbol">:generate_toc</span>)</span><br><span class="line"><span class="comment"># ヘッダ１</span></span><br><span class="line"></span><br><span class="line">本文<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## ヘッダ２</span></span><br><span class="line"></span><br><span class="line">本文<span class="number">2</span></span><br><span class="line"><span class="constant">EOF</span></span><br><span class="line"></span><br><span class="line">puts rd.to_html</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">$ bundle <span class="built_in">exec</span> ruby toc_test.rb</span><br><span class="line">&lt;a name=<span class="string">"L............"</span>&gt;&lt;/a&gt;</span><br><span class="line">&lt;h1&gt;ヘッダ１&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;本文<span class="number">1</span>&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;a name=<span class="string">"L............"</span>&gt;&lt;/a&gt;</span><br><span class="line">&lt;h2&gt;ヘッダ２&lt;/h2&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;本文<span class="number">2</span>&lt;/p&gt;</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">ヘッダ１、ヘッダ２はname属性が同じになるようにあえて全角数字で書いています。</span><br><span class="line"></span><br><span class="line">rdiscountに下記のようなコードがあるので、おそらく意図した動作なのでしょう。</span><br><span class="line">ただ、アルファベット以外の見出しはすべて<span class="string">"."</span>に<span class="string">"mangle"</span>されてしまうので、</span><br><span class="line">日本語で見出しを書くとたまたま長さが同じになったときにリンクが重複します。</span><br><span class="line"></span><br><span class="line">    // vendor/bundle/ruby/<span class="number">2.1</span>.<span class="number">0</span>/gems/rdiscount-<span class="number">2.0</span>.<span class="number">7.3</span>/ext/mkdio.c</span><br><span class="line"></span><br><span class="line">    /* write out a Cstring, mangled into a form suitable <span class="keyword">for</span> `&lt;a href=` or `&lt;a id=`</span><br><span class="line">     */</span><br><span class="line">    void</span><br><span class="line">    mkd_string_to_anchor(char *s, int len, mkd_sta_<span class="keyword">function</span>_t outchar,</span><br><span class="line">                                           void *out, int labelformat)</span><br><span class="line">    &#123;</span><br><span class="line">        unsigned char c;</span><br><span class="line"></span><br><span class="line">        int i, size;</span><br><span class="line">        char *line;</span><br><span class="line"></span><br><span class="line">        size = mkd_line(s, len, &amp;line, IS_LABEL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( labelformat &amp;&amp; size &amp;&amp; !isalpha(line[<span class="number">0</span>]) )</span><br><span class="line">            (*outchar)(<span class="string">'L'</span>,out);</span><br><span class="line">        <span class="keyword">for</span> ( i=<span class="number">0</span>; i &lt; size ; i++ ) &#123;</span><br><span class="line">            c = line[i];</span><br><span class="line">            <span class="keyword">if</span> ( labelformat ) &#123;</span><br><span class="line">                <span class="keyword">if</span> ( isalnum(c) || (c == <span class="string">'_'</span>) || (c == <span class="string">':'</span>) || (c == <span class="string">'-'</span>) || (c == <span class="string">'.'</span> ) )</span><br><span class="line">                    (*outchar)(c, out);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    (*outchar)(<span class="string">'.'</span>,out);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                (*outchar)(c,out);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (line)</span><br><span class="line">            free(line);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解決案</span></span><br><span class="line"></span><br><span class="line">以下の方法を取りました。</span><br><span class="line"></span><br><span class="line">* jekyllを修正して、`RDiscount<span class="comment">#toc_content`をブログ本文のドキュメントに挿入する前後でHTMLを書き換える。</span></span><br><span class="line">  * 本文のアンカータグのname属性を`section_<span class="comment">#&#123;n&#125;`というフォーマットの連番に書き換える。</span></span><br><span class="line">  * `RDiscount<span class="comment">#toc_content`のリンクを上記で書き換えたアンカーに置換する。</span></span><br><span class="line"></span><br><span class="line">差分は下記のとおりです。Nokogiriを使ってます。</span><br><span class="line">あと`RDiscount<span class="comment">#toc_content`の不正なバイトを綺麗にするために`String#scrub`を使っているのでruby2.1系じゃないと動きません。</span></span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ <span class="built_in">cd</span> vendor/github/jekyll</span><br></pre></td></tr></table></figure>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">diff --git jekyll.gemspec jekyll.gemspec</span><br><span class="line">index f88d073..e9a09b4 100644</span><br><span class="line"><span class="header">--- jekyll.gemspec</span></span><br><span class="line"><span class="header">+++ jekyll.gemspec</span></span><br><span class="line">@@ -29,6 +29,7 @@ Gem::Specification.new do |s|</span><br><span class="line">   s.add_runtime_dependency('maruku', "~&gt; 0.5")</span><br><span class="line">   s.add_runtime_dependency('kramdown', "~&gt; 0.13.4")</span><br><span class="line">   s.add_runtime_dependency('pygments.rb', "~&gt; 0.3.2")</span><br><span class="line"><span class="addition">+  s.add_runtime_dependency('nokogiri', "~&gt; 1.6.1")</span></span><br><span class="line"></span><br><span class="line">   s.add_development_dependency('rake', "~&gt; 0.9")</span><br><span class="line">   s.add_development_dependency('rdoc', "~&gt; 3.11")</span><br><span class="line">diff --git lib/jekyll/converters/markdown.rb lib/jekyll/converters/markdown.rb</span><br><span class="line">index 3c6ba53..31f0e9a 100644</span><br><span class="line"><span class="header">--- lib/jekyll/converters/markdown.rb</span></span><br><span class="line"><span class="header">+++ lib/jekyll/converters/markdown.rb</span></span><br><span class="line"><span class="chunk">@@ -1,3 +1,5 @@</span></span><br><span class="line"><span class="addition">+require 'nokogiri'</span></span><br><span class="line"><span class="addition">+</span></span><br><span class="line"> module Jekyll</span><br><span class="line"></span><br><span class="line">   class MarkdownConverter &lt; Converter</span><br><span class="line">@@ -137,7 +139,15 @@ module Jekyll</span><br><span class="line">           rd = RDiscount.new(content, *@rdiscount_extensions)</span><br><span class="line">           html = rd.to_html</span><br><span class="line">           if rd.generate_toc and html.include?(@config['rdiscount']['toc_token'])</span><br><span class="line"><span class="deletion">-            html.gsub!(@config['rdiscount']['toc_token'], rd.toc_content)</span></span><br><span class="line"><span class="addition">+            doc = Nokogiri::HTML::DocumentFragment.parse(rd.to_html)</span></span><br><span class="line"><span class="addition">+            toc  = Nokogiri::HTML::DocumentFragment.parse(rd.toc_content.force_encoding("utf-8").scrub("."))</span></span><br><span class="line"><span class="addition">+            doc.css("a[name]").each_with_index&#123;|elem, i| elem['name'] = "section_#&#123;i&#125;" &#125;</span></span><br><span class="line"><span class="addition">+            anchors = doc.css("a[name]")</span></span><br><span class="line"><span class="addition">+            toc.css("a[href]").each_with_index&#123;|elem, i|</span></span><br><span class="line"><span class="addition">+              elem["href"] = "#" + anchors[i]["name"]</span></span><br><span class="line"><span class="addition">+            &#125;</span></span><br><span class="line"><span class="addition">+            html = doc.to_html</span></span><br><span class="line"><span class="addition">+            toc = html.gsub!(@config['rdiscount']['toc_token'], toc.to_html)</span></span><br><span class="line">           end</span><br><span class="line">           html</span><br><span class="line">         when 'maruku'</span><br></pre></td></tr></table></figure>
+<p>ここまでで見出し目次は出力されるようになりますが、アンカータグは<code>&lt;a href=&quot;#section_0&quot;&gt;見出し１&lt;/a&gt;</code>のような相対パスでのリンクになります。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#section_0"</span>&gt;</span>categories:<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">ul</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#section_1"</span>&gt;</span>見出し１<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#section_2"</span>&gt;</span>見出し２<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#section_3"</span>&gt;</span>見出し３<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">ul</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">ul</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span>見出し目次のテストです。<span class="tag">&lt;/<span class="title">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- more --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">name</span>=<span class="value">"section_1"</span>&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">h1</span>&gt;</span>見出し１<span class="tag">&lt;/<span class="title">h1</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">name</span>=<span class="value">"section_1"</span>&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">h1</span>&gt;</span>見出し１<span class="tag">&lt;/<span class="title">h1</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span>本文<span class="tag">&lt;/<span class="title">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">name</span>=<span class="value">"section_2"</span>&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">h2</span>&gt;</span>見出し２<span class="tag">&lt;/<span class="title">h2</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span>本文<span class="tag">&lt;/<span class="title">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">name</span>=<span class="value">"section_3"</span>&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">h2</span>&gt;</span>見出し３<span class="tag">&lt;/<span class="title">h2</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span>本文<span class="tag">&lt;/<span class="title">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>そのため、投稿の単体ページでは意図したように動作しますが、投稿一覧ページに表示されていて、かつ参照先が<code>&lt;!-- more --&gt;</code>によって省略されているような場合には意図したように動作しません。</p>
+<p>これを解決するためにプラグインを書きます。</p>
+<figure class="highlight ruby"><figcaption><span>plugins/toc_linker.rb</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">'nokogiri'</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">Jekyll</span></span></span><br><span class="line">  require_relative <span class="string">'post_filters'</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">TocLinker</span> <span class="inheritance">&lt; <span class="parent">PostFilter</span></span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post_render</span><span class="params">(post)</span></span></span><br><span class="line">      <span class="keyword">if</span> post.is_post?</span><br><span class="line">        doc = <span class="constant">Nokogiri::HTML::DocumentFragment</span>.parse(post.content)</span><br><span class="line">        doc.css(<span class="string">"a[href]"</span>).each <span class="keyword">do</span> |elem|</span><br><span class="line">          <span class="keyword">next</span> <span class="keyword">if</span> elem[<span class="string">"href"</span>] !~ <span class="regexp">/^#/</span></span><br><span class="line">          elem[<span class="string">"href"</span>] = post.full_url + elem[<span class="string">"href"</span>]</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        post.content = doc.to_html</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>これにより、下記のようにアンカータグのリンク先を絶対パスに書き換えてしまいます。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://yoursite.com/blog/2014/06/16/octopress-toc/#section_0"</span>&gt;</span>categories:<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">ul</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://yoursite.com/blog/2014/06/16/octopress-toc/#section_1"</span>&gt;</span>見出し１<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://yoursite.com/blog/2014/06/16/octopress-toc/#section_2"</span>&gt;</span>見出し２<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://yoursite.com/blog/2014/06/16/octopress-toc/#section_3"</span>&gt;</span>見出し３<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">ul</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="フィード">フィード</h1><p>ついでに出力されるフィードにも手を入れておきます。</p>
+<p><code>&lt;!-- more --&gt;</code>で省略している箇所はフィードに含めず、<br>それよりも前に見出し目次がある場合はフィードに含めて、<br>見出し目次のリンク先は投稿本文になるようにします。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#123;% raw %&#125;</span><br><span class="line">diff --git source/atom.xml source/atom.xml</span><br><span class="line">index 83af3f8..035a610 100644</span><br><span class="line"><span class="header">--- source/atom.xml</span></span><br><span class="line"><span class="header">+++ source/atom.xml</span></span><br><span class="line">@@ -21,7 +21,13 @@ layout: nil</span><br><span class="line">     &lt;link href="&#123;&#123; site.url &#125;&#125;&#123;&#123; post.url &#125;&#125;"/&gt;</span><br><span class="line">     &lt;updated&gt;&#123;&#123; post.date | date_to_xmlschema &#125;&#125;&lt;/updated&gt;</span><br><span class="line">     &lt;id&gt;&#123;&#123; site.url &#125;&#125;&#123;&#123; post.id &#125;&#125;&lt;/id&gt;</span><br><span class="line"><span class="deletion">-    &lt;content type="html"&gt;&lt;![CDATA[&#123;&#123; post.content | expand_urls: site.url | cdata_escape &#125;&#125;]]&gt;&lt;/content&gt;</span></span><br><span class="line"><span class="addition">+    &lt;content type="html"&gt;&lt;![CDATA[</span></span><br><span class="line"><span class="addition">+      &#123;&#123; post.content | excerpt | expand_urls: site.url | cdata_escape &#125;&#125;</span></span><br><span class="line"><span class="addition">+      &#123;% capture excerpted %&#125;&#123;&#123; post.content | has_excerpt &#125;&#125;&#123;% endcapture %&#125;</span></span><br><span class="line"><span class="addition">+      &#123;% if excerpted == 'true' %&#125;</span></span><br><span class="line"><span class="addition">+        &lt;a rel="full-article" href="&#123;&#123; site.url &#125;&#125;&#123;&#123; root_url &#125;&#125;&#123;&#123; post.url &#125;&#125;"&gt;&#123;&#123; site.excerpt_link | cdata_escape &#125;&#125;&lt;/a&gt;</span></span><br><span class="line"><span class="addition">+      &#123;% endif %&#125;</span></span><br><span class="line"><span class="addition">+    ]]&gt;&lt;/content&gt;</span></span><br><span class="line">   &lt;/entry&gt;</span><br><span class="line">   &#123;% endfor %&#125;</span><br><span class="line"> &lt;/feed&gt;</span><br><span class="line">&#123;% endraw %&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="課題">課題</h1><ul>
+<li>見出し目次のリンクに対応する本文中のDOM要素をアンカータグのname属性だけでサーチしているため、それ以外のname属性付きアンカータグを含むような記事では誤動作します。</li>
+<li>見出し目次のリンクが<code>bundle exec rake preview</code>でも絶対パスになります。</li>
+<li>octopressの更新によってjekyllのバージョンが上がってしまった場合には再度対処が必要になる可能性があります。</li>
+</ul>
+<p>最初に書いたように筋悪な方法だと思ってるのでプルリクとかもしません。</p>
+<p>もっとスマートな方法知ってる人いたらtwitterで教えて下さい。</p>
+<p>追記：twitterで筋の良い方法を教えて頂きましたので、その紹介の記事を書きました。</p>
+<p><a href="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/">Octopressで見出しの目次を作る方法 改 - 割り箸ポテチ</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/" data-id="cidkeohvj002afgrciwzxqux1" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/octopress/">octopress</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2014/06/17/wovn/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          JavaScript一行でサイトを多言語化するサービスWOVN.ioを試してみました
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2014/06/15/rbenv/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">ruby 実行環境の構築 - rbenvの使い方とその仕組み</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2015/04/27/errbit/">RailsのエラーモニタリングツールErrbitのChefレシピ</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/chef/" style="font-size: 16.67px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 16.67px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 10px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/research/">research</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発/">開発</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2015 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,rails,railspanel,rails panel,chrome,meta_request,仕組み,_">
+  
+  <meta name="description" content="7 must have Development Gems to install on every project
+この記事を読んでいて、Rails PanelというChrome拡張を知りました。
+
+qqshfox/meta_request
+RailsPanel - Chrome ウェブストア
+
+Rails PanelでできることデベロッパーツールにRailsというパネルが追加されます。このパネルで">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み">
+<meta property="og:url" content="http://blog.chopschips.net/blog/2015/03/06/rails-panel/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="7 must have Development Gems to install on every project
+この記事を読んでいて、Rails PanelというChrome拡張を知りました。
+
+qqshfox/meta_request
+RailsPanel - Chrome ウェブストア
+
+Rails PanelでできることデベロッパーツールにRailsというパネルが追加されます。このパネルで">
+<meta property="og:image" content="http://blog.chopschips.net/images/post_20150306_rails_panel/ss_01.png">
+<meta property="og:updated_time" content="2015-08-17T15:42:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み">
+<meta name="twitter:description" content="7 must have Development Gems to install on every project
+この記事を読んでいて、Rails PanelというChrome拡張を知りました。
+
+qqshfox/meta_request
+RailsPanel - Chrome ウェブストア
+
+Rails PanelでできることデベロッパーツールにRailsというパネルが追加されます。このパネルで">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-rails-panel" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/03/06/rails-panel/" class="article-date">
+  <time datetime="2015-03-06T14:38:45.000Z" itemprop="datePublished">2015-03-06</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/research/">research</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/03/06/rails-panel/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/03/06/rails-panel/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+        <p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/" target="_blank" rel="external">7 must have Development Gems to install on every project</a></p>
+<p>この記事を読んでいて、Rails PanelというChrome拡張を知りました。</p>
+<ul>
+<li><a href="https://github.com/qqshfox/meta_request" target="_blank" rel="external">qqshfox/meta_request</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg" target="_blank" rel="external">RailsPanel - Chrome ウェブストア</a></li>
+</ul>
+<h1 id="Rails_Panelでできること">Rails Panelでできること</h1><p>デベロッパーツールにRailsというパネルが追加されます。<br>このパネルでは、ページリクエスト単位で下記のような情報を表示することができます。</p>
+<ul>
+<li>Breakdown: 処理時間の内訳(ActiveRecord, Rendering, Other)</li>
+<li>Params: コントローラから参照できるparamsの内容</li>
+<li>ActiveRecord: そのリクエストを処理する際に発行したSQLと処理時間</li>
+<li>Rendering: ビューテンプレートごとの描画時間</li>
+</ul>
+<img src="/images/post_20150306_rails_panel/ss_01.png">
+<p>要するに <code>rails server</code> の標準出力(あるいは <code>log/${RAILS_ENV}.log</code>)の情報を見やすく表示してくれます。</p>
+<a id="more"></a>
+<h1 id="使い方">使い方</h1><ul>
+<li>ChromeにはChrome ウェブストアからインストールします。<br><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg" target="_blank" rel="external">RailsPanel - Chrome ウェブストア</a></li>
+<li>Railsには <code>meta_request</code> というgemを追加します。</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">group <span class="symbol">:development</span> <span class="keyword">do</span></span><br><span class="line">  gem <span class="string">"meta_request"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h1 id="動作の仕組み">動作の仕組み</h1><p>meta_requestをbundleすると、いくつかのRackミドルウェアが自動的に組み込まれます。</p>
+<ul>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/middlewares.rb" target="_blank" rel="external">rails_panel/middlewares.rb at master · dejan/rails_panel</a></li>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/railtie.rb" target="_blank" rel="external">rails_panel/railtie.rb at master · dejan/rails_panel</a></li>
+</ul>
+<p>この中のMetaRequest::Middlewares::Headersによって <code>X-Meta-Request-Version</code>が、<br>MetaRequest::Middlewares::RequestIdによって <code>X-Request-Id</code>が<br>Railsアプリケーションが返すすべてのレスポンスのヘッダに追加されます。</p>
+<ul>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/middlewares/headers.rb" target="_blank" rel="external">rails_panel/headers.rb at master · dejan/rails_panel</a></li>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/middlewares/request_id.rb" target="_blank" rel="external">rails_panel/request_id.rb at master · dejan/rails_panel</a></li>
+</ul>
+<p>Rails Panelを有効にしていると、 <code>X-Meta-Request-Version</code> がレスポンスヘッダに存在する際に、<br>Chromeは <code>/__meta_request/${X-Request-Id}.json</code> というパスにリクエストを投げます。</p>
+<p><a href="https://github.com/dejan/rails_panel/blob/master/rails_panel/assets/javascripts/requests.js#L12" target="_blank" rel="external">rails_panel/requests.js at master · dejan/rails_panel</a></p>
+<p>このリクエストもmeta_requestのRackミドルウェアで処理され、Railsアプリ層の手前の段階で、必要な情報がjsonでレスポンスされます。</p>
+<p>ただし、このリクエストのログもRackミドルウェア層によってRails.loggerに出力するため、Railsのログには下記のような痕跡が残ります。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Started GET <span class="string">"/__meta_request/abcd92a2-3859-4972-9708-8303fe238e9e.json"</span> <span class="keyword">for</span> ::<span class="number">1</span> at <span class="number">2015</span>-<span class="number">03</span>-<span class="number">06</span> <span class="number">23</span>:<span class="number">45</span>:<span class="number">37</span> +<span class="number">0900</span></span><br></pre></td></tr></table></figure>
+<p>なお、 <code>/__meta_request/${X-Request-Id}.json</code> のレスポンスで返されるjsonファイルは、<code>tmp/data/meta_request/</code> 以下に最大10個まで保存されます。<br>該当のコードはこのあたり。</p>
+<ul>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/middlewares/app_request_handler.rb" target="_blank" rel="external">rails_panel/app_request_handler.rb at master · dejan/rails_panel</a></li>
+<li><a href="https://github.com/dejan/rails_panel/blob/master/meta_request/lib/meta_request/storage.rb#L12" target="_blank" rel="external">rails_panel/storage.rb at master · dejan/rails_panel</a></li>
+</ul>
+<p>RackミドルウェアとChrome拡張でモニタリング用の機能を実装するというアプローチは他のことにも応用ができそうですね。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-id="cidkeohuj000xfgrcs26ezox1" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Sidekiqのコードに潜む愉快なメソッドたち
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2015/02/26/active-job/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2015/04/27/errbit/">RailsのエラーモニタリングツールErrbitのChefレシピ</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/chef/" style="font-size: 16.67px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 16.67px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 10px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/research/">research</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発/">開発</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2015 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

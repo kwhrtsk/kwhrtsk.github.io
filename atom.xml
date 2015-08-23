@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  
+  <title><![CDATA[割り箸ポテチ]]></title>
+  <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://blog.chopschips.net//"/>
+  <updated>2015-08-18T13:27:18.000Z</updated>
+  <id>http://blog.chopschips.net//</id>
+  
+  <author>
+    <name><![CDATA[Kawahara Taisuke / 河原太介]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[RailsのエラーモニタリングツールErrbitのChefレシピ]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/04/27/errbit/"/>
+    <updated>2015-04-27T14:00:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/04/27/errbit/</id>
+    <content type="html">
+    <![CDATA[<p>4/17に大阪で開催されたRailsの勉強会でLTしてきました。</p>
+<ul>
+<li><a href="https://riding-rails.doorkeeper.jp/events/22793">Railsをのりこなせ！ - Riding Rails勉強会</a></li>
+<li><a href="http://www.techscore.com/blog/2015/04/23/riding-rails-vol1-yattayo/">» Riding Rails 勉強会 #1 Rails をのりこなせ！やりました！発表資料も！ TECHSCORE BLOG</a></li>
+</ul>
+<p>自分の発表資料をちょっと加筆修正したものを以下に公開しました。</p>
+<p><iframe src="https://www.slideshare.net/slideshow/embed_code/key/oDPA7cITu1ZJBy" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/secret/oDPA7cITu1ZJBy" title="Railsのエラーログとの付き合い方" target="_blank">Railsのエラーログとの付き合い方</a> </strong> from <strong><a href="http://www.slideshare.net/kwhrtsk" target="_blank">Taisuke Kawahara</a></strong> </div></p>
+<p>テーマはRailsのエラーモニタリングです。</p>
+<p>通知先はSlackという前提で、<br><a href="https://github.com/smartinez87/exception_notification">exception_notification</a>というgemで直接Slackに通知する方法と、<br>New RelicやAirbrakeといったWebサービス経由で通知する方法、<br><a href="https://github.com/errbit/errbit">Errbit</a> というOSSのAirbrakクローン経由でSlackに通知する方法を紹介しました。</p>
+<p>ErrbitはHerokuの無料枠で運用することが可能で、詳細なセットアップの情報が日本語でも見つかります。</p>
+<p><a href="http://morizyun.github.io/blog/errbit-heroku-rails-error-ruby/">Errbit - Railsアプリの本番エラーをherokuで管理、メール通知する【無料枠】 - 酒と泪とRubyとRailsと</a></p>
+<p>今回はHerokuを使わずにオンプレやAmazon EC2のようなIaaSに自分でセットアップする方法を検討しました。</p>
+<p>まずErrbitをセットアップするChefのレシピを探してみたのですが、見つかったものは対応しているErrbitのバージョンが古く、サポートもUbuntuのみでした。</p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit">errbit Cookbook - Chef Supermarket</a></p>
+<p>自分はCentOSも好きなので、2015-04-17時点の最新のErrbitに対応していて、かつUbuntuとCentOSのどちらもサポートしているものを作成して公開しました。</p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit-server">errbit-server Cookbook - Chef Supermarket</a></p>
+<p>今回はコミュニティクックブックを多めに使ってやってみました。大まかな構成は下記のとおりです。</p>
+<ul>
+<li>コミュニティクックブックでやっていること<ul>
+<li>mongodbのインストール</li>
+<li>rbenvとruby_buildのインストール</li>
+<li>ruby 2.2.2のインストール(attributeで変更可能)</li>
+<li>Errbitのチェックアウトと初期化<ul>
+<li>applicationクックブックを利用</li>
+<li>application_rubyはマイグレーションでbundlerのrakeを使おうとせずにエラーになるのでスルー</li>
+</ul>
+</li>
+<li>ErrbitにバンドルされているUnicornをservice_factoryでサービス化(SysV or Upstart)</li>
+<li>Unicornのlogrotate</li>
+</ul>
+</li>
+<li>自前で追加した分<ul>
+<li>Errbitのデプロイ先のディレクトリレイアウト</li>
+<li>Errbitの初期化処理(<code>rake errbit:bootstrap</code>)</li>
+<li>ErrbitのUnicornを起動するためのラッパ作成</li>
+<li>Errbitの設定値のための環境変数をattributeで設定する仕組み</li>
+</ul>
+</li>
+</ul>
+<p>Vagrantで動作を確認するための手順をsampleディレクトリに置いています。下記のバージョンの組み合わせで動作を確認しています。</p>
+<ul>
+<li>OSX Yosemite</li>
+<li>Ruby 2.2.2</li>
+<li>Vagrant 1.7.2</li>
+<li>VirtualBox 4.3.26</li>
+<li>CentOS 6.6 or Ubuntu 14.10</li>
+</ul>
+<p>CentOSで試すのであれば、ターミナルで下記のようなコマンドを入力すると、最終的に <code>http://192.168.33.10:3000/</code> でローカルVM上のErrbitにログインできます。</p>]]>
+    
+    </content>
+    
+      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+    
+      <category term="errbit" scheme="http://blog.chopschips.net/tags/errbit/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="開発" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Sidekiqのコードに潜む愉快なメソッドたち]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/"/>
+    <updated>2015-04-04T13:50:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</id>
+    <content type="html">
+    <![CDATA[<p><br/></p>
+<p>少し前にRails4.2のActiveJobのバックエンドについて調べました。</p>
+<p><a href="http://blog.chopschips.net/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a></p>
+<p>このとき<a href="https://github.com/mperham/sidekiq">Sidekiq</a>のコードを読んで、<a href="https://github.com/celluloid/celluloid">Celluloid</a>によるアクターモデルで並行処理を実装していることを知りました。<br>ちょうどScalaやErlangでアクターを使う方法を調べていたところだったので興味がわき、Celluloidを利用したアプリケーションのサンプルとして読んでみることにしました。</p>
+<p>その時見つけた愉快なメソッドを紹介します。</p>
+<p>今回読んだSidekiqのバージョンは3.3.3です。</p>
+<h2 id="注意事項">注意事項</h2><ul>
+<li>本エントリはSidekiqやアクターの解説記事ではありません。</li>
+<li>記事に機種依存文字が含まれています。<ul>
+<li>OSXのChromeとFirefox、iOSのSafariとChromeでのみ表示を確認しています。</li>
+<li>iOSのブラウザではGithubから引用しているコードの一部が化けます。</li>
+</ul>
+</li>
+</ul>]]>
+    
+    </content>
+    
+      <category term="emoji" scheme="http://blog.chopschips.net/tags/emoji/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="sidekiq" scheme="http://blog.chopschips.net/tags/sidekiq/"/>
+    
+      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/03/06/rails-panel/"/>
+    <updated>2015-03-06T14:38:45.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/03/06/rails-panel/</id>
+    <content type="html">
+    <![CDATA[<p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/">7 must have Development Gems to install on every project</a></p>
+<p>この記事を読んでいて、Rails PanelというChrome拡張を知りました。</p>
+<ul>
+<li><a href="https://github.com/qqshfox/meta_request">qqshfox/meta_request</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg">RailsPanel - Chrome ウェブストア</a></li>
+</ul>
+<h1 id="Rails_Panelでできること">Rails Panelでできること</h1><p>デベロッパーツールにRailsというパネルが追加されます。<br>このパネルでは、ページリクエスト単位で下記のような情報を表示することができます。</p>
+<ul>
+<li>Breakdown: 処理時間の内訳(ActiveRecord, Rendering, Other)</li>
+<li>Params: コントローラから参照できるparamsの内容</li>
+<li>ActiveRecord: そのリクエストを処理する際に発行したSQLと処理時間</li>
+<li>Rendering: ビューテンプレートごとの描画時間</li>
+</ul>
+<img src="/images/post_20150306_rails_panel/ss_01.png">
+<p>要するに <code>rails server</code> の標準出力(あるいは <code>log/${RAILS_ENV}.log</code>)の情報を見やすく表示してくれます。</p>]]>
+    
+    </content>
+    
+      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/02/26/active-job/"/>
+    <updated>2015-02-26T13:11:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/02/26/active-job/</id>
+    <content type="html">
+    <![CDATA[<h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由">ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
+<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、<br>ActiveJobはジョブを記述するためのインタフェースを抽象化して、<br>ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。<br>なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
+<p>Rails 4.2.0時点では、ActiveJobのバックエンドとして以下のページにある9つのいずれかを使用できます。</p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html">ActiveJob::QueueAdapters</a></p>
+<ul>
+<li>Backburner</li>
+<li>Delayed Job</li>
+<li>Qu</li>
+<li>Que</li>
+<li>queue_classic</li>
+<li>Resque 1.x</li>
+<li>Sidekiq</li>
+<li>Sneakers</li>
+<li>Sucker Punch</li>
+</ul>
+<p>ちなみにRuby ToolboxのBackground Jobsというカテゴリの上位3つは、Resque、Sidekiq、Delayed Jobでした。この3つがよく使われている印象です。</p>
+<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
+<p>特にResque、Sidekiqは、ジョブの情報を永続化する先としてRedisを必須としています。</p>
+<p>情報の保存先ならActiveRecord(RDBMS)でも良さそうなものですが、あえてRedisを必須としている理由は何だろうか考えてみました。</p>
+<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、<br>Redisの<a href="http://redis.io/topics/pubsub">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP">BLPOP</a>/<a href="http://redis.io/commands/brpop">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
+<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、<br>RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
+<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、<br>ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
+<p>9つの中で特にSucker Punchはジョブの保存先もワーカープロセスの起動も必要とせずに非同期処理を行えるので、簡単に作りたいならおすすめです。詳細は後述。</p>]]>
+    
+    </content>
+    
+      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/"/>
+    <updated>2015-02-15T14:55:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/</id>
+    <content type="html">
+    <![CDATA[<p>Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>]]>
+    
+    </content>
+    
+      <category term="Mac" scheme="http://blog.chopschips.net/tags/Mac/"/>
+    
+      <category term="MySQL" scheme="http://blog.chopschips.net/tags/MySQL/"/>
+    
+      <category term="Yosemite" scheme="http://blog.chopschips.net/tags/Yosemite/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Chef 12のオープンソース版と25ノード制限について]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/09/10/chef-12/"/>
+    <updated>2014-09-09T15:10:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/09/10/chef-12/</id>
+    <content type="html">
+    <![CDATA[<p>Chef バージョン12がリリースされました。</p>
+<p>ところで下記のニュースで気になる記述がありました。</p>
+<blockquote><p>ビジネスモデル面でも変更があり、<br>オープンソース版（「Chef Essentials」）と商用版（「Chef Ent]]>
+    </content>
+    
+      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[knife solo prepareでエラー]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/"/>
+    <updated>2014-09-08T15:32:43.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/09/09/chef-alpha/</id>
+    <content type="html">
+    <![CDATA[<p>knife-soloをインストールしたら何故かchef 12.0.0.alphaがインストールされてしまいました。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ gem install knife-solo</span><br><span class="line">Fetching: chef-zero-<span class="number">2.2</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-zero-<span class="number">2.2</span></span><br><span class="line">Fetching: chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Thanks <span class="keyword">for</span> installing knife-solo!</span><br><span class="line"></span><br><span class="line">If you run into any issues please let us know at:</span><br><span class="line">  https:<span class="comment">//github.com/matschaffer/knife-solo/issues</span></span><br><span class="line"></span><br><span class="line">If you are upgrading knife-solo please uninstall any old versions by</span><br><span class="line">running `gem clean knife-solo` to avoid any errors.</span><br><span class="line"></span><br><span class="line">See http:<span class="comment">//bit.ly/CHEF-3255 for more information on the knife bug</span></span><br><span class="line">that causes <span class="keyword">this</span>.</span><br><span class="line">Successfully installed knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Done installing documentation <span class="keyword">for</span> chef, chef-zero, knife-solo after <span class="number">20</span> seconds</span><br><span class="line"><span class="number">3</span> gems installed</span><br></pre></td></tr></table></figure>
+<p>opscodeのchefのインストーラはまだ未対応なのか、<code>knife solo prepare</code>が失敗するようになってしまいました。</p>]]>
+    
+    </content>
+    
+      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/"/>
+    <updated>2014-09-08T14:50:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/</id>
+    <content type="html">
+    <![CDATA[<h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
+<p>忘れた頃にまた踏みそうなのでメモしておきます。</p>]]>
+    
+    </content>
+    
+      <category term="VirtualBox" scheme="http://blog.chopschips.net/tags/VirtualBox/"/>
+    
+      <category term="vagrant" scheme="http://blog.chopschips.net/tags/vagrant/"/>
+    
+      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Scala 開発環境構築(IntelliJ IDEA, SBT, scalaenv)]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/"/>
+    <updated>2014-09-07T08:50:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/09/07/scala-get-started/</id>
+    <content type="html">
+    <![CDATA[<h1 id="前提と目標">前提と目標</h1><p>下記のような開発環境の構築手順をメモしておきます。</p>
+<ul>
+<li>Mac OSX 10.9.4</li>
+<li>Scala 2.11.0</li>
+<li>SBT 0.13 (ビルドツール)</li>
+<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA 13.1</a> のCommunity Edition</li>
+<li>IdeaVIMの設定(操作をvimライクに)</li>
+<li>ターミナル用のScala環境の構築(scalaenv)</li>
+</ul>
+<p>IntelliJ IDEA上でHello Worldを動かすところまでの手順を説明します。</p>
+<p>ScalaとSBTはIntelliJのプラグインによって自動的にインストールされるため、個別にインストールする必要はありません。</p>
+<p>現時点では、デフォルトのScalaのバージョンは2.10.4ですが、<br>SBTのビルド定義にバージョンを書けば、プロジェクトごとに異なるバージョンのScalaコンパイラでビルドできます。<br>具体例として2.11.0を使う方法を後述します。</p>
+<p>また、上記の方法はIntelliJ IDEAのプラグインがScala一式をインストールしてしまうので、<br>ターミナル用の実行環境としてscalaenvを少し紹介します。</p>
+<p>大半がIDEでの設定なので画像多め。</p>]]>
+    
+    </content>
+    
+      <category term="scala" scheme="http://blog.chopschips.net/tags/scala/"/>
+    
+      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Octopressで見出しの目次を作る方法 改]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/"/>
+    <updated>2014-07-07T16:30:43.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/</id>
+    <content type="html">
+    <![CDATA[<p>以前このような記事を書きました。</p>
+<p><a href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
+<p>この記事を読まれた方から、より良い方法を教えて頂きました。</p>
+<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
+<p><a href="https://github.com/dafi/jekyll-toc-generator">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。<br>修正する理由は下記で解説されています。<br><a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
+<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。<br>勉強になりました。その手があったか。</p>
+<p>で、試してみたところ概ね自分の望むとおりに動いていました。素晴らしいです。</p>
+<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、<br>カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、<br>オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
+<p>修正した後のコードは下記です。</p>]]>
+    
+    </content>
+    
+      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+    
+      <category term="blog" scheme="http://blog.chopschips.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[書評:パーフェクトRuby on Rails]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/"/>
+    <updated>2014-06-18T14:50:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/</id>
+    <content type="html">
+    <![CDATA[<p>これからRailsを覚える友人に書籍を薦める機会があればこの2冊を選びます。</p>
+<iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774165166&ref=qf_sp_asin_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe><br><iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774164100&ref=tf_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
+<p>特に1冊目の<br><a href="http://www.amazon.co.jp/gp/product/4774165166/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774165166&linkCode=as2&tag=chopschips03-22">パーフェクト Ruby on Rails</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774165166" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /><br>は<strong>「これからRailsを覚える同僚に紹介する」</strong>という用途にも最適な一冊だと思います。</p>
+<p>こういう書籍の内容は”Railsの標準機能”の枠に収まっている事が多いのですが、実際の開発現場においてはRails本体の機能ではないものの、<br>多くの現場でデファクトスタンダードになっているgemが数多く存在します。</p>
+<p>そのような情報に関してはアンテナを広げてキャッチアップしていくしかないのですが、<br>この書籍はRails非標準の内容にまで深く踏み込んでおり、初学者の最初の一歩をブーストしてくれます。<br>もちろん非標準の内容については広く普及しているかどうか(かつ長くその地位を保てるか)意見のわかれる点でもあるのですが、<br>少なくとも自分の主観で読み進めて違和感のある部分はほとんどありませんでした。</p>
+<p>Railsで初めてWebアプリ開発を行うという方には適切ではないかもしれませんが、<br>他の言語・フレームワークの経験があるような技術者にはこれくらいの内容のほうが効率が良いです。</p>
+<p>具体的にどこがよかったかについては後半で述べます。</p>
+<p>2冊目の<br><a href="http://www.amazon.co.jp/gp/product/4774164100/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774164100&linkCode=as2&tag=chopschips03-22">Ruby on Rails 4 アプリケーションプログラミング</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774164100" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /><br>は、1冊めを補完する目的でおすすめです。<br>バリデータやビューのヘルパなどのリファレンス的な情報が豊富です。</p>
+<p>今回は、特に”パーフェクトRuby on Rails”について良いと思った点をメモしておこうと思います。</p>]]>
+    
+    </content>
+    
+      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="本" scheme="http://blog.chopschips.net/tags/%E6%9C%AC/"/>
+    
+      <category term="書評" scheme="http://blog.chopschips.net/categories/%E6%9B%B8%E8%A9%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[JavaScript一行でサイトを多言語化するサービスWOVN.ioを試してみました]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/06/17/wovn/"/>
+    <updated>2014-06-17T05:45:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/06/17/wovn/</id>
+    <content type="html">
+    <![CDATA[<p>以下の記事でWOVN.ioというサイトの多言語化(翻訳支援)サービスが紹介されているのを見ました。</p>
+<p><a href="http://jp.techcrunch.com/2014/06/16/wovnio/">JavaScript 1行でサイトを多言語化、ボタン一発翻訳の「WOVN.io」が良さそう | TechCrunch Japan</a></p>
+<p>さっそく試してみました。簡単に使用感など紹介してみたいと思います。</p>]]>
+    
+    </content>
+    
+      <category term="WOVN.io" scheme="http://blog.chopschips.net/tags/WOVN-io/"/>
+    
+      <category term="javascript" scheme="http://blog.chopschips.net/tags/javascript/"/>
+    
+      <category term="I18n" scheme="http://blog.chopschips.net/categories/I18n/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Octopressで見出しの目次を作る方法]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/"/>
+    <updated>2014-06-16T13:00:01.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/06/16/octopress-toc/</id>
+    <content type="html">
+    <![CDATA[<p>調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。</p>
+<p>最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。</p>
+<ol>
+<li>日本語の見出しでもエラーにならず出力される。</li>
+<li>OctopressデフォルトのMarkdownパーサであるrdiscountを使用している。</li>
+<li>リンクが絶対パスになる(記事一覧画面のような「続きを読む(Read On)」で目次のリンク先が省略されるような状況でも有効なリンクになる)</li>
+<li>リンクが重複しない(後述)</li>
+</ol>
+<p>前半はアプローチのメモです。実現方法は解決案以降に書いています。</p>]]>
+    
+    </content>
+    
+      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+    
+      <category term="blog" scheme="http://blog.chopschips.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[ruby 実行環境の構築 - rbenvの使い方とその仕組み]]></title>
+    <link href="http://blog.chopschips.net/blog/2014/06/15/rbenv/"/>
+    <updated>2014-06-15T09:00:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2014/06/15/rbenv/</id>
+    <content type="html">
+    <![CDATA[<h1 id="rbenvとruby-buildのインストール方法">rbenvとruby-buildのインストール方法</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/rbenv.git ~/.rbenv</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$HOME/.rbenv/bin:$PATH"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'eval "$(rbenv init -)"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p><code>.bash_profile</code>は自分の使っているシェルに応じて<code>.zshrc</code>などに読み替えてください。</p>]]>
+    
+    </content>
+    
+      <category term="rbenv" scheme="http://blog.chopschips.net/tags/rbenv/"/>
+    
+      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+    
+      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+    
+  </entry>
+  
+</feed>
