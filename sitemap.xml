@@ -2,8 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/</loc>
+    <lastmod>2015-08-23T14:27:44.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.chopschips.net/blog/2015/04/27/errbit/</loc>
-    <lastmod>2015-08-18T13:27:18.000Z</lastmod>
+    <lastmod>2015-08-23T14:19:54.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2014/06/16/octopress-toc/</loc>
+    <lastmod>2015-08-23T14:15:57.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
+    <lastmod>2015-08-23T14:11:31.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2015/03/06/rails-panel/</loc>
+    <lastmod>2015-08-23T14:11:28.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2015/02/26/active-job/</loc>
+    <lastmod>2015-08-23T14:11:24.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2014/09/10/chef-12/</loc>
+    <lastmod>2015-08-23T14:11:17.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
+    <lastmod>2015-08-23T14:10:46.000Z</lastmod>
   </url>
   
   <url>
@@ -12,28 +47,8 @@
   </url>
   
   <url>
-    <loc>http://blog.chopschips.net/blog/2014/09/10/chef-12/</loc>
-    <lastmod>2015-08-17T15:44:47.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.chopschips.net/blog/2014/06/15/rbenv/</loc>
     <lastmod>2015-08-17T15:44:45.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
-    <lastmod>2015-08-17T15:43:12.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.chopschips.net/blog/2015/03/06/rails-panel/</loc>
-    <lastmod>2015-08-17T15:42:51.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.chopschips.net/blog/2015/02/26/active-job/</loc>
-    <lastmod>2015-08-17T15:42:39.000Z</lastmod>
   </url>
   
   <url>
@@ -52,11 +67,6 @@
   </url>
   
   <url>
-    <loc>http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
-    <lastmod>2015-08-17T15:40:33.000Z</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/</loc>
     <lastmod>2015-08-17T15:39:55.000Z</lastmod>
   </url>
@@ -64,11 +74,6 @@
   <url>
     <loc>http://blog.chopschips.net/blog/2014/06/17/wovn/</loc>
     <lastmod>2015-08-17T15:39:41.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.chopschips.net/blog/2014/06/16/octopress-toc/</loc>
-    <lastmod>2015-08-17T15:39:23.000Z</lastmod>
   </url>
   
   <url>

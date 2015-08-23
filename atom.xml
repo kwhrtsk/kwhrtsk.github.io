@@ -5,7 +5,7 @@
   <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.chopschips.net//"/>
-  <updated>2015-08-18T13:27:18.000Z</updated>
+  <updated>2015-08-23T14:27:44.000Z</updated>
   <id>http://blog.chopschips.net//</id>
   
   <author>
@@ -14,6 +14,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[OctopressからHexoへの移行]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/"/>
+    <updated>2015-08-23T14:20:00.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/</id>
+    <content type="html">
+    <![CDATA[<p>ブログエンジンを<a href="http://octopress.org/">Octopress</a>から<a href="https://hexo.io/">Hexo</a>へ移行しました。</p>
+<p>この記事では自分の場合の移行の手順についてまとめます。</p>]]>
+    
+    </content>
+    
+      <category term="hexo" scheme="http://blog.chopschips.net/tags/hexo/"/>
+    
+      <category term="node" scheme="http://blog.chopschips.net/tags/node/"/>
+    
+      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+    
+      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[RailsのエラーモニタリングツールErrbitのChefレシピ]]></title>
@@ -78,7 +99,7 @@
     
       <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
     
-      <category term="開発" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA/"/>
+      <category term="制作物" scheme="http://blog.chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
     
   </entry>
   
@@ -111,7 +132,7 @@
     
       <category term="sidekiq" scheme="http://blog.chopschips.net/tags/sidekiq/"/>
     
-      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
     
   </entry>
   
@@ -143,7 +164,7 @@
     
       <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
     
-      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
     
   </entry>
   
@@ -183,7 +204,7 @@
     
       <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
     
-      <category term="research" scheme="http://blog.chopschips.net/categories/research/"/>
+      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
     
   </entry>
   
@@ -221,6 +242,8 @@
     </content>
     
       <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+    
+      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
     
   </entry>
   
@@ -309,7 +332,7 @@
     
       <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
     
-      <category term="blog" scheme="http://blog.chopschips.net/categories/blog/"/>
+      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
     
   </entry>
   
@@ -369,6 +392,7 @@
     <id>http://blog.chopschips.net/blog/2014/06/16/octopress-toc/</id>
     <content type="html">
     <![CDATA[<p>調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。</p>
+<p>追記：ブログエンジンをHexoに移行しましたので、この記事の内容は現状と齟齬を生じている可能性があります。</p>
 <p>最終的には、この記事に出ているような見出しの目次を作ることができました。この方法の特徴は下記の通りです。</p>
 <ol>
 <li>日本語の見出しでもエラーにならず出力される。</li>
@@ -382,7 +406,7 @@
     
       <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
     
-      <category term="blog" scheme="http://blog.chopschips.net/categories/blog/"/>
+      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
     
   </entry>
   
