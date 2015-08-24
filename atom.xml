@@ -5,7 +5,7 @@
   <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.chopschips.net//"/>
-  <updated>2015-08-23T14:27:44.000Z</updated>
+  <updated>2015-08-24T12:46:23.000Z</updated>
   <id>http://blog.chopschips.net//</id>
   
   <author>
@@ -14,6 +14,23 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[HexoのテーマIngenuousをリリースしました]]></title>
+    <link href="http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/"/>
+    <updated>2015-08-24T11:42:53.000Z</updated>
+    <id>http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</id>
+    <content type="html">
+    <![CDATA[<p><a href="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/">先日ブログエンジンをHexoに移行した</a>のですが、その際に下記のページのテーマをひと通り試してみま]]>
+    </content>
+    
+      <category term="blog" scheme="http://blog.chopschips.net/tags/blog/"/>
+    
+      <category term="hexo" scheme="http://blog.chopschips.net/tags/hexo/"/>
+    
+      <category term="制作物" scheme="http://blog.chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[OctopressからHexoへの移行]]></title>
