@@ -82,6 +82,90 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-vagrant-knife-zero-best-practice" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/08/25/vagrant-knife-zero-best-practice/" class="article-date">
+  <time datetime="2015-08-25T14:15:00.000Z" itemprop="datePublished">2015-08-25</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/08/25/vagrant-knife-zero-best-practice/">Vagrantでknife-zeroを使うためのベストプラクティス</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。</p>
+<p>下記のドキュメントを参考にしました。</p>
+<ul>
+<li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
+</ul>
+<h2 id="TL;DR">TL;DR</h2><p>プライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する具体的な手順を説明します。</p>
+<p>基本方針は下記の通り。</p>
+<ul>
+<li>コマンドラインでのパラメータを極力減らす。</li>
+<li>IPアドレスの記述は.envrcに集約して、その他の設定ファイルやコマンドラインでは環境変数を使う。</li>
+<li>ノード情報の編集を行う際に、途中でエディタによる編集を伴うknifeコマンド(<code>knife node edit</code>など)を使わない。</li>
+</ul>
+<p>適切に設定ファイルを書けば、下記のような一連のコマンドでレシピの適用まで実行することができます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host001')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST001']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host002')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST002']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> chef_ip</span><br></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/08/25/vagrant-knife-zero-best-practice/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidpz5qxd0001jwrcy4f34g9d" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chef/">chef</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/knife-zero/">knife-zero</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vagrant/">vagrant</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hexo-theme-ingenuous" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/blog/2015/08/24/hexo-theme-ingenuous/" class="article-date">
@@ -154,7 +238,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/" data-id="cidpxgcs90001cmrcdofk81hz" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/" data-id="cidpz5qxl000ajwrczsmbym32" class="article-share-link">Share</a>
       
       
       
@@ -226,7 +310,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cidpxgcsi0008cmrcc37h3ycy" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cidpz5qxo000hjwrcnlyi24ov" class="article-share-link">Share</a>
       
       
       
@@ -344,7 +428,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/04/27/errbit/" data-id="cidpxgcsm000gcmrcquyrr8vy" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/04/27/errbit/" data-id="cidpz5qxs000pjwrclllonwgg" class="article-share-link">Share</a>
       
       
       
@@ -428,7 +512,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-id="cidpxgcsp000ocmrcexvgttp9" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-id="cidpz5qxx000wjwrc05pgiqyh" class="article-share-link">Share</a>
       
       
       
@@ -513,7 +597,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-id="cidpxgcss000wcmrcxcrjg2fr" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/03/06/rails-panel/" data-id="cidpz5qy30014jwrcu3gdghig" class="article-share-link">Share</a>
       
       
       
@@ -606,7 +690,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/02/26/active-job/" data-id="cidpxgcsy0011cmrc5y6etd32" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/02/26/active-job/" data-id="cidpz5qy60019jwrcszp7n7mk" class="article-share-link">Share</a>
       
       
       
@@ -677,7 +761,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cidpxgct00015cmrcntji3oi7" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cidpz5qy9001djwrculo27shv" class="article-share-link">Share</a>
       
       
       
@@ -770,7 +854,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2014/09/10/chef-12/" data-id="cidpxgct6001hcmrcb51unvdq" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2014/09/10/chef-12/" data-id="cidpz5qye001ojwrctiixxjtx" class="article-share-link">Share</a>
       
       
       
@@ -839,84 +923,11 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" data-id="cidpxgct5001fcmrckb3jbv7x" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/" data-id="cidpz5qyc001mjwrcl5snxcrj" class="article-share-link">Share</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chef/">chef</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-vagrant-problem-with-yum-update" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/blog/2014/09/08/vagrant-problem-with-yum-update/" class="article-date">
-  <time datetime="2014-09-08T14:50:00.000Z" itemprop="datePublished">2014-09-08</time>
-</a>
-
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
-  </div>
-
-
-  </div>
-  <div class="article-inner">
-    
-
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2014/09/08/vagrant-problem-with-yum-update/">Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-sharing">
-  <ul>
-    <li>
-      <a href="http://b.hatena.ne.jp/entry/http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
-    </li>
-    <li>
-      <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-via="{{ theme.twitter }}" data-counturl="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" >Tweet</a>
-    </li>
-    <li>
-      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/"></div>
-    </li>
-  </ul>
-</div>
-
-      
-      
-        <h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
-<p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
-        
-          <p class="article-more-link">
-            <a href="/blog/2014/09/08/vagrant-problem-with-yum-update/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cidpxgct8001kcmrce1gsyidc" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VirtualBox/">VirtualBox</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vagrant/">vagrant</a></li></ul>
 
 
     </footer>
@@ -967,6 +978,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2015/08/25/vagrant-knife-zero-best-practice/">Vagrantでknife-zeroを使うためのベストプラクティス</a>
+          </li>
+        
+          <li>
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
@@ -982,10 +997,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/04/04/funcy-methods-in-sidekiq/">Sidekiqのコードに潜む愉快なメソッドたち</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/03/06/rails-panel/">Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -996,7 +1007,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 16.67px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 13.33px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 16.67px;">octopress</a> <a href="/tags/rails/" style="font-size: 16.67px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 10px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 17.5px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12.5px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 15px;">octopress</a> <a href="/tags/rails/" style="font-size: 15px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 12.5px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -1006,7 +1017,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1016,7 +1027,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">4</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -1026,7 +1037,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
