@@ -31,7 +31,7 @@ TL;DRプライベートネットワークモードで立ち上げた2つのVMに
 基本方針は下記の通り。
 
 コマンド">
-<meta property="og:updated_time" content="2015-08-25T15:41:49.000Z">
+<meta property="og:updated_time" content="2015-08-25T15:44:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vagrantでknife-zeroを使うためのベストプラクティス">
 <meta name="twitter:description" content="Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。
@@ -236,9 +236,7 @@ ga('send', 'pageview');
 <p>また、<code>knife node list</code>コマンドを実行して、登録したVMのホスト名が表示されることを確認して下さい。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife node list</span><br><span class="line">host001.example</span><br><span class="line">host002.example</span><br></pre></td></tr></table></figure>
 <p>次に、<code>knife exec</code>コマンドを使って、ノード情報に接続用IPアドレスをAttributeとして追加します。</p>
-<p>knife-soloではノードにレシピを適用するとき、<code>knife solo cook FQDN</code>でホストを一つ指定します。</p>
-<p>knife-zeroでは、<code>knife solo cook FQDN</code>に相当するコマンドは<code>knife zero converge QUERY</code>です。</p>
-<p>QUERYで指定した条件にマッチするすべてのホストに対して並列にレシピが適用されます。</p>
+<p>knife-soloではノードにレシピを適用するとき、<code>knife solo cook FQDN</code>でホストを一つ指定します。<br>knife-zeroでは、<code>knife solo cook FQDN</code>に相当するコマンドは<code>knife zero converge QUERY</code>です。<br>QUERYで指定した条件にマッチするすべてのホストに対して並列にsshログインし、<code>chef-client</code>を実行してレシピを適用します。</p>
 <p><code>knife zero converge QUERY</code>では、対象のノードにsshでログインするためのIPアドレスをノード情報のAttribute名で指定する必要があります(<code>-a</code>オプション)。<br>このAttributeは通常<code>ipaddress</code>で良いのですが、Vagrant + VirtualBoxのprivate_networkでIPアドレスを固定したVMに<code>knife zero bootstrap</code>した場合、<br>ノードのAttributeとして記録される<code>ipaddress</code>は、Vagrantfileで指定したアドレス<code>192.168.33.*</code>ではなく、<br><code>10.0.2.*</code>のように異なるネットワークのアドレスになっているはずです。(さらにおそらくアドレス自体が同じ)</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife search node <span class="operator">-a</span> ipaddress</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br></pre></td></tr></table></figure>
 <p>そのため、何らかの方法で接続用のアドレスをノードのAttributeとして追加する必要があります。<br>最も平易な方法は、下記のようにknife node editコマンドでエディタを立ち上げてAttributeを編集することです。</p>
@@ -276,7 +274,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidritb8500015grcuzl16fvr" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidriws050001evrcb6aeukb8" class="article-share-link">Share</a>
       
       
       
