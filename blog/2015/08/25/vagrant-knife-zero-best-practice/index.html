@@ -31,7 +31,7 @@ TL;DRプライベートネットワークモードで立ち上げた2つのVMに
 基本方針は下記の通り。
 
 コマンド">
-<meta property="og:updated_time" content="2015-08-25T15:47:11.000Z">
+<meta property="og:updated_time" content="2015-08-25T15:56:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vagrantでknife-zeroを使うためのベストプラクティス">
 <meta name="twitter:description" content="Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。
@@ -265,7 +265,7 @@ ga('send', 'pageview');
 <p>これは本質的にはknife-solo(chef-solo)で書くものと同じなのですが、knife-zero(chef-zero)では非常に分量が多いです。</p>
 <p>これについては、<code>.chef/knife.rb</code>にAttributeのホワイトリストを書くことで制御できます。</p>
 <p><a href="http://qiita.com/sawanoboly/items/28dfc22929b8fa961456" target="_blank" rel="external">chef-zero - Knife-Zeroで管理するnodeオブジェクトを任意のattributesに限定する - Qiita</a></p>
-<h3 id="Attributeのタイプ">Attributeのタイプ</h3><p><code>knife exec</code>でnormalを指定していますが、chefのAttributeには他にもdefaultやoverrideなどの種類があります。<br>defaultで記録してしまうと、次にconvergeしたタイミングで消えるので注意してください。normarlであればconvergeでは消えません。<br>優先順位は複雑なので公式のドキュメントを参照してください。</p>
+<h3 id="Attributeのタイプ">Attributeのタイプ</h3><p><code>knife exec</code>でnormalを指定していますが、chefのAttributeには他にもdefaultやoverrideなどの種類があります。<br>defaultで記録してしまうと、次にconvergeしたタイミングで消えるので注意してください。normalであればconvergeでは消えません。<br>優先順位は複雑なので公式のドキュメントを参照してください。</p>
 <p><a href="https://docs.chef.io/attributes.html#attribute-precedence" target="_blank" rel="external">About Attributes — Chef Docs</a></p>
 <h3 id="サンプルコード">サンプルコード</h3><p>設定ファイル一式まとめたものを下記に置きました。</p>
 <p><a href="https://github.com/kwhrtsk/knife_zero_example" target="_blank" rel="external">https://github.com/kwhrtsk/knife_zero_example</a></p>
@@ -274,7 +274,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidrj0qk90001jfrc0levrgv8" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidrjc3cj0001strc2hnf02rv" class="article-share-link">Share</a>
       
       
       
