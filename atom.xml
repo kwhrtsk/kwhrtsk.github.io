@@ -5,7 +5,7 @@
   <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.chopschips.net//"/>
-  <updated>2015-08-25T15:56:18.000Z</updated>
+  <updated>2015-08-26T22:32:17.000Z</updated>
   <id>http://blog.chopschips.net//</id>
   
   <author>
@@ -22,6 +22,7 @@
     <id>http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/</id>
     <content type="html">
     <![CDATA[<p>Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。</p>
+<p>追記：以下開発環境でのVagrantの利用を想定しています。</p>
 <p>下記のドキュメントを参考にしました。</p>
 <ul>
 <li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
