@@ -5,7 +5,7 @@
   <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.chopschips.net//"/>
-  <updated>2015-08-26T22:32:17.000Z</updated>
+  <updated>2015-08-27T13:55:23.000Z</updated>
   <id>http://blog.chopschips.net//</id>
   
   <author>
@@ -22,7 +22,8 @@
     <id>http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/</id>
     <content type="html">
     <![CDATA[<p>Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。</p>
-<p>追記：以下開発環境でのVagrantの利用を想定しています。</p>
+<p>追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。</p>
+<p>以下、Vagrantを開発環境で利用することを想定しています。</p>
 <p>下記のドキュメントを参考にしました。</p>
 <ul>
 <li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
@@ -32,10 +33,9 @@
 <ul>
 <li>コマンドラインでのパラメータを極力減らす。</li>
 <li>IPアドレスの記述は.envrcに集約して、その他の設定ファイルやコマンドラインでは環境変数を使う。</li>
-<li>ノード情報の編集を行う際に、途中でエディタによる編集を伴うknifeコマンド(<code>knife node edit</code>など)を使わない。</li>
 </ul>
 <p>適切に設定ファイルを書けば、下記のような一連のコマンドでレシピの適用まで実行することができます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host001')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST001']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host002')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST002']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> chef_ip</span><br></pre></td></tr></table></figure>]]>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> knife_zero.host</span><br></pre></td></tr></table></figure>]]>
     
     </content>
     

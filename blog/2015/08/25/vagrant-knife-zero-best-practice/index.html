@@ -10,33 +10,36 @@
     <meta name="keywords" content="割り箸ポテチ, 河原太介,knife-zero,knife zero,vagrant,chef,ベストプラクティス">
   
   <meta name="description" content="Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。
-追記：以下開発環境でのVagrantの利用を想定しています。
+追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。
+以下、Vagrantを開発環境で利用することを想定しています。
 下記のドキュメントを参考にしました。
 
 Knife-ZeroとVagrant(単品VM) - Qiita
 
-TL;DRプライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する">
+TL;DRプライベートネットワ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vagrantでknife-zeroを使うためのベストプラクティス">
 <meta property="og:url" content="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。
-追記：以下開発環境でのVagrantの利用を想定しています。
+追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。
+以下、Vagrantを開発環境で利用することを想定しています。
 下記のドキュメントを参考にしました。
 
 Knife-ZeroとVagrant(単品VM) - Qiita
 
-TL;DRプライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する">
-<meta property="og:updated_time" content="2015-08-26T22:32:17.000Z">
+TL;DRプライベートネットワ">
+<meta property="og:updated_time" content="2015-08-27T13:55:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vagrantでknife-zeroを使うためのベストプラクティス">
 <meta name="twitter:description" content="Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。
-追記：以下開発環境でのVagrantの利用を想定しています。
+追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。
+以下、Vagrantを開発環境で利用することを想定しています。
 下記のドキュメントを参考にしました。
 
 Knife-ZeroとVagrant(単品VM) - Qiita
 
-TL;DRプライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する">
+TL;DRプライベートネットワ">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
@@ -148,11 +151,12 @@ ga('send', 'pageview');
         
           <div class="toc-wrap">
             <h3> Table of Contents</h3>
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TL;DR"><span class="toc-number">1.</span> <span class="toc-text">TL;DR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概要"><span class="toc-number">2.</span> <span class="toc-text">概要</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#動作確認環境"><span class="toc-number">2.1.</span> <span class="toc-text">動作確認環境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#目標"><span class="toc-number">2.2.</span> <span class="toc-text">目標</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手順"><span class="toc-number">3.</span> <span class="toc-text">手順</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VMのアドレスを環境変数に設定(-envrc)"><span class="toc-number">3.1.</span> <span class="toc-text">VMのアドレスを環境変数に設定(.envrc)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vagrantfileの作成"><span class="toc-number">3.2.</span> <span class="toc-text">Vagrantfileの作成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#~/-ssh/config_の設定変更"><span class="toc-number">3.3.</span> <span class="toc-text">~/.ssh/config の設定変更</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VMの立ち上げと疎通確認"><span class="toc-number">3.4.</span> <span class="toc-text">VMの立ち上げと疎通確認</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#knife-zeroとberkshelfのインストール"><span class="toc-number">3.5.</span> <span class="toc-text">knife-zeroとberkshelfのインストール</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ノードの初期設定"><span class="toc-number">3.6.</span> <span class="toc-text">ノードの初期設定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#レシピの適用"><span class="toc-number">3.7.</span> <span class="toc-text">レシピの適用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#補足"><span class="toc-number">4.</span> <span class="toc-text">補足</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ノード情報の保存先"><span class="toc-number">4.1.</span> <span class="toc-text">ノード情報の保存先</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attributeのタイプ"><span class="toc-number">4.2.</span> <span class="toc-text">Attributeのタイプ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#サンプルコード"><span class="toc-number">4.3.</span> <span class="toc-text">サンプルコード</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TL;DR"><span class="toc-number">1.</span> <span class="toc-text">TL;DR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概要"><span class="toc-number">2.</span> <span class="toc-text">概要</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#動作確認環境"><span class="toc-number">2.1.</span> <span class="toc-text">動作確認環境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#目標"><span class="toc-number">2.2.</span> <span class="toc-text">目標</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手順"><span class="toc-number">3.</span> <span class="toc-text">手順</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VMのアドレスを環境変数に設定(-envrc)"><span class="toc-number">3.1.</span> <span class="toc-text">VMのアドレスを環境変数に設定(.envrc)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vagrantfileの作成"><span class="toc-number">3.2.</span> <span class="toc-text">Vagrantfileの作成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#~/-ssh/config_の設定変更"><span class="toc-number">3.3.</span> <span class="toc-text">~/.ssh/config の設定変更</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VMの立ち上げと疎通確認"><span class="toc-number">3.4.</span> <span class="toc-text">VMの立ち上げと疎通確認</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#knife-zeroとberkshelfのインストール"><span class="toc-number">3.5.</span> <span class="toc-text">knife-zeroとberkshelfのインストール</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ノードの初期設定"><span class="toc-number">3.6.</span> <span class="toc-text">ノードの初期設定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#レシピの適用"><span class="toc-number">3.7.</span> <span class="toc-text">レシピの適用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#補足"><span class="toc-number">4.</span> <span class="toc-text">補足</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ノード情報の保存先"><span class="toc-number">4.1.</span> <span class="toc-text">ノード情報の保存先</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attributeのタイプ"><span class="toc-number">4.2.</span> <span class="toc-text">Attributeのタイプ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#サンプルコード"><span class="toc-number">4.3.</span> <span class="toc-text">サンプルコード</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#knife-zero_1-7-1以前(蛇足)"><span class="toc-number">4.4.</span> <span class="toc-text">knife-zero 1.7.1以前(蛇足)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新履歴"><span class="toc-number">5.</span> <span class="toc-text">更新履歴</span></a></li></ol>
           </div>
         
         <p>Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。</p>
-<p>追記：以下開発環境でのVagrantの利用を想定しています。</p>
+<p>追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。</p>
+<p>以下、Vagrantを開発環境で利用することを想定しています。</p>
 <p>下記のドキュメントを参考にしました。</p>
 <ul>
 <li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c" target="_blank" rel="external">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
@@ -162,10 +166,9 @@ ga('send', 'pageview');
 <ul>
 <li>コマンドラインでのパラメータを極力減らす。</li>
 <li>IPアドレスの記述は.envrcに集約して、その他の設定ファイルやコマンドラインでは環境変数を使う。</li>
-<li>ノード情報の編集を行う際に、途中でエディタによる編集を伴うknifeコマンド(<code>knife node edit</code>など)を使わない。</li>
 </ul>
 <p>適切に設定ファイルを書けば、下記のような一連のコマンドでレシピの適用まで実行することができます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host001')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST001']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host002')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST002']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> chef_ip</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> knife_zero.host</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <h2 id="概要">概要</h2><h3 id="動作確認環境">動作確認環境</h3><ul>
 <li>Yosemite 10.10.5</li>
@@ -173,7 +176,7 @@ ga('send', 'pageview');
 <li>VirtualBox 5.0.0</li>
 <li>ruby 2.2.3</li>
 <li>chef 12.4.1</li>
-<li>knife-zero 1.7.1</li>
+<li>knife-zero 1.8.0</li>
 <li>berkshelf 3.3.0</li>
 <li>direnv 2.6.0</li>
 <li>CentOS 7.1(VM on VirtualBox)</li>
@@ -230,32 +233,21 @@ ga('send', 'pageview');
 <p><code>nodes/</code>ディレクトリと<code>clients/</code>ディレクトリ以下にそれぞれjsonファイルができていることを確認して下さい。</p>
 <p>また、<code>knife node list</code>コマンドを実行して、登録したVMのホスト名が表示されることを確認して下さい。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife node list</span><br><span class="line">host001.example</span><br><span class="line">host002.example</span><br></pre></td></tr></table></figure>
-<p>次に、<code>knife exec</code>コマンドを使って、ノード情報に接続用IPアドレスをAttributeとして追加します。</p>
-<p>knife-soloではノードにレシピを適用するとき、<code>knife solo cook FQDN</code>でホストを一つ指定します。<br>knife-zeroでは、<code>knife solo cook FQDN</code>に相当するコマンドは<code>knife zero converge QUERY</code>です。<br>QUERYで指定した条件にマッチするすべてのホストに対して並列にsshログインし、<code>chef-client</code>を実行してレシピを適用します。</p>
-<p><code>knife zero converge QUERY</code>では、対象のノードにsshでログインするためのIPアドレスをノード情報のAttribute名で指定する必要があります(<code>-a</code>オプション)。<br>このAttributeは通常<code>ipaddress</code>で良いのですが、Vagrant + VirtualBoxのprivate_networkでIPアドレスを固定したVMに<br><code>knife zero bootstrap</code>した場合、ノードのAttributeとして記録される<code>ipaddress</code>は、Vagrantfileで指定したアドレス<code>192.168.33.*</code>ではなく、<br><code>10.0.2.*</code>のように異なるネットワークのアドレスになっているはずです。(さらにおそらくアドレス自体が同じ)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife search node <span class="operator">-a</span> ipaddress</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br></pre></td></tr></table></figure>
-<p>そのため、何らかの方法で接続用のアドレスをノードのAttributeとして追加する必要があります。<br>最も平易な方法は、下記のようにknife node editコマンドでエディタを立ち上げてAttributeを編集することです。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife node edit host001.example</span><br></pre></td></tr></table></figure>
-<p>ただ、この手の操作はできるだけコマンドラインで定型化したいものです。</p>
-<p><code>knife exec</code>コマンドを使えば、下記のように環境変数経由でアドレスを設定することができます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host001')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST001']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host002')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST002']; n.save&#125;"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 設定されているか確認</span></span><br><span class="line">% ./bin/knife search node <span class="string">'hostname:*'</span> <span class="operator">-a</span> chef_ip</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  chef_ip: <span class="number">192.168</span>.<span class="number">33.10</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  chef_ip: <span class="number">192.168</span>.<span class="number">33.11</span></span><br></pre></td></tr></table></figure>
-<p>元々の <code>ipaddress</code> 属性とは別に、<code>chef_ip</code> という属性を新規に登録し、<code>knife zero converge</code>を実行する際には <code>chef_ip</code>を指定することにします。</p>
-<p>VagrantのプライベートIPアドレスは個人の環境によって都合の良いアドレスが異なる場合がありますが、<br>このように環境変数で指定するようにしておけば、<code>.envrc</code>だけ編集すれば良いようになります。</p>
-<p><code>knife exec</code>でどのようなことができるかは、下記のドキュメントが参考になります。</p>
-<ul>
-<li><a href="https://docs.chef.io/knife_exec.html#examples" target="_blank" rel="external">knife exec — Chef Docs</a></li>
-<li><a href="https://gist.github.com/ipedrazas/aadbaeb808f5ace5d3ce" target="_blank" rel="external">knife cheat</a></li>
-</ul>
 <h3 id="レシピの適用">レシピの適用</h3><p>各ノードのrun_listにbuild-essentialレシピを追加します。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">host001.example:</span><br><span class="line">  run_list: recipe[build-essential]</span><br><span class="line"></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">host002.example:</span><br><span class="line">  run_list: recipe[build-essential]</span><br></pre></td></tr></table></figure>
-<p>すべてのノードでchef-clientを実行します。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife zero converge <span class="string">'name:*'</span> <span class="operator">-a</span> chef_ip</span><br></pre></td></tr></table></figure>
-<p><code>-a</code> はssh接続する際に使用するIPアドレスが記録されたAttributeを指定します。</p>
+<p>次に各ノードへレシピを適用します。</p>
+<p>knife-soloではノードにレシピを適用するとき、<code>knife solo cook FQDN</code>でホストを一つ指定します。<br>knife-zeroでは、<code>knife solo cook FQDN</code>に相当するコマンドは<code>knife zero converge QUERY</code>です。<br>QUERYで指定した条件にマッチするすべてのホストに対して並列にsshログインし、<code>chef-client</code>を実行してレシピを適用します。</p>
+<p><code>knife zero converge QUERY</code>では、対象のノードにsshでログインするためのIPアドレスをノード情報のAttribute名で指定する必要があります(<code>-a</code>オプション)。<br>このAttributeは通常<code>ipaddress</code>で良く、その場合は省略できます。<br>ただし、Vagrant + VirtualBoxのprivate_networkでIPアドレスを固定したVMに<code>knife zero bootstrap</code>した場合、<br>ノードのAttributeとして記録される<code>ipaddress</code>は、Vagrantfileで指定したアドレス<code>192.168.33.*</code>ではなく、<br><code>10.0.2.*</code>のように異なるネットワークのアドレスになっているはずです。(さらにおそらくアドレス自体が同じ)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife search node <span class="operator">-a</span> ipaddress</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  ipaddress: <span class="number">10.0</span>.<span class="number">2.15</span></span><br></pre></td></tr></table></figure>
+<p>knife-zeroのバージョン1.8.0以降であれば、bootstrap時に<code>knife_zero.host</code>というAttributeに接続時のアドレスが記録されます。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife search node -a knife_zero.host</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  knife_zero.host: <span class="number">192.168</span><span class="number">.33</span><span class="number">.10</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  knife_zero.host: <span class="number">192.168</span><span class="number">.33</span><span class="number">.11</span></span><br></pre></td></tr></table></figure>
+<p>なので下記のように<code>knife_zero.host</code>を指定すればレシピを適用できます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife zero converge <span class="string">'name:*'</span> <span class="operator">-a</span> knife_zero.host</span><br></pre></td></tr></table></figure>
 <p><code>&#39;name:*&#39;</code>はクエリ文字列で、この例ではすべてのノードを対象にしています。</p>
 <p>クエリの構造は <code>knife search</code> と同様です。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># host001だけを指定</span></span><br><span class="line">% ./bin/knife search node <span class="string">'name:host001.example'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># exampleドメインに一致するホストだけを指定</span></span><br><span class="line">% ./bin/knife search node <span class="string">'name:*.example'</span></span><br></pre></td></tr></table></figure>
 <p>また、クエリ指定でsshログインして任意のコマンドを実行することもできます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife ssh <span class="string">'name:*'</span> <span class="operator">-a</span> chef_ip <span class="string">'sudo yum update -y'</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife ssh <span class="string">'name:*'</span> <span class="operator">-a</span> knife_zero.host <span class="string">'sudo yum update -y'</span></span><br></pre></td></tr></table></figure>
 <h2 id="補足">補足</h2><h3 id="ノード情報の保存先">ノード情報の保存先</h3><p><code>knife exec</code>や<code>knife node edit</code>で変更した情報は <code>nodes/*.json</code> に保存されています。</p>
 <p>これは本質的にはknife-solo(chef-solo)で書くものと同じなのですが、knife-zero(chef-zero)では非常に分量が多いです。</p>
 <p>これについては、<code>.chef/knife.rb</code>にAttributeのホワイトリストを書くことで制御できます。</p>
@@ -264,12 +256,27 @@ ga('send', 'pageview');
 <p><a href="https://docs.chef.io/attributes.html#attribute-precedence" target="_blank" rel="external">About Attributes — Chef Docs</a></p>
 <h3 id="サンプルコード">サンプルコード</h3><p>設定ファイル一式まとめたものを下記に置きました。</p>
 <p><a href="https://github.com/kwhrtsk/knife_zero_example" target="_blank" rel="external">https://github.com/kwhrtsk/knife_zero_example</a></p>
+<h3 id="knife-zero_1-7-1以前(蛇足)">knife-zero 1.7.1以前(蛇足)</h3><p><code>knife_zero.host</code> にbootstrapで接続した時のIPアドレスが記録されるようになったのはknife-zero 1.8.0からです。</p>
+<p>それ以前は <code>knife node edit</code> でjsonファイルを編集するか、下記のように<code>knife exec</code>で接続用のアドレスを追加する必要がありました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host001')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST001']; n.save&#125;"</span></span><br><span class="line">% ./bin/knife <span class="built_in">exec</span> -E <span class="string">"search(:node, 'hostname:host002')&#123;|n| n.normal['chef_ip'] = ENV['VAGRANT_HOST002']; n.save&#125;"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 設定されているか確認</span></span><br><span class="line">% ./bin/knife search node <span class="string">'hostname:*'</span> <span class="operator">-a</span> chef_ip</span><br><span class="line"><span class="number">2</span> items found</span><br><span class="line"></span><br><span class="line">host001.example:</span><br><span class="line">  chef_ip: <span class="number">192.168</span>.<span class="number">33.10</span></span><br><span class="line"></span><br><span class="line">host002.example:</span><br><span class="line">  chef_ip: <span class="number">192.168</span>.<span class="number">33.11</span></span><br></pre></td></tr></table></figure>
+<p><code>knife exec</code>でどのようなことができるかは、下記のドキュメントが参考になります。</p>
+<ul>
+<li><a href="https://docs.chef.io/knife_exec.html#examples" target="_blank" rel="external">knife exec — Chef Docs</a></li>
+<li><a href="https://gist.github.com/ipedrazas/aadbaeb808f5ace5d3ce" target="_blank" rel="external">knife cheat</a></li>
+</ul>
+<h2 id="更新履歴">更新履歴</h2><ul>
+<li>2015-08-27<ul>
+<li>本記事の内容が開発環境での利用を想定したものであることを追記</li>
+<li><a href="https://github.com/higanworks/knife-zero/pull/57" target="_blank" rel="external">knife-zefo 1.8.0で追加された機能</a>に対応</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidtcxiri0001zercpo3d78gs" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cidpz5qxd0001jwrcy4f34g9d" class="article-share-link">Share</a>
       
       
       
