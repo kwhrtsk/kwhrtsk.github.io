@@ -9,18 +9,21 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,ruby,rubygems,mysql2,gem,mysql,mysql56,mac,macports,yosemite,community">
   
-  <meta name="description" content="Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。">
+  <meta name="description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
+追記(2016-03-11): El Capitanの場合の手順を追加">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法">
 <meta property="og:url" content="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。">
+<meta property="og:description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
+追記(2016-03-11): El Capitanの場合の手順を追加">
 <meta property="og:image" content="http://blog.chopschips.net/images/post_20150215_mysql/ss_01.png">
 <meta property="og:image" content="http://blog.chopschips.net/images/post_20150215_mysql/ss_02.png">
-<meta property="og:updated_time" content="2015-08-17T15:42:03.000Z">
+<meta property="og:updated_time" content="2016-03-11T14:15:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法">
-<meta name="twitter:description" content="Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。">
+<meta name="twitter:description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
+追記(2016-03-11): El Capitanの場合の手順を追加">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
@@ -130,7 +133,8 @@ ga('send', 'pageview');
       
       
         
-        <p>Mac(OSX 10.10: Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
+        <p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
+<p>追記(2016-03-11): El Capitanの場合の手順を追加</p>
 <a id="more"></a>
 <h1 id="MacPortsを使う場合">MacPortsを使う場合</h1><h2 id="MySQL_5-6(server)のインストール">MySQL 5.6(server)のインストール</h2><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% sudo <span class="foreign"><span class="keyword">port</span> install mysql56-server</span></span><br></pre></td></tr></table></figure>
 <h2 id="mysql2(gem)のインストール">mysql2(gem)のインストール</h2><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># bundle コマンドを使う場合</span></span><br><span class="line">% bundle config build.mysql2 --<span class="keyword">with</span>-mysql-config=/<span class="built_in">opt</span>/<span class="keyword">local</span>/lib/mysql56/bin/mysql_config</span><br><span class="line">% bundle install</span><br><span class="line"></span><br><span class="line"><span class="preprocessor"># gem コマンドを使う場合</span></span><br><span class="line">% gem install mysql2 -- --<span class="keyword">with</span>-mysql-config=/<span class="built_in">opt</span>/<span class="keyword">local</span>/lib/mysql56/bin/mysql_config</span><br></pre></td></tr></table></figure>
@@ -140,7 +144,7 @@ ga('send', 'pageview');
 <img src="/images/post_20150215_mysql/ss_01.png">
 <img src="/images/post_20150215_mysql/ss_02.png">
 <p>gemをインストールする前にシンボリックリンクを貼る必要があります。</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>lib<span class="regexp">/libmysqlclient.18.dylib /u</span>sr<span class="regexp">/lib/</span>libmysqlclient.<span class="number">18</span>.dylib</span><br></pre></td></tr></table></figure>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Yosemiteの場合</span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>lib<span class="regexp">/libmysqlclient.18.dylib /u</span>sr<span class="regexp">/lib/</span>libmysqlclient.<span class="number">18</span>.dylib</span><br><span class="line"></span><br><span class="line"># El Capitanの場合</span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>lib<span class="regexp">/libmysqlclient.18.dylib /u</span>sr<span class="regexp">/local/</span>lib<span class="regexp">/libmysqlclient.18.dylib</span></span><br></pre></td></tr></table></figure>
 <p>これを行わないと、gemのインストールは成功しますが、実行時に下記のようなエラーが発生します。</p>
 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># test.rb</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">'mysql2'</span></span><br><span class="line"></span><br><span class="line">client = <span class="constant">Mysql2::Client</span>.new(<span class="symbol">:host</span> =&gt; <span class="string">"localhost"</span>, <span class="symbol">:username</span> =&gt; <span class="string">"root"</span>)</span><br><span class="line">puts client.query(<span class="string">"show databases"</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% ruby test.rb</span><br><span class="line">/Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/<span class="number">2.2</span><span class="number">.0</span>/rubygems/core_ext/kernel_require.rb:<span class="number">54</span>:<span class="keyword">in</span> `require<span class="comment">': dlopen(/Users/kawahara_taisuke/.rbenv/versions/2.2.0/lib/ruby/gems/2.2.0/extensions/x86_64-darwin-14/2.2.0-static/mysql2-0.3.17/mysql2/mysql2.bundle, 9): Library not loaded: libmysqlclient.18.dylib (LoadError)</span></span><br><span class="line">  Referenced <span class="keyword">from</span>: /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/gems/<span class="number">2.2</span><span class="number">.0</span>/extensions/x86_64-darwin-<span class="number">14</span>/<span class="number">2.2</span><span class="number">.0</span>-<span class="keyword">static</span>/mysql2-<span class="number">0.3</span><span class="number">.17</span>/mysql2/mysql2.bundle</span><br><span class="line">  Reason: image <span class="keyword">not</span> found - /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/gems/<span class="number">2.2</span><span class="number">.0</span>/extensions/x86_64-darwin-<span class="number">14</span>/<span class="number">2.2</span><span class="number">.0</span>-<span class="keyword">static</span>/mysql2-<span class="number">0.3</span><span class="number">.17</span>/mysql2/mysql2.bundle</span><br><span class="line">        <span class="keyword">from</span> /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/<span class="number">2.2</span><span class="number">.0</span>/rubygems/core_ext/kernel_require.rb:<span class="number">54</span>:<span class="keyword">in</span> `require<span class="comment">'</span></span><br><span class="line">        <span class="keyword">from</span> /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/gems/<span class="number">2.2</span><span class="number">.0</span>/gems/mysql2-<span class="number">0.3</span><span class="number">.17</span>/<span class="keyword">lib</span>/mysql2.rb:<span class="number">8</span>:<span class="keyword">in</span> `&lt;top (required)&gt;<span class="comment">'</span></span><br><span class="line">        <span class="keyword">from</span> /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/<span class="number">2.2</span><span class="number">.0</span>/rubygems/core_ext/kernel_require.rb:<span class="number">128</span>:<span class="keyword">in</span> `require<span class="comment">'</span></span><br><span class="line">        <span class="keyword">from</span> /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/<span class="number">2.2</span><span class="number">.0</span>/rubygems/core_ext/kernel_require.rb:<span class="number">128</span>:<span class="keyword">in</span> `rescue <span class="keyword">in</span> require<span class="comment">'</span></span><br><span class="line">        <span class="keyword">from</span> /Users/kawahara_taisuke/.rbenv/versions/<span class="number">2.2</span><span class="number">.0</span>/<span class="keyword">lib</span>/ruby/<span class="number">2.2</span><span class="number">.0</span>/rubygems/core_ext/kernel_require.rb:<span class="number">39</span>:<span class="keyword">in</span> `require<span class="comment">'</span></span><br><span class="line">        <span class="keyword">from</span> test.rb:<span class="number">1</span>:<span class="keyword">in</span> `&lt;main&gt;<span class="comment">'</span></span><br></pre></td></tr></table></figure>
@@ -161,7 +165,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cidvk64ny001ja1rcfo7822s9" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cilns8noj001j1arcx8zo3ae3" class="article-share-link">Share</a>
       
       
       
@@ -303,7 +307,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      Copyrights &copy; 2015 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Copyrights &copy; 2016 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
       Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
     </div>
