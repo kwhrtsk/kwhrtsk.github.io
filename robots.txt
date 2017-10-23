@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: http://blog.chopschips.net/sitemap.xml
+Sitemap: http://chopschips.net/sitemap.xml

@@ -4,9 +4,9 @@
   <title><![CDATA[割り箸ポテチ]]></title>
   <subtitle><![CDATA[ソフトウェアエンジニアリング一般についてのメモです。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
-  <link href="http://blog.chopschips.net//"/>
+  <link href="http://chopschips.net//"/>
   <updated>2015-08-28T11:30:51.000Z</updated>
-  <id>http://blog.chopschips.net//</id>
+  <id>http://chopschips.net//</id>
   
   <author>
     <name><![CDATA[Kawahara Taisuke / 河原太介]]></name>
@@ -17,29 +17,29 @@
   
   <entry>
     <title><![CDATA[chef社のVagrant Boxがbento organizationに移行してた]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/"/>
+    <link href="http://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/"/>
     <updated>2015-08-28T11:13:06.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/</id>
+    <id>http://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/</id>
     <content type="html">
     <![CDATA[<p>Vagrantを使うときに、どこの馬の骨ともしれないboxは使いたくないので chef 社が公式にサポートしてるboxを使っていました。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre]]>
     </content>
     
-      <category term="bento" scheme="http://blog.chopschips.net/tags/bento/"/>
+      <category term="bento" scheme="http://chopschips.net/tags/bento/"/>
     
-      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+      <category term="chef" scheme="http://chopschips.net/tags/chef/"/>
     
-      <category term="vagrant" scheme="http://blog.chopschips.net/tags/vagrant/"/>
+      <category term="vagrant" scheme="http://chopschips.net/tags/vagrant/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Vagrantでknife-zeroを使うためのベストプラクティス]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/"/>
+    <link href="http://chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/"/>
     <updated>2015-08-25T14:15:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/</id>
+    <id>http://chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/</id>
     <content type="html">
     <![CDATA[<p>Vagrantでknife-zeroを試そうとして挫折する人が多いらしいので、自分の考えるベストプラクティスを書いてみます。</p>
 <p>追記：記事の一部を更新しました。詳細は末尾の更新履歴でご確認ください。</p>
@@ -59,59 +59,59 @@
     
     </content>
     
-      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+      <category term="chef" scheme="http://chopschips.net/tags/chef/"/>
     
-      <category term="knife-zero" scheme="http://blog.chopschips.net/tags/knife-zero/"/>
+      <category term="knife-zero" scheme="http://chopschips.net/tags/knife-zero/"/>
     
-      <category term="vagrant" scheme="http://blog.chopschips.net/tags/vagrant/"/>
+      <category term="vagrant" scheme="http://chopschips.net/tags/vagrant/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[技術ブログのためのHexoのテーマ Ingenuous をリリースしました]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/"/>
+    <link href="http://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/"/>
     <updated>2015-08-24T11:42:53.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</id>
+    <id>http://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</id>
     <content type="html">
-    <![CDATA[<p><a href="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/">先日ブログエンジンをHexoに移行した</a>のですが、その際に下記のページのテーマをひと通り試してみま]]>
+    <![CDATA[<p><a href="http://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/">先日ブログエンジンをHexoに移行した</a>のですが、その際に下記のページのテーマをひと通り試してみました。</]]>
     </content>
     
-      <category term="blog" scheme="http://blog.chopschips.net/tags/blog/"/>
+      <category term="blog" scheme="http://chopschips.net/tags/blog/"/>
     
-      <category term="hexo" scheme="http://blog.chopschips.net/tags/hexo/"/>
+      <category term="hexo" scheme="http://chopschips.net/tags/hexo/"/>
     
-      <category term="制作物" scheme="http://blog.chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
+      <category term="制作物" scheme="http://chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[OctopressからHexoへの移行]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/"/>
+    <link href="http://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/"/>
     <updated>2015-08-23T14:20:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/</id>
+    <id>http://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/</id>
     <content type="html">
     <![CDATA[<p>ブログエンジンを<a href="http://octopress.org/">Octopress</a>から<a href="https://hexo.io/">Hexo</a>へ移行しました。</p>
 <p>この記事では自分の場合の移行の手順についてまとめます。</p>]]>
     
     </content>
     
-      <category term="hexo" scheme="http://blog.chopschips.net/tags/hexo/"/>
+      <category term="hexo" scheme="http://chopschips.net/tags/hexo/"/>
     
-      <category term="node" scheme="http://blog.chopschips.net/tags/node/"/>
+      <category term="node" scheme="http://chopschips.net/tags/node/"/>
     
-      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+      <category term="octopress" scheme="http://chopschips.net/tags/octopress/"/>
     
-      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
+      <category term="Blog" scheme="http://chopschips.net/categories/Blog/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[RailsのエラーモニタリングツールErrbitのChefレシピ]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/04/27/errbit/"/>
+    <link href="http://chopschips.net/blog/2015/04/27/errbit/"/>
     <updated>2015-04-27T14:00:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/04/27/errbit/</id>
+    <id>http://chopschips.net/blog/2015/04/27/errbit/</id>
     <content type="html">
     <![CDATA[<p>4/17に大阪で開催されたRailsの勉強会でLTしてきました。</p>
 <ul>
@@ -164,25 +164,25 @@
     
     </content>
     
-      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+      <category term="chef" scheme="http://chopschips.net/tags/chef/"/>
     
-      <category term="errbit" scheme="http://blog.chopschips.net/tags/errbit/"/>
+      <category term="errbit" scheme="http://chopschips.net/tags/errbit/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="制作物" scheme="http://blog.chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
+      <category term="制作物" scheme="http://chopschips.net/categories/%E5%88%B6%E4%BD%9C%E7%89%A9/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Sidekiqのコードに潜む愉快なメソッドたち]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/"/>
+    <link href="http://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/"/>
     <updated>2015-04-04T13:50:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</id>
+    <id>http://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</id>
     <content type="html">
     <![CDATA[<p><br/></p>
 <p>少し前にRails4.2のActiveJobのバックエンドについて調べました。</p>
-<p><a href="http://blog.chopschips.net/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a></p>
+<p><a href="http://chopschips.net/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a></p>
 <p>このとき<a href="https://github.com/mperham/sidekiq">Sidekiq</a>のコードを読んで、<a href="https://github.com/celluloid/celluloid">Celluloid</a>によるアクターモデルで並行処理を実装していることを知りました。<br>ちょうどScalaやErlangでアクターを使う方法を調べていたところだったので興味がわき、Celluloidを利用したアプリケーションのサンプルとして読んでみることにしました。</p>
 <p>その時見つけた愉快なメソッドを紹介します。</p>
 <p>今回読んだSidekiqのバージョンは3.3.3です。</p>
@@ -197,21 +197,21 @@
     
     </content>
     
-      <category term="emoji" scheme="http://blog.chopschips.net/tags/emoji/"/>
+      <category term="emoji" scheme="http://chopschips.net/tags/emoji/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="sidekiq" scheme="http://blog.chopschips.net/tags/sidekiq/"/>
+      <category term="sidekiq" scheme="http://chopschips.net/tags/sidekiq/"/>
     
-      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
+      <category term="Research" scheme="http://chopschips.net/categories/Research/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Rails 開発をサポートするChrome拡張 Rails Panel の機能と仕組み]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/03/06/rails-panel/"/>
+    <link href="http://chopschips.net/blog/2015/03/06/rails-panel/"/>
     <updated>2015-03-06T14:38:45.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/03/06/rails-panel/</id>
+    <id>http://chopschips.net/blog/2015/03/06/rails-panel/</id>
     <content type="html">
     <![CDATA[<p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/">7 must have Development Gems to install on every project</a></p>
 <p>この記事を読んでいて、Rails PanelというChrome拡張を知りました。</p>
@@ -231,19 +231,19 @@
     
     </content>
     
-      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+      <category term="rails" scheme="http://chopschips.net/tags/rails/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
+      <category term="Research" scheme="http://chopschips.net/categories/Research/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/02/26/active-job/"/>
+    <link href="http://chopschips.net/blog/2015/02/26/active-job/"/>
     <updated>2015-02-26T13:11:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/02/26/active-job/</id>
+    <id>http://chopschips.net/blog/2015/02/26/active-job/</id>
     <content type="html">
     <![CDATA[<h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由">ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
 <p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、<br>ActiveJobはジョブを記述するためのインタフェースを抽象化して、<br>ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。<br>なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
@@ -271,59 +271,59 @@
     
     </content>
     
-      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+      <category term="rails" scheme="http://chopschips.net/tags/rails/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
+      <category term="Research" scheme="http://chopschips.net/categories/Research/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法]]></title>
-    <link href="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/"/>
+    <link href="http://chopschips.net/blog/2015/02/15/macports-mysql2-gem/"/>
     <updated>2015-02-15T14:55:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/</id>
+    <id>http://chopschips.net/blog/2015/02/15/macports-mysql2-gem/</id>
     <content type="html">
     <![CDATA[<p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
 <p>追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)</p>]]>
     
     </content>
     
-      <category term="Mac" scheme="http://blog.chopschips.net/tags/Mac/"/>
+      <category term="Mac" scheme="http://chopschips.net/tags/Mac/"/>
     
-      <category term="MySQL" scheme="http://blog.chopschips.net/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://chopschips.net/tags/MySQL/"/>
     
-      <category term="Yosemite" scheme="http://blog.chopschips.net/tags/Yosemite/"/>
+      <category term="Yosemite" scheme="http://chopschips.net/tags/Yosemite/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Chef 12のオープンソース版と25ノード制限について]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/09/10/chef-12/"/>
+    <link href="http://chopschips.net/blog/2014/09/10/chef-12/"/>
     <updated>2014-09-09T15:10:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/09/10/chef-12/</id>
+    <id>http://chopschips.net/blog/2014/09/10/chef-12/</id>
     <content type="html">
     <![CDATA[<p>Chef バージョン12がリリースされました。</p>
 <p>ところで下記のニュースで気になる記述がありました。</p>
 <blockquote><p>ビジネスモデル面でも変更があり、<br>オープンソース版（「Chef Essentials」）と商用版（「Chef Ent]]>
     </content>
     
-      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+      <category term="chef" scheme="http://chopschips.net/tags/chef/"/>
     
-      <category term="Research" scheme="http://blog.chopschips.net/categories/Research/"/>
+      <category term="Research" scheme="http://chopschips.net/categories/Research/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[knife solo prepareでエラー]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/09/09/chef-alpha/"/>
+    <link href="http://chopschips.net/blog/2014/09/09/chef-alpha/"/>
     <updated>2014-09-08T15:32:43.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/09/09/chef-alpha/</id>
+    <id>http://chopschips.net/blog/2014/09/09/chef-alpha/</id>
     <content type="html">
     <![CDATA[<p>knife-soloをインストールしたら何故かchef 12.0.0.alphaがインストールされてしまいました。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ gem install knife-solo</span><br><span class="line">Fetching: chef-zero-<span class="number">2.2</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-zero-<span class="number">2.2</span></span><br><span class="line">Fetching: chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Thanks <span class="keyword">for</span> installing knife-solo!</span><br><span class="line"></span><br><span class="line">If you run into any issues please let us know at:</span><br><span class="line">  https:<span class="comment">//github.com/matschaffer/knife-solo/issues</span></span><br><span class="line"></span><br><span class="line">If you are upgrading knife-solo please uninstall any old versions by</span><br><span class="line">running `gem clean knife-solo` to avoid any errors.</span><br><span class="line"></span><br><span class="line">See http:<span class="comment">//bit.ly/CHEF-3255 for more information on the knife bug</span></span><br><span class="line">that causes <span class="keyword">this</span>.</span><br><span class="line">Successfully installed knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Done installing documentation <span class="keyword">for</span> chef, chef-zero, knife-solo after <span class="number">20</span> seconds</span><br><span class="line"><span class="number">3</span> gems installed</span><br></pre></td></tr></table></figure>
@@ -331,15 +331,15 @@
     
     </content>
     
-      <category term="chef" scheme="http://blog.chopschips.net/tags/chef/"/>
+      <category term="chef" scheme="http://chopschips.net/tags/chef/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/"/>
+    <link href="http://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/"/>
     <updated>2014-09-08T14:50:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/</id>
+    <id>http://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/</id>
     <content type="html">
     <![CDATA[<h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
@@ -347,19 +347,19 @@
     
     </content>
     
-      <category term="VirtualBox" scheme="http://blog.chopschips.net/tags/VirtualBox/"/>
+      <category term="VirtualBox" scheme="http://chopschips.net/tags/VirtualBox/"/>
     
-      <category term="vagrant" scheme="http://blog.chopschips.net/tags/vagrant/"/>
+      <category term="vagrant" scheme="http://chopschips.net/tags/vagrant/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Scala 開発環境構築(IntelliJ IDEA, SBT, scalaenv)]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/09/07/scala-get-started/"/>
+    <link href="http://chopschips.net/blog/2014/09/07/scala-get-started/"/>
     <updated>2014-09-07T08:50:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/09/07/scala-get-started/</id>
+    <id>http://chopschips.net/blog/2014/09/07/scala-get-started/</id>
     <content type="html">
     <![CDATA[<h1 id="前提と目標">前提と目標</h1><p>下記のような開発環境の構築手順をメモしておきます。</p>
 <ul>
@@ -378,20 +378,20 @@
     
     </content>
     
-      <category term="scala" scheme="http://blog.chopschips.net/tags/scala/"/>
+      <category term="scala" scheme="http://chopschips.net/tags/scala/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Octopressで見出しの目次を作る方法 改]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/"/>
+    <link href="http://chopschips.net/blog/2014/07/08/octopress-toc-improved/"/>
     <updated>2014-07-07T16:30:43.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/07/08/octopress-toc-improved/</id>
+    <id>http://chopschips.net/blog/2014/07/08/octopress-toc-improved/</id>
     <content type="html">
     <![CDATA[<p>以前このような記事を書きました。</p>
-<p><a href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
+<p><a href="http://chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
 <p>この記事を読まれた方から、より良い方法を教えて頂きました。</p>
 <p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
 <p><a href="https://github.com/dafi/jekyll-toc-generator">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。<br>修正する理由は下記で解説されています。<br><a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
@@ -402,17 +402,17 @@
     
     </content>
     
-      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+      <category term="octopress" scheme="http://chopschips.net/tags/octopress/"/>
     
-      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
+      <category term="Blog" scheme="http://chopschips.net/categories/Blog/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[書評:パーフェクトRuby on Rails]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/"/>
+    <link href="http://chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/"/>
     <updated>2014-06-18T14:50:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/</id>
+    <id>http://chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/</id>
     <content type="html">
     <![CDATA[<p>これからRailsを覚える友人に書籍を薦める機会があればこの2冊を選びます。</p>
 <iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774165166&ref=qf_sp_asin_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe><br><iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774164100&ref=tf_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
@@ -427,21 +427,21 @@
     
     </content>
     
-      <category term="rails" scheme="http://blog.chopschips.net/tags/rails/"/>
+      <category term="rails" scheme="http://chopschips.net/tags/rails/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="本" scheme="http://blog.chopschips.net/tags/%E6%9C%AC/"/>
+      <category term="本" scheme="http://chopschips.net/tags/%E6%9C%AC/"/>
     
-      <category term="書評" scheme="http://blog.chopschips.net/categories/%E6%9B%B8%E8%A9%95/"/>
+      <category term="書評" scheme="http://chopschips.net/categories/%E6%9B%B8%E8%A9%95/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[JavaScript一行でサイトを多言語化するサービスWOVN.ioを試してみました]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/06/17/wovn/"/>
+    <link href="http://chopschips.net/blog/2014/06/17/wovn/"/>
     <updated>2014-06-17T05:45:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/06/17/wovn/</id>
+    <id>http://chopschips.net/blog/2014/06/17/wovn/</id>
     <content type="html">
     <![CDATA[<p>以下の記事でWOVN.ioというサイトの多言語化(翻訳支援)サービスが紹介されているのを見ました。</p>
 <p><a href="http://jp.techcrunch.com/2014/06/16/wovnio/">JavaScript 1行でサイトを多言語化、ボタン一発翻訳の「WOVN.io」が良さそう | TechCrunch Japan</a></p>
@@ -449,19 +449,19 @@
     
     </content>
     
-      <category term="WOVN.io" scheme="http://blog.chopschips.net/tags/WOVN-io/"/>
+      <category term="WOVN.io" scheme="http://chopschips.net/tags/WOVN-io/"/>
     
-      <category term="javascript" scheme="http://blog.chopschips.net/tags/javascript/"/>
+      <category term="javascript" scheme="http://chopschips.net/tags/javascript/"/>
     
-      <category term="I18n" scheme="http://blog.chopschips.net/categories/I18n/"/>
+      <category term="I18n" scheme="http://chopschips.net/categories/I18n/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Octopressで見出しの目次を作る方法]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/06/16/octopress-toc/"/>
+    <link href="http://chopschips.net/blog/2014/06/16/octopress-toc/"/>
     <updated>2014-06-16T13:00:01.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/06/16/octopress-toc/</id>
+    <id>http://chopschips.net/blog/2014/06/16/octopress-toc/</id>
     <content type="html">
     <![CDATA[<p>調べて見つかった方法だとうまく行かなかったので、少し筋の悪い方法ですが自分で考えた方法をメモしておきます。</p>
 <p>追記：ブログエンジンをHexoに移行しましたので、この記事の内容は現状と齟齬を生じている可能性があります。</p>
@@ -476,28 +476,28 @@
     
     </content>
     
-      <category term="octopress" scheme="http://blog.chopschips.net/tags/octopress/"/>
+      <category term="octopress" scheme="http://chopschips.net/tags/octopress/"/>
     
-      <category term="Blog" scheme="http://blog.chopschips.net/categories/Blog/"/>
+      <category term="Blog" scheme="http://chopschips.net/categories/Blog/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[ruby 実行環境の構築 - rbenvの使い方とその仕組み]]></title>
-    <link href="http://blog.chopschips.net/blog/2014/06/15/rbenv/"/>
+    <link href="http://chopschips.net/blog/2014/06/15/rbenv/"/>
     <updated>2014-06-15T09:00:00.000Z</updated>
-    <id>http://blog.chopschips.net/blog/2014/06/15/rbenv/</id>
+    <id>http://chopschips.net/blog/2014/06/15/rbenv/</id>
     <content type="html">
     <![CDATA[<h1 id="rbenvとruby-buildのインストール方法">rbenvとruby-buildのインストール方法</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/rbenv.git ~/.rbenv</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$HOME/.rbenv/bin:$PATH"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'eval "$(rbenv init -)"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
 <p><code>.bash_profile</code>は自分の使っているシェルに応じて<code>.zshrc</code>などに読み替えてください。</p>]]>
     
     </content>
     
-      <category term="rbenv" scheme="http://blog.chopschips.net/tags/rbenv/"/>
+      <category term="rbenv" scheme="http://chopschips.net/tags/rbenv/"/>
     
-      <category term="ruby" scheme="http://blog.chopschips.net/tags/ruby/"/>
+      <category term="ruby" scheme="http://chopschips.net/tags/ruby/"/>
     
-      <category term="開発環境" scheme="http://blog.chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
+      <category term="開発環境" scheme="http://chopschips.net/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/"/>
     
   </entry>
   
