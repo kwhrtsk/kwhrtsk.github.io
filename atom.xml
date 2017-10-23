@@ -286,7 +286,7 @@
     <id>http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/</id>
     <content type="html">
     <![CDATA[<p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
-<p>追記(2016-03-11): El Capitanの場合の手順を追加</p>]]>
+<p>追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)</p>]]>
     
     </content>
     

@@ -7,23 +7,23 @@
   <title>Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法 | 割り箸ポテチ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-    <meta name="keywords" content="割り箸ポテチ, 河原太介,ruby,rubygems,mysql2,gem,mysql,mysql56,mac,macports,yosemite,community">
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,ruby,rubygems,mysql2,gem,mysql,mysql56,mac,macports,yosemite,el capitan,community">
   
   <meta name="description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
-追記(2016-03-11): El Capitanの場合の手順を追加">
+追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法">
 <meta property="og:url" content="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
-追記(2016-03-11): El Capitanの場合の手順を追加">
+追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)">
 <meta property="og:image" content="http://blog.chopschips.net/images/post_20150215_mysql/ss_01.png">
 <meta property="og:image" content="http://blog.chopschips.net/images/post_20150215_mysql/ss_02.png">
-<meta property="og:updated_time" content="2016-03-11T14:15:55.000Z">
+<meta property="og:updated_time" content="2016-03-11T14:17:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法">
 <meta name="twitter:description" content="Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。
-追記(2016-03-11): El Capitanの場合の手順を追加">
+追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
@@ -134,7 +134,7 @@ ga('send', 'pageview');
       
         
         <p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
-<p>追記(2016-03-11): El Capitanの場合の手順を追加</p>
+<p>追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)</p>
 <a id="more"></a>
 <h1 id="MacPortsを使う場合">MacPortsを使う場合</h1><h2 id="MySQL_5-6(server)のインストール">MySQL 5.6(server)のインストール</h2><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% sudo <span class="foreign"><span class="keyword">port</span> install mysql56-server</span></span><br></pre></td></tr></table></figure>
 <h2 id="mysql2(gem)のインストール">mysql2(gem)のインストール</h2><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># bundle コマンドを使う場合</span></span><br><span class="line">% bundle config build.mysql2 --<span class="keyword">with</span>-mysql-config=/<span class="built_in">opt</span>/<span class="keyword">local</span>/lib/mysql56/bin/mysql_config</span><br><span class="line">% bundle install</span><br><span class="line"></span><br><span class="line"><span class="preprocessor"># gem コマンドを使う場合</span></span><br><span class="line">% gem install mysql2 -- --<span class="keyword">with</span>-mysql-config=/<span class="built_in">opt</span>/<span class="keyword">local</span>/lib/mysql56/bin/mysql_config</span><br></pre></td></tr></table></figure>
@@ -165,7 +165,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cilns8noj001j1arcx8zo3ae3" class="article-share-link">Share</a>
+        <a data-url="http://blog.chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cimox7ceb001p49rczcdn0fbg" class="article-share-link">Share</a>
       
       
       
