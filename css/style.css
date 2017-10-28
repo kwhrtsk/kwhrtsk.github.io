@@ -996,6 +996,9 @@ a.article-title:hover {
   list-style-type: none;
   line-height: 0;
 }
+.article-ad-unit {
+  margin-top: 120px;
+}
 #comments {
   background: #fff;
   -webkit-box-shadow: 1px 2px 3px #ddd;
