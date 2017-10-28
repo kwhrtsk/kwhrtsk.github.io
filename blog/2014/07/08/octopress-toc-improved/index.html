@@ -167,10 +167,30 @@ ga('send', 'pageview');
 <figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"># source/_includes/article.html</span><br><span class="line"></span><br><span class="line"># (snip)</span><br><span class="line"></span><br><span class="line">&#123;% raw %&#125;</span><br><span class="line">&#123;% if index %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"entry-content"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">toc</span>_<span class="variable">generate</span> <span class="variable">page</span>_<span class="variable">url</span>: <span class="variable">post.url</span> | <span class="variable">excerpt</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  &#123;% capture excerpted %&#125;</span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">has</span>_<span class="variable">excerpt</span> &#125;&#125;</span><span class="xml">&#123;% endcapture %&#125;</span><br><span class="line">  &#123;% if excerpted == 'true' %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="title">footer</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">a</span> <span class="attribute">rel</span>=<span class="value">"full-article"</span> <span class="attribute">href</span>=<span class="value">"</span></span></span><span class="expression">&#123;&#123; <span class="variable">root</span>_<span class="variable">url</span> &#125;&#125;</span><span class="xml"><span class="tag"><span class="value"></span></span></span><span class="expression">&#123;&#123; <span class="variable">post.url</span> &#125;&#125;</span><span class="xml"><span class="tag"><span class="value">"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">site.excerpt</span>_<span class="variable">link</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">footer</span>&gt;</span></span><br><span class="line">  &#123;% endif %&#125;</span><br><span class="line">&#123;% else %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"entry-content"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">toc</span>_<span class="variable">generate</span> <span class="variable">page</span>_<span class="variable">url</span>: <span class="variable">post.url</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">&#123;% endif %&#125;</span><br><span class="line">&#123;% endraw %&#125;</span></span><br></pre></td></tr></table></figure>
 
       
+      
+        
+<p>
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</p>
+
+
+      
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cj94955fr002k6archlci0n8z" class="article-share-link">Share</a>
+        <a data-url="http://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cj9awgvvo002krqrcn0z89y6n" class="article-share-link">Share</a>
       
       
       
