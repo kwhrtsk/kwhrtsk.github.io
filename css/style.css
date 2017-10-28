@@ -997,7 +997,8 @@ a.article-title:hover {
   line-height: 0;
 }
 .article-ad-unit {
-  margin-top: 120px;
+  margin-top: 60px;
+  margin-bottom: 40px;
 }
 #comments {
   background: #fff;
