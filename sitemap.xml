@@ -2,7 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://chopschips.net/blog/2018/04/11/rails-5-2-0/</loc>
+    <lastmod>2018-04-11T13:14:27.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>https://chopschips.net/blog/2014/06/16/octopress-toc/</loc>
+    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</loc>
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
   </url>
   
@@ -18,11 +28,6 @@
   
   <url>
     <loc>https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
-    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</loc>
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
   </url>
   
