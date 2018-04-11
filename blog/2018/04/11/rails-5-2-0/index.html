@@ -10,21 +10,24 @@
     <meta name="keywords" content="割り箸ポテチ, 河原太介,rails,rails 5.2.0,simple_form,annotate">
   
   <meta name="description" content="Rails 5.2.0が正式にリリースされましたね。めでたい。
-2018-04-11時点で、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。
-simple_formRails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1">
+
+Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails
+【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rails 5.2.0 で問題の起きるgem">
 <meta property="og:url" content="https://chopschips.net/blog/2018/04/11/rails-5-2-0/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="Rails 5.2.0が正式にリリースされましたね。めでたい。
-2018-04-11時点で、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。
-simple_formRails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1">
-<meta property="og:updated_time" content="2018-04-11T13:14:27.000Z">
+
+Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails
+【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2">
+<meta property="og:updated_time" content="2018-04-11T13:21:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Rails 5.2.0 で問題の起きるgem">
 <meta name="twitter:description" content="Rails 5.2.0が正式にリリースされましたね。めでたい。
-2018-04-11時点で、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。
-simple_formRails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1">
+
+Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails
+【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
@@ -107,7 +110,7 @@ ga('send', 'pageview');
 
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Research/">Research</a>
+    <a class="article-category-link" href="/categories/Development/">Development</a>
   </div>
 
 
@@ -147,14 +150,20 @@ ga('send', 'pageview');
       
         
         <p>Rails 5.2.0が正式にリリースされましたね。めでたい。</p>
-<p>2018-04-11時点で、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。</p>
+<ul>
+<li><a href="http://weblog.rubyonrails.org/2018/4/9/Rails-5-2-0-final/" target="_blank" rel="external">Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails</a></li>
+<li><a href="https://techracho.bpsinc.jp/hachi8833/2018_04_10/55079" target="_blank" rel="external">【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2 Early Hintほか</a></li>
+</ul>
+<p>いつものことですが、2018-04-11現在、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。</p>
 <h1 id="simple_form">simple_form</h1><p><a href="https://github.com/plataformatec/simple_form/issues/1568" target="_blank" rel="external">Rails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1568 · plataformatec/simple_form</a></p>
-<p>Gemfileでバージョン指定していない場合、<code>bundle update</code>したらsimple_formのバージョンが3.5.1から1.4.1まで下がります。上記はそのために引き起こされるエラーです。</p>
+<p>Gemfileでsimple_formのバージョンを指定していない場合、railsのバージョンを5.2.0に上げて<code>bundle update</code>したらsimple_formのバージョンが3.5.1から1.4.1まで下がるという現象が起きていました。上記はそのために引き起こされるエラーです。</p>
 <p>単にgemspecの要求バージョンが厳しかったみたいで、このブログを書いている間に 4.0.0 がリリースされて解決しました。</p>
 <p><a href="https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400" target="_blank" rel="external">https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400</a></p>
+<p>3.5系でバージョンをロックしている人は4.0.0を試してみましょう。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Gemfile</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># gem "simple_form", "~&gt; 3.5.1"</span></span><br><span class="line">gem <span class="string">"simple_form"</span>, <span class="string">"~&gt; 4.0.0"</span></span><br></pre></td></tr></table></figure>
 <h1 id="annotate">annotate</h1><p><a href="https://github.com/ctran/annotate_models/issues/538" target="_blank" rel="external">Annotate no longer works with Rails 5.2 models  Issue #538 · ctran/annotate_models</a></p>
 <p><code>./bin/rails annotate_models</code> または <code>./bin/rails db:migrate</code> など、モデルのアノテーションを更新する際に下記のようなエラーが起きる場合があります。</p>
-<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Unable <span class="keyword">to</span> annotate app/models/author.rb: can<span class="attribute">'t</span> modify frozen <span class="typename">String</span></span><br><span class="line">Unable <span class="keyword">to</span> annotate app/models/author.rb: no implicit conversion <span class="keyword">of</span> nil into <span class="keyword">Array</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to annotate app/models/author.rb: can&#39;t modify frozen String&#10;Unable to annotate app/models/author.rb: no implicit conversion of nil into Array</span><br></pre></td></tr></table></figure>
 <p>暫定的な措置として、設定でインデックスに関する情報の記入を無効化すればエラーを回避できます。</p>
 <figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/lib/tasks/auto_annotate_models.rake b/lib/tasks/auto_annotate_models.rake</span><br><span class="line">index 9088128..9c2f5d5 100644</span><br><span class="line"><span class="header">--- a/lib/tasks/auto_annotate_models.rake</span></span><br><span class="line"><span class="header">+++ b/lib/tasks/auto_annotate_models.rake</span></span><br><span class="line">@@ -16,7 +16,7 @@ if Rails.env.development?</span><br><span class="line">       'position_in_serializer'    =&gt; 'before',</span><br><span class="line">       'show_foreign_keys'         =&gt; 'true',</span><br><span class="line">       'show_complete_foreign_keys' =&gt; 'false',</span><br><span class="line"><span class="deletion">-      'show_indexes'              =&gt; 'true',</span></span><br><span class="line"><span class="addition">+      'show_indexes'              =&gt; 'false',</span></span><br><span class="line">       'simple_indexes'            =&gt; 'false',</span><br><span class="line">       'model_dir'                 =&gt; 'app/models',</span><br><span class="line">       'root_dir'                  =&gt; '',</span><br></pre></td></tr></table></figure>
 <p>他にも何か見つけたら更新していきます。</p>
@@ -183,7 +192,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="cjfv49rjj00019krcj7nr1rd9" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="cjfv4ko9g0001fsrcnlxspu8e" class="article-share-link">Share</a>
       
       
       
@@ -292,7 +301,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
