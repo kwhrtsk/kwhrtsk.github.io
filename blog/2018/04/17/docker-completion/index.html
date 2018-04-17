@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
-<meta property="og:updated_time" content="2018-04-17T16:43:35.194Z">
+<meta property="og:updated_time" content="2018-04-17T16:50:31.539Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bash&#x2F;zshとfzfでDocker関連コマンドの補完を行う方法">
 <meta name="twitter:description" content="dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒です。 公式のbash/zsh用補完スクリプトを使うと各種ID類も補完できるようになるのですが、 Docker for Macをインストールするだけではそれらのスクリプトは有効にならないので、使い方を解説します。 また、fzfを使って候補のフィルタリングや複数選択を楽に行えるようにする方法についても説明します">
@@ -159,7 +159,7 @@ Docker for Macをインストールするだけではそれらのスクリプト
 <p>最終的にはこんな感じになります(クリックで拡大)。スマホで見てる人はズームしてください。</p>
 <img src="/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <h1 id="dockerとdocker-composeの補完スクリプト"><a href="#dockerとdocker-composeの補完スクリプト" class="headerlink" title="dockerとdocker-composeの補完スクリプト"></a>dockerとdocker-composeの補完スクリプト</h1><p>Docker for Macにはbashとzsh用の補完スクリプトが同梱されています。</p>
-<pre class="line-numbers language-shell-session"><code class="language-shell-session">% ls -1 /Applications/Docker.app/Contents/Resources/etc/
+<pre><code>% ls -1 /Applications/Docker.app/Contents/Resources/etc/
 docker-compose.bash-completion
 docker-compose.zsh-completion
 docker-machine.bash-completion
@@ -167,36 +167,35 @@ docker-machine.zsh-completion
 docker.bash-completion
 docker.fish-completion
 docker.zsh-completion
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>適切に設定すれば下記のようにサブコマンドやイメージIDなどを補完できます(クリックで拡大)。</p>
+</code></pre><p>適切に設定すれば下記のようにサブコマンドやイメージIDなどを補完できます(クリックで拡大)。</p>
 <img src="/images/post_20180417_docker_completion/docker-completion.gif">
 <a id="more"></a>
 <h2 id="zshの場合"><a href="#zshの場合" class="headerlink" title="zshの場合"></a>zshの場合</h2><p>下記のように補完スクリプトのリンクを作って <code>~/.zshrc</code> で読み込むようにすると、
 <code>docker</code>コマンドと<code>docker-compose</code>コマンドに補完が効くようになります。</p>
-<pre class="line-numbers language-shell-session"><code class="language-shell-session">$ mkdir ~/.zsh/completions
+<pre><code>$ mkdir ~/.zsh/completions
 $ ln -s /Applications/Docker.app/Contents/Resources/etc/docker.zsh-completion ~/.zsh/completions/_docker
 $ ln -s /Applications/Docker.app/Contents/Resources/etc/docker-compose.zsh-completion ~/.zsh/completions/_docker-compose
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-zsh"><code class="language-zsh"># ~/.zshrc
-if [ -e ~/.zsh/completions ]; then
-  fpath=(~/.zsh/completions $fpath)
-fi
+</code></pre><pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ~/.zshrc</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">[</span> -e ~/.zsh/completions <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+  fpath<span class="token operator">=</span><span class="token punctuation">(</span>~/.zsh/completions <span class="token variable">$fpath</span><span class="token punctuation">)</span>
+<span class="token keyword">fi</span>
 
 autoload -U compinit
 compinit
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="bashの場合"><a href="#bashの場合" class="headerlink" title="bashの場合"></a>bashの場合</h2><p><code>bash-completion</code>が必要です。Homebrewでインストールできます。</p>
 <pre><code>$ brew install bash-completion
 </code></pre><p>下記のように補完スクリプトのリンクを作って <code>~/.bash_profile</code> で読み込むようにすると、
 <code>docker</code>コマンドと<code>docker-compose</code>コマンドに補完が効くようになります。</p>
-<pre class="line-numbers language-shell-session"><code class="language-shell-session">$ ln -s /Applications/Docker.app/Contents/Resources/etc/docker-compose.bash-completion /usr/local/etc/bash_completion.d/
+<pre><code>$ ln -s /Applications/Docker.app/Contents/Resources/etc/docker-compose.bash-completion /usr/local/etc/bash_completion.d/
 $ ln -s /Applications/Docker.app/Contents/Resources/etc/docker.bash-completion /usr/local/etc/bash_completion.d/
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ~/.bash_profile</span>
+</code></pre><pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ~/.bash_profile</span>
+
 <span class="token keyword">if</span> <span class="token punctuation">[</span> -f <span class="token variable"><span class="token variable">$(</span>brew --prefix<span class="token variable">)</span></span>/etc/bash_completion <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
   <span class="token keyword">.</span> <span class="token variable"><span class="token variable">$(</span>brew --prefix<span class="token variable">)</span></span>/etc/bash_completion
 <span class="token keyword">fi</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="fzfによる補完"><a href="#fzfによる補完" class="headerlink" title="fzfによる補完"></a>fzfによる補完</h1><p>fzfと組み合わせると、<code>docker rm</code>や<code>docker rmi</code>のようなコマンドで、
 パラメータのコンテナやイメージをフィルタしたり複数選択したりできます。</p>
 <h2 id="fzfのインストール"><a href="#fzfのインストール" class="headerlink" title="fzfのインストール"></a>fzfのインストール</h2><p>Homebrewでインストールできます。</p>
@@ -205,10 +204,12 @@ $ ln -s /Applications/Docker.app/Contents/Resources/etc/docker.bash-completion /
 <pre><code>$ /usr/local/opt/fzf/install
 </code></pre><p>質問に答えると <code>~/.fzf.zsh</code>と<code>~/.fzf.bash</code>が作成されます。
 <code>~/.zshrc</code>に下記を追加してこれを有効にします。</p>
-<pre><code># ~/.zshrc
-[ -f ~/.fzf.zsh ] &amp;&amp; source ~/.fzf.zsh
-export FZF_COMPLETION_TRIGGER=&quot;,&quot; # default: &#39;**&#39;
-</code></pre><p>FZF_COMPLETION_TRIGGERは、fzfによる補完を開始するトリガーです。
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ~/.zshrc</span>
+
+<span class="token punctuation">[</span> -f ~/.fzf.zsh <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token function">source</span> ~/.fzf.zsh
+<span class="token function">export</span> FZF_COMPLETION_TRIGGER<span class="token operator">=</span><span class="token string">","</span> <span class="token comment" spellcheck="true"># default: '**'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>FZF_COMPLETION_TRIGGERは、fzfによる補完を開始するトリガーです。
 ここで指定した文字列の後にタブを入力するとfzfによる補完が始まります。
 デフォルトでは <code>**</code> ですが、zshのグロブ補完と重複していて気持ち悪いので、上記の例では<code>,</code>に変更しています。
 この記事のスクリーンキャストでもこの設定を有効にしていて、<code>docker rmi ,</code>まで入力してからタブを押して補完を開始しています。</p>
@@ -223,9 +224,9 @@ bashの場合も <code>docker-fzf.bash</code> を取得して <code>~/.bash_prof
 # mkdir -p mkdir ~/.ghq/github.com/Mike-Now/
 # cd ~/.ghq/github.com/Mike-Now/
 # git clone https://github.com/Mike-Now/docker-fzf-completion
-</code></pre><pre class="line-numbers language-zsh"><code class="language-zsh"># ~/.zshrc
+</code></pre><pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ~/.zshrc</span>
 
-source ~/.ghq/github.com/Mike-Now/docker-fzf-completion/docker-fzf.zsh
+<span class="token function">source</span> ~/.ghq/github.com/Mike-Now/docker-fzf-completion/docker-fzf.zsh
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>ただ、このままだと<code>docker rmi</code>のようにイメージを選択するコマンドでパラメータにイメージ名(リポジトリ:タグ)が入力されてしまうため、
 <code>&lt;none&gt;</code>と表示されているような無名のイメージに対しては正常に動作しません。
@@ -281,7 +282,7 @@ index e661ec9..db3dd6a 100644
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3wdpw3001ncqrc2rjxe5cf" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3wlbob001so0rcxyrzh381" class="article-share-link">Share</a>
       
       
       
