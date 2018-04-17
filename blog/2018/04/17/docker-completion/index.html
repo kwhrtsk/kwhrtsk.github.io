@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
-<meta property="og:updated_time" content="2018-04-17T15:48:47.478Z">
+<meta property="og:updated_time" content="2018-04-17T15:51:17.665Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bash&#x2F;zshとfzfでDocker関連コマンドの補完を行う方法">
 <meta name="twitter:description" content="dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒なんですが、 公式の補完スクリプトを使うと各種ID類も補完できるようになります。 また、最終的にfzfを使ってフィルタや複数入力も楽に行えるようにします。 こんな感じです(クリックで拡大)。  dockerとdocker-composeの補完スクリプトDocker for Macにはbashとzsh用の補完ス">
@@ -210,7 +210,7 @@ export FZF_COMPLETION_TRIGGER=&quot;,&quot; # default: &#39;**&#39;
 </code></pre><p>FZF_COMPLETION_TRIGGERは、fzfによる補完を開始するトリガーです。
 ここで指定した文字列の後にタブを入力するとfzfによる補完が始まります。
 デフォルトでは <code>**</code> ですが、zshのグロブ補完と重複していて気持ち悪いので、上記の例では<code>,</code>に変更しています。
-上記のスクリーンキャストでもこの設定を有効にしていて、<code>docker rmi ,</code>まで入力してからタブを押して補完を開始しています。</p>
+この記事のスクリーンキャストでもこの設定を有効にしていて、<code>docker rmi ,</code>まで入力してからタブを押して補完を開始しています。</p>
 <h2 id="docker-fzf-completionのインストール"><a href="#docker-fzf-completionのインストール" class="headerlink" title="docker-fzf-completionのインストール"></a>docker-fzf-completionのインストール</h2><p>下記のリポジトリから <code>docker-fzf.zsh</code> を取得して、<code>~/.zshrc</code>で読み込みます。</p>
 <p><a href="https://github.com/Mike-Now/docker-fzf-completion" target="_blank" rel="noopener">https://github.com/Mike-Now/docker-fzf-completion</a></p>
 <p>bashの場合も <code>docker-fzf.bash</code> を取得して <code>~/.bash_profile</code> で <code>source</code> すれば使えると思います。</p>
@@ -271,7 +271,7 @@ index e661ec9..db3dd6a 100644
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3ufcqf004bm2rczcdiysh1" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3uih1u00232brclku8ygdn" class="article-share-link">Share</a>
       
       
       
