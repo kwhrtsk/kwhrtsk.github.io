@@ -4,7 +4,7 @@
   <url>
     <loc>https://chopschips.net/blog/2018/04/17/docker-completion/</loc>
     
-    <lastmod>2018-04-17T15:55:25.176Z</lastmod>
+    <lastmod>2018-04-17T16:32:57.148Z</lastmod>
     
   </url>
   
@@ -12,6 +12,20 @@
     <loc>https://chopschips.net/blog/2018/04/11/rails-5-2-0/</loc>
     
     <lastmod>2018-04-12T15:26:13.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://chopschips.net/blog/2014/06/16/octopress-toc/</loc>
+    
+    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
+    
+    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
     
   </url>
   
@@ -30,21 +44,7 @@
   </url>
   
   <url>
-    <loc>https://chopschips.net/blog/2014/06/16/octopress-toc/</loc>
-    
-    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
-    
-    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
     
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
     
