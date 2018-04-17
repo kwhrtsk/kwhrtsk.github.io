@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
-<meta property="og:updated_time" content="2018-04-17T15:46:08.303Z">
+<meta property="og:updated_time" content="2018-04-17T15:48:47.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bash&#x2F;zshとfzfでDocker関連コマンドの補完を行う方法">
 <meta name="twitter:description" content="dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒なんですが、 公式の補完スクリプトを使うと各種ID類も補完できるようになります。 また、最終的にfzfを使ってフィルタや複数入力も楽に行えるようにします。 こんな感じです(クリックで拡大)。  dockerとdocker-composeの補完スクリプトDocker for Macにはbashとzsh用の補完ス">
@@ -147,6 +147,11 @@ ga('send', 'pageview');
       
       
         
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dockerとdocker-composeの補完スクリプト"><span class="toc-number">1.</span> <span class="toc-text">dockerとdocker-composeの補完スクリプト</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#zshの場合"><span class="toc-number">1.1.</span> <span class="toc-text">zshの場合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bashの場合"><span class="toc-number">1.2.</span> <span class="toc-text">bashの場合</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#fzfによる補完"><span class="toc-number">2.</span> <span class="toc-text">fzfによる補完</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#fzfのインストール"><span class="toc-number">2.1.</span> <span class="toc-text">fzfのインストール</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-fzf-completionのインストール"><span class="toc-number">2.2.</span> <span class="toc-text">docker-fzf-completionのインストール</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-fzf-completionの使い方"><span class="toc-number">2.3.</span> <span class="toc-text">docker-fzf-completionの使い方</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+          </div>
+        
         <p>dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒なんですが、
 公式の補完スクリプトを使うと各種ID類も補完できるようになります。</p>
 <p>また、最終的にfzfを使ってフィルタや複数入力も楽に行えるようにします。</p>
@@ -266,7 +271,7 @@ index e661ec9..db3dd6a 100644
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3tx4hs00202irctqb2ytil" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3ufcqf004bm2rczcdiysh1" class="article-share-link">Share</a>
       
       
       
