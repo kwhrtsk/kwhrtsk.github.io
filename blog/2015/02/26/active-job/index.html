@@ -9,26 +9,25 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,rails,activejob,resque,sidekiq,sucker_punch">
   
-  <meta name="description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。
-これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、ActiveJobはジョブを記述するためのインタフェースを抽象化して、ジョブの実装を変えること無くジョブランナーを切り替える">
+  <meta name="description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。 これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、 ActiveJobはジョブを記述するためのインタフェースを抽象化して、 ジョブの実装を変えること無くジョブランナーを切り替">
+<meta name="keywords" content="rails,activejob,resque,sidekiq,sucker_punch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた">
 <meta property="og:url" content="https://chopschips.net/blog/2015/02/26/active-job/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。
-これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、ActiveJobはジョブを記述するためのインタフェースを抽象化して、ジョブの実装を変えること無くジョブランナーを切り替える">
+<meta property="og:description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。 これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、 ActiveJobはジョブを記述するためのインタフェースを抽象化して、 ジョブの実装を変えること無くジョブランナーを切り替">
+<meta property="og:locale" content="ja">
 <meta property="og:updated_time" content="2015-08-23T14:11:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた">
-<meta name="twitter:description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。
-これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、ActiveJobはジョブを記述するためのインタフェースを抽象化して、ジョブの実装を変えること無くジョブランナーを切り替える">
+<meta name="twitter:description" content="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由Rails 4.2で、ActiveJobというクラスが導入されました。 これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、 ActiveJobはジョブを記述するためのインタフェースを抽象化して、 ジョブの実装を変えること無くジョブランナーを切り替">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -56,7 +55,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -89,7 +89,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -143,10 +143,13 @@ ga('send', 'pageview');
       
       
         
-        <h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由">ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
-<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、<br>ActiveJobはジョブを記述するためのインタフェースを抽象化して、<br>ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。<br>なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
+        <h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由"><a href="#ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由" class="headerlink" title="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由"></a>ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
+<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、
+ActiveJobはジョブを記述するためのインタフェースを抽象化して、
+ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。
+なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
 <p>Rails 4.2.0時点では、ActiveJobのバックエンドとして以下のページにある9つのいずれかを使用できます。</p>
-<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html" target="_blank" rel="external">ActiveJob::QueueAdapters</a></p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html" target="_blank" rel="noopener">ActiveJob::QueueAdapters</a></p>
 <ul>
 <li>Backburner</li>
 <li>Delayed Job</li>
@@ -159,35 +162,57 @@ ga('send', 'pageview');
 <li>Sucker Punch</li>
 </ul>
 <p>ちなみにRuby ToolboxのBackground Jobsというカテゴリの上位3つは、Resque、Sidekiq、Delayed Jobでした。この3つがよく使われている印象です。</p>
-<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs" target="_blank" rel="external">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
+<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs" target="_blank" rel="noopener">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
 <p>特にResque、Sidekiqは、ジョブの情報を永続化する先としてRedisを必須としています。</p>
 <p>情報の保存先ならActiveRecord(RDBMS)でも良さそうなものですが、あえてRedisを必須としている理由は何だろうか考えてみました。</p>
-<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、<br>Redisの<a href="http://redis.io/topics/pubsub" target="_blank" rel="external">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP" target="_blank" rel="external">BLPOP</a>/<a href="http://redis.io/commands/brpop" target="_blank" rel="external">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
-<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、<br>RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
-<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、<br>ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
+<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、
+Redisの<a href="http://redis.io/topics/pubsub" target="_blank" rel="noopener">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP" target="_blank" rel="noopener">BLPOP</a>/<a href="http://redis.io/commands/brpop" target="_blank" rel="noopener">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
+<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、
+RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
+<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、
+ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
 <p>9つの中で特にSucker Punchはジョブの保存先もワーカープロセスの起動も必要とせずに非同期処理を行えるので、簡単に作りたいならおすすめです。詳細は後述。</p>
 <a id="more"></a>
-<h1 id="Resque">Resque</h1><p>Rails 4.2.0時点においてActiveJobが対応しているのはRedisのバージョン1系列です。</p>
-<p><a href="https://github.com/resque/resque/tree/1-x-stable" target="_blank" rel="external">resque/resque at 1-x-stable</a></p>
+<h1 id="Resque"><a href="#Resque" class="headerlink" title="Resque"></a>Resque</h1><p>Rails 4.2.0時点においてActiveJobが対応しているのはRedisのバージョン1系列です。</p>
+<p><a href="https://github.com/resque/resque/tree/1-x-stable" target="_blank" rel="noopener">resque/resque at 1-x-stable</a></p>
 <p>ワーカーを起動する場合はrakeタスクを実行するので、そのあたりからコードを読んでいきます。</p>
-<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/tasks/resque.rake" target="_blank" rel="external">lib/tasks/resque.task</a><br>これはresque/tasksを読み込んでいるだけ。</p>
-<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/resque/tasks.rb#L42" target="_blank" rel="external">resque/tasks.rb</a><br><code>Resque::Worker#work</code>がメインループのようです。</p>
-<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/resque/worker.rb#L205" target="_blank" rel="external">resque/worker.rb</a><br>ジョブが無い場合はインターバル分だけスリープする実装になっていました。<br>ジョブの取得はさらに読んでいくとRedisの<code>LPOP</code>を使っていて、キューが空でもブロックせずにnilが帰ってきます。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Resque::Worker<span class="id">#work</span></span><br><span class="line">  Resque<span class="id">#reserve</span></span><br><span class="line">    Resque::Job<span class="class">.reserve</span></span><br><span class="line">      Resque<span class="class">.pop</span></span><br><span class="line">        Redis#<span class="function"><span class="title">lpop</span><span class="params">(redis-<span class="number">3.2</span>.<span class="number">1</span>)</span></span></span><br></pre></td></tr></table></figure>
-<h2 id="結論">結論</h2><p>Resqueのバージョン1系はRedisのメッセージング機構は使わずにポーリングしてました。</p>
-<p>ただ、2015-02-26時点のmasterブランチのHEADでは、インターバルに設定した値をタイムアウト値として<code>BLPOP</code>を使う実装になっていました。<br>(インターバルが1より小さい場合はnon-blockで実質ポーリング)</p>
-<h1 id="Sidekiq">Sidekiq</h1><p>現時点で最新の3.3.2を読んでいきます。</p>
-<p><a href="https://github.com/mperham/sidekiq/tree/v3.3.2" target="_blank" rel="external">mperham/sidekiq at v3.3.2</a></p>
-<p>Sidekiqのエントリポイントはbin/sidekiqです。<br>中身はSidekiq::CLI#runなのでそこを見てみます。</p>
-<p><a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/cli.rb#L76" target="_blank" rel="external">sidekiq/cli.rb</a></p>
+<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/tasks/resque.rake" target="_blank" rel="noopener">lib/tasks/resque.task</a>
+これはresque/tasksを読み込んでいるだけ。</p>
+<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/resque/tasks.rb#L42" target="_blank" rel="noopener">resque/tasks.rb</a>
+<code>Resque::Worker#work</code>がメインループのようです。</p>
+<p><a href="https://github.com/resque/resque/blob/1-x-stable/lib/resque/worker.rb#L205" target="_blank" rel="noopener">resque/worker.rb</a>
+ジョブが無い場合はインターバル分だけスリープする実装になっていました。
+ジョブの取得はさらに読んでいくとRedisの<code>LPOP</code>を使っていて、キューが空でもブロックせずにnilが帰ってきます。</p>
+<pre><code>Resque::Worker#work
+  Resque#reserve
+    Resque::Job.reserve
+      Resque.pop
+        Redis#lpop(redis-3.2.1)
+</code></pre><h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>Resqueのバージョン1系はRedisのメッセージング機構は使わずにポーリングしてました。</p>
+<p>ただ、2015-02-26時点のmasterブランチのHEADでは、インターバルに設定した値をタイムアウト値として<code>BLPOP</code>を使う実装になっていました。
+(インターバルが1より小さい場合はnon-blockで実質ポーリング)</p>
+<h1 id="Sidekiq"><a href="#Sidekiq" class="headerlink" title="Sidekiq"></a>Sidekiq</h1><p>現時点で最新の3.3.2を読んでいきます。</p>
+<p><a href="https://github.com/mperham/sidekiq/tree/v3.3.2" target="_blank" rel="noopener">mperham/sidekiq at v3.3.2</a></p>
+<p>Sidekiqのエントリポイントはbin/sidekiqです。
+中身はSidekiq::CLI#runなのでそこを見てみます。</p>
+<p><a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/cli.rb#L76" target="_blank" rel="noopener">sidekiq/cli.rb</a></p>
 <p>Sidekiq::Launcher#runがメインループのようです。</p>
-<p><a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/launcher.rb#L39" target="_blank" rel="external">sidekiq/launcher.rb</a></p>
-<p>Celluloidを使ったアクターモデルでFetcherとManagerとPollerという3つのインスタンスが強調しつつ並行処理を行っているように見えます。<br>Pollerがスケジュールされたジョブをワークキューに載せ替える、ということをやっていました。<br>Managerの方では同時実行数の数だけProcessorのインスタンスを作って、<br>ProcessorごとにFetcher#fetchしています。<br>Fetcherの中身をざっくり追いかけると、<br><a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/fetch.rb#L102" target="_blank" rel="external">sidekiq/fetch.rb</a><br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Fetcher<span class="id">#fetch</span></span><br><span class="line">  Fetcher<span class="class">.strategy</span></span><br><span class="line">    Fetcher::BasicFetch<span class="id">#retrive_work</span></span><br><span class="line">      Redis#brpop</span><br></pre></td></tr></table></figure></p>
-<p>という流れで最終的にRedisの<code>BRPOP</code>でジョブ情報を読みだしていました。</p>
-<h2 id="結論-1">結論</h2><p>Sidekiqはポーリングせずに、Redisの<code>BRPOP</code>を使ってジョブが積まれたイベントをワーカーに通知していました。</p>
-<h1 id="その他のバックエンド">その他のバックエンド</h1><h2 id="Backburner">Backburner</h2><p><a href="https://github.com/nesquena/backburner" target="_blank" rel="external">nesquena/backburner</a></p>
-<p><a href="http://kr.github.io/beanstalkd/" target="_blank" rel="external">beanstalkd</a> というジョブキューサーバをバックエンドに使うようです。</p>
-<h2 id="Delayed_Job">Delayed Job</h2><p><a href="https://github.com/collectiveidea/delayed_job" target="_blank" rel="external">collectiveidea/delayed_job</a></p>
+<p><a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/launcher.rb#L39" target="_blank" rel="noopener">sidekiq/launcher.rb</a></p>
+<p>Celluloidを使ったアクターモデルでFetcherとManagerとPollerという3つのインスタンスが強調しつつ並行処理を行っているように見えます。
+Pollerがスケジュールされたジョブをワークキューに載せ替える、ということをやっていました。
+Managerの方では同時実行数の数だけProcessorのインスタンスを作って、
+ProcessorごとにFetcher#fetchしています。
+Fetcherの中身をざっくり追いかけると、
+<a href="https://github.com/mperham/sidekiq/blob/v3.3.2/lib/sidekiq/fetch.rb#L102" target="_blank" rel="noopener">sidekiq/fetch.rb</a></p>
+<pre><code>Fetcher#fetch
+  Fetcher.strategy
+    Fetcher::BasicFetch#retrive_work
+      Redis#brpop
+</code></pre><p>という流れで最終的にRedisの<code>BRPOP</code>でジョブ情報を読みだしていました。</p>
+<h2 id="結論-1"><a href="#結論-1" class="headerlink" title="結論"></a>結論</h2><p>Sidekiqはポーリングせずに、Redisの<code>BRPOP</code>を使ってジョブが積まれたイベントをワーカーに通知していました。</p>
+<h1 id="その他のバックエンド"><a href="#その他のバックエンド" class="headerlink" title="その他のバックエンド"></a>その他のバックエンド</h1><h2 id="Backburner"><a href="#Backburner" class="headerlink" title="Backburner"></a>Backburner</h2><p><a href="https://github.com/nesquena/backburner" target="_blank" rel="noopener">nesquena/backburner</a></p>
+<p><a href="http://kr.github.io/beanstalkd/" target="_blank" rel="noopener">beanstalkd</a> というジョブキューサーバをバックエンドに使うようです。</p>
+<h2 id="Delayed-Job"><a href="#Delayed-Job" class="headerlink" title="Delayed Job"></a>Delayed Job</h2><p><a href="https://github.com/collectiveidea/delayed_job" target="_blank" rel="noopener">collectiveidea/delayed_job</a></p>
 <p>バックエンドとして複数のプロダクトを指定できます。(DJはDelayed Jobのこと)</p>
 <ul>
 <li>ActiveRecord (DJ 3.0+)</li>
@@ -196,26 +221,72 @@ ga('send', 'pageview');
 <li>Mongoid</li>
 <li>MongoMapper</li>
 <li>MongoMapper (DJ 3.0+, MongoMapper 0.11.0+)</li>
-<li>Redis (DJ 3.0+, experimental)<br><a href="https://github.com/collectiveidea/delayed_job/wiki/Backends" target="_blank" rel="external">Backends · collectiveidea/delayed_job Wiki</a></li>
+<li>Redis (DJ 3.0+, experimental)
+<a href="https://github.com/collectiveidea/delayed_job/wiki/Backends" target="_blank" rel="noopener">Backends · collectiveidea/delayed_job Wiki</a></li>
 </ul>
-<h2 id="Qu">Qu</h2><p><a href="https://github.com/bkeepers/qu" target="_blank" rel="external">bkeepers/qu</a></p>
+<h2 id="Qu"><a href="#Qu" class="headerlink" title="Qu"></a>Qu</h2><p><a href="https://github.com/bkeepers/qu" target="_blank" rel="noopener">bkeepers/qu</a></p>
 <p>RedisかMongo。</p>
-<h2 id="Que">Que</h2><p><a href="https://github.com/chanks/que" target="_blank" rel="external">chanks/que</a></p>
-<p>PostgreSQLの<a href="http://www.postgresql.org/docs/current/static/explicit-locking.html#ADVISORY-LOCKS" target="_blank" rel="external">Advisory Lock</a>を使います。</p>
+<h2 id="Que"><a href="#Que" class="headerlink" title="Que"></a>Que</h2><p><a href="https://github.com/chanks/que" target="_blank" rel="noopener">chanks/que</a></p>
+<p>PostgreSQLの<a href="http://www.postgresql.org/docs/current/static/explicit-locking.html#ADVISORY-LOCKS" target="_blank" rel="noopener">Advisory Lock</a>を使います。</p>
 <p>Advisory Lockを用いてMessage Queueを実現する方法については下記のサイトが詳しいです。</p>
-<p><a href="http://d.hatena.ne.jp/n_shuyo/20090415/mq" target="_blank" rel="external">PostgreSQL で簡易に MQ - Mi manca qualche giovedi`?</a></p>
+<p><a href="http://d.hatena.ne.jp/n_shuyo/20090415/mq" target="_blank" rel="noopener">PostgreSQL で簡易に MQ - Mi manca qualche giovedi`?</a></p>
 <p>ちなみにMySQLでMessage Queueやる場合はQ4MというストレージエンジンがありますがActiveJobで使う方法は見つかりませんでした。</p>
-<h2 id="queue_classic">queue_classic</h2><p><a href="https://github.com/QueueClassic/queue_classic" target="_blank" rel="external">QueueClassic/queue_classic</a></p>
+<h2 id="queue-classic"><a href="#queue-classic" class="headerlink" title="queue_classic"></a>queue_classic</h2><p><a href="https://github.com/QueueClassic/queue_classic" target="_blank" rel="noopener">QueueClassic/queue_classic</a></p>
 <p>PostgreSQL。listen / notify &amp; row lockingで実装。PostgreSQLはPub/Sub機能があるんですね。</p>
-<h2 id="Sneakers">Sneakers</h2><p><a href="https://github.com/jondot/sneakers" target="_blank" rel="external">jondot/sneakers</a></p>
+<h2 id="Sneakers"><a href="#Sneakers" class="headerlink" title="Sneakers"></a>Sneakers</h2><p><a href="https://github.com/jondot/sneakers" target="_blank" rel="noopener">jondot/sneakers</a></p>
 <p>RabbitMQ。サンプルコードでRedisを使っていますが、デモのためのカウントアップをRedisでやっているだけです。</p>
-<h2 id="Sucker_Punch">Sucker Punch</h2><p>ジョブ情報の保存先やワーカープロセスの立ち上げが必要ありません。<br>Celluloidで即座に非同期処理を開始するモデルのようですね。<br>RailsやSinatraのようなアプリケーションプロセス一つでジョブの実行が(非同期に)完結するというのがウリみたいです。</p>
+<h2 id="Sucker-Punch"><a href="#Sucker-Punch" class="headerlink" title="Sucker Punch"></a>Sucker Punch</h2><p>ジョブ情報の保存先やワーカープロセスの立ち上げが必要ありません。
+Celluloidで即座に非同期処理を開始するモデルのようですね。
+RailsやSinatraのようなアプリケーションプロセス一つでジョブの実行が(非同期に)完結するというのがウリみたいです。</p>
 <p>そのため、RedisやRabbitMQを用意する必要はないし、ワーカープロセスを起動する必要すらありません。</p>
-<p>Herokuで安価にサービス運用したいのでRedisやRabbitMQは使いたくないけどビューのレスポンスは高速化したいような場合に使うと良さそうです。<br>個人的にはこれがActiveJobのデフォルトのバックエンドでも良いくらいだと思いました。</p>
-<p>development環境のWebrickで試してみましたが、コントローラのアクションメソッドで<code>TestJob.perform_later</code>しても、アクションそのものはすぐにレスポンスが返ってきました。<br>また、ジョブが完了していなくても次のリクエストを処理することができていました。<br>Celluloid使っているらしいのでジョブはThreadで実行されていると思われます。</p>
+<p>Herokuで安価にサービス運用したいのでRedisやRabbitMQは使いたくないけどビューのレスポンスは高速化したいような場合に使うと良さそうです。
+個人的にはこれがActiveJobのデフォルトのバックエンドでも良いくらいだと思いました。</p>
+<p>development環境のWebrickで試してみましたが、コントローラのアクションメソッドで<code>TestJob.perform_later</code>しても、アクションそのものはすぐにレスポンスが返ってきました。
+また、ジョブが完了していなくても次のリクエストを処理することができていました。
+Celluloid使っているらしいのでジョブはThreadで実行されていると思われます。</p>
 <p>以下動作を確認したサンプルコードです。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config/routes.rb</span></span><br><span class="line"><span class="constant">Rails</span>.application.routes.draw <span class="keyword">do</span></span><br><span class="line">  get <span class="string">'top/welcome'</span></span><br><span class="line">  get <span class="string">'top/job'</span></span><br><span class="line">  root <span class="string">'top#welcome'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># config/initializers/sucker_punch.rb</span></span><br><span class="line"><span class="constant">Rails</span>.application.configure <span class="keyword">do</span></span><br><span class="line">  config.active_job.queue_adapter = <span class="symbol">:sucker_punch</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># app/jobs/test_job.rb</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestJob</span> <span class="inheritance">&lt; <span class="parent">ActiveJob::Base</span></span></span></span><br><span class="line">  queue_as <span class="symbol">:default</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">perform</span><span class="params">(*args)</span></span></span><br><span class="line">    logger.info <span class="string">"job started"</span></span><br><span class="line">    sleep <span class="number">5</span></span><br><span class="line">    logger.info <span class="string">"job finished"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># app/controllers/top_controller.rb</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopController</span> <span class="inheritance">&lt; <span class="parent">ApplicationController</span></span></span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">welcome</span></span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">job</span></span></span><br><span class="line">    <span class="constant">TestJob</span>.perform_later</span><br><span class="line">    flash[<span class="symbol">:notice</span>] = <span class="string">"done!"</span></span><br><span class="line">    redirect_to top_welcome_path</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># app/views/welcome.view.erb</span></span><br><span class="line">&lt;% <span class="keyword">if</span> flash[<span class="symbol">:notice</span>] %&gt;</span><br><span class="line">  &lt;%= flash[<span class="symbol">:notice</span>] %&gt;</span><br><span class="line">&lt;% <span class="keyword">end</span> %&gt;</span><br><span class="line">&lt;%= link_to <span class="string">"Do job"</span>, top_job_path %&gt;</span><br></pre></td></tr></table></figure>
-<h1 id="感想">感想</h1><ul>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># config/routes.rb</span>
+<span class="token constant">Rails</span><span class="token punctuation">.</span>application<span class="token punctuation">.</span>routes<span class="token punctuation">.</span>draw <span class="token keyword">do</span>
+  get <span class="token string">'top/welcome'</span>
+  get <span class="token string">'top/job'</span>
+  root <span class="token string">'top#welcome'</span>
+<span class="token keyword">end</span>
+
+<span class="token comment" spellcheck="true"># config/initializers/sucker_punch.rb</span>
+<span class="token constant">Rails</span><span class="token punctuation">.</span>application<span class="token punctuation">.</span>configure <span class="token keyword">do</span>
+  config<span class="token punctuation">.</span>active_job<span class="token punctuation">.</span>queue_adapter <span class="token operator">=</span> <span class="token symbol">:sucker_punch</span>
+<span class="token keyword">end</span>
+
+<span class="token comment" spellcheck="true"># app/jobs/test_job.rb</span>
+<span class="token keyword">class</span> <span class="token class-name">TestJob</span> <span class="token operator">&lt;</span> <span class="token constant">ActiveJob</span><span class="token punctuation">:</span><span class="token symbol">:Base</span>
+  queue_as <span class="token symbol">:default</span>
+
+  <span class="token keyword">def</span> <span class="token function">perform</span><span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">)</span>
+    logger<span class="token punctuation">.</span>info <span class="token string">"job started"</span>
+    sleep <span class="token number">5</span>
+    logger<span class="token punctuation">.</span>info <span class="token string">"job finished"</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token comment" spellcheck="true"># app/controllers/top_controller.rb</span>
+<span class="token keyword">class</span> <span class="token class-name">TopController</span> <span class="token operator">&lt;</span> <span class="token constant">ApplicationController</span>
+  <span class="token keyword">def</span> welcome
+  <span class="token keyword">end</span>
+
+  <span class="token keyword">def</span> job
+    <span class="token constant">TestJob</span><span class="token punctuation">.</span>perform_later
+    flash<span class="token punctuation">[</span><span class="token symbol">:notice</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"done!"</span>
+    redirect_to top_welcome_path
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token comment" spellcheck="true"># app/views/welcome.view.erb</span>
+<span class="token operator">&lt;</span><span class="token operator">%</span> <span class="token keyword">if</span> flash<span class="token punctuation">[</span><span class="token symbol">:notice</span><span class="token punctuation">]</span> <span class="token string">%>
+  &lt;%= flash[:notice] %></span>
+<span class="token operator">&lt;</span><span class="token operator">%</span> <span class="token keyword">end</span> <span class="token string">%>
+&lt;%= link_to "Do job", top_job_path %></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h1><ul>
 <li>resque 1系がRedisを使いつつ実はポーリングしていたのが意外でした。</li>
 <li>PostgreSQLはほとんど使ったこと無いんだけど、RDBMSでPub/Subできたら楽できそう。</li>
 <li>Sucker Punchはワーカープロセスの起動無しで非同期処理できる点が便利。これでOKという場面は結構ありそうなので良い発見でした。</li>
@@ -245,7 +316,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/02/26/active-job/" data-id="cjfv4wzzr002e8irc9cje57oi" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/02/26/active-job/" data-id="cjg3tx4ge000t2ircf0w4nib5" class="article-share-link">Share</a>
       
       
       
@@ -314,6 +385,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -329,10 +404,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -343,7 +414,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -353,7 +424,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -363,7 +434,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -373,7 +444,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -408,8 +479,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -423,7 +494,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

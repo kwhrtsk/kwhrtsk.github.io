@@ -15,6 +15,7 @@
 <meta property="og:url" content="https://chopschips.net/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
+<meta property="og:locale" content="ja">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="割り箸ポテチ">
 <meta name="twitter:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
@@ -24,7 +25,7 @@
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -52,7 +53,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -85,7 +87,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -93,6 +95,94 @@ ga('send', 'pageview');
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-docker-completion" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/04/17/docker-completion/" class="article-date">
+  <time datetime="2018-04-17T13:45:51.000Z" itemprop="datePublished">2018-04-17</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/04/17/docker-completion/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/04/17/docker-completion/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/04/17/docker-completion/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒なんですが、
+公式の補完スクリプトを使うと各種ID類も補完できるようになります。</p>
+<p>また、最終的にfzfを使ってフィルタや複数入力も楽に行えるようにします。</p>
+<p>こんな感じです(クリックで拡大)。</p>
+<img src="/images/post_20180417_docker_completion/docker-fzf-completion.gif">
+<h1 id="dockerとdocker-composeの補完スクリプト"><a href="#dockerとdocker-composeの補完スクリプト" class="headerlink" title="dockerとdocker-composeの補完スクリプト"></a>dockerとdocker-composeの補完スクリプト</h1><p>Docker for Macにはbashとzsh用の補完スクリプトが同梱されています。</p>
+<pre><code class="shell-session">% ls -1 /Applications/Docker.app/Contents/Resources/etc/
+docker-compose.bash-completion
+docker-compose.zsh-completion
+docker-machine.bash-completion
+docker-machine.zsh-completion
+docker.bash-completion
+docker.fish-completion
+docker.zsh-completion
+</code></pre>
+<p>適切に設定すれば下記のようにサブコマンドやイメージIDなどを補完できます(クリックで拡大)。</p>
+<img src="/images/post_20180417_docker_completion/docker-completion.gif">
+        
+          <p class="article-more-link">
+            <a href="/blog/2018/04/17/docker-completion/#more">Read More</a>
+          </p>
+        
+      
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3tx4hs00202irctqb2ytil" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bash/">bash</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zsh/">zsh</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-rails-5-2-0" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -143,21 +233,40 @@ ga('send', 'pageview');
         
         <p>Rails 5.2.0が正式にリリースされましたね。めでたい。</p>
 <ul>
-<li><a href="http://weblog.rubyonrails.org/2018/4/9/Rails-5-2-0-final/" target="_blank" rel="external">Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails</a></li>
-<li><a href="https://techracho.bpsinc.jp/hachi8833/2018_04_10/55079" target="_blank" rel="external">【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2 Early Hintほか</a></li>
+<li><a href="http://weblog.rubyonrails.org/2018/4/9/Rails-5-2-0-final/" target="_blank" rel="noopener">Rails 5.2.0 FINAL: Active Storage, Redis Cache Store, HTTP/2 Early Hints, CSP, Credentials | Riding Rails</a></li>
+<li><a href="https://techracho.bpsinc.jp/hachi8833/2018_04_10/55079" target="_blank" rel="noopener">【速報】Rails 5.2.0正式リリース！Active Storage、Redis Cache Store、HTTP/2 Early Hintほか</a></li>
 </ul>
 <p>いつものことですが、2018-04-11現在、Rails 5.2.0だと正常に動作しないgemがあります。とりあえず見つけたものをメモしておきます。</p>
-<h1 id="simple_form">simple_form</h1><p><a href="https://github.com/plataformatec/simple_form/issues/1568" target="_blank" rel="external">Rails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1568 · plataformatec/simple_form</a></p>
+<h1 id="simple-form"><a href="#simple-form" class="headerlink" title="simple_form"></a>simple_form</h1><p><a href="https://github.com/plataformatec/simple_form/issues/1568" target="_blank" rel="noopener">Rails 5.2.0 upgrade causes “Undefined method wrapper for SimpleForm:Module” error  Issue #1568 · plataformatec/simple_form</a></p>
 <p>Gemfileでsimple_formのバージョンを指定していない場合、railsのバージョンを5.2.0に上げて<code>bundle update</code>したらsimple_formのバージョンが3.5.1から1.4.1まで下がるという現象が起きていました。上記はそのために引き起こされるエラーです。</p>
 <p>単にgemspecの要求バージョンが厳しかったみたいで、このブログを書いている間に 4.0.0 がリリースされて解決しました。</p>
-<p><a href="https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400" target="_blank" rel="external">https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400</a></p>
+<p><a href="https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400" target="_blank" rel="noopener">https://github.com/plataformatec/simple_form/blob/master/CHANGELOG.md#400</a></p>
 <p>3.5系でバージョンをロックしている人は4.0.0を試してみましょう。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Gemfile</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># gem "simple_form", "~&gt; 3.5.1"</span></span><br><span class="line">gem <span class="string">"simple_form"</span>, <span class="string">"~&gt; 4.0.0"</span></span><br></pre></td></tr></table></figure>
-<h1 id="annotate">annotate</h1><p><a href="https://github.com/ctran/annotate_models/issues/538" target="_blank" rel="external">Annotate no longer works with Rails 5.2 models  Issue #538 · ctran/annotate_models</a></p>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># Gemfile</span>
+
+<span class="token comment" spellcheck="true"># gem "simple_form", "~> 3.5.1"</span>
+gem <span class="token string">"simple_form"</span><span class="token punctuation">,</span> <span class="token string">"~> 4.0.0"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="annotate"><a href="#annotate" class="headerlink" title="annotate"></a>annotate</h1><p><a href="https://github.com/ctran/annotate_models/issues/538" target="_blank" rel="noopener">Annotate no longer works with Rails 5.2 models  Issue #538 · ctran/annotate_models</a></p>
 <p><code>./bin/rails annotate_models</code> または <code>./bin/rails db:migrate</code> など、モデルのアノテーションを更新する際に下記のようなエラーが起きる場合があります。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to annotate app/models/author.rb: can&#39;t modify frozen String&#10;Unable to annotate app/models/author.rb: no implicit conversion of nil into Array</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-console"><code class="language-console">Unable to annotate app/models/author.rb: can't modify frozen String
+Unable to annotate app/models/author.rb: no implicit conversion of nil into Array
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>暫定的な措置として、設定でインデックスに関する情報の記入を無効化すればエラーを回避できます。</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/lib/tasks/auto_annotate_models.rake b/lib/tasks/auto_annotate_models.rake</span><br><span class="line">index 9088128..9c2f5d5 100644</span><br><span class="line"><span class="header">--- a/lib/tasks/auto_annotate_models.rake</span></span><br><span class="line"><span class="header">+++ b/lib/tasks/auto_annotate_models.rake</span></span><br><span class="line">@@ -16,7 +16,7 @@ if Rails.env.development?</span><br><span class="line">       'position_in_serializer'    =&gt; 'before',</span><br><span class="line">       'show_foreign_keys'         =&gt; 'true',</span><br><span class="line">       'show_complete_foreign_keys' =&gt; 'false',</span><br><span class="line"><span class="deletion">-      'show_indexes'              =&gt; 'true',</span></span><br><span class="line"><span class="addition">+      'show_indexes'              =&gt; 'false',</span></span><br><span class="line">       'simple_indexes'            =&gt; 'false',</span><br><span class="line">       'model_dir'                 =&gt; 'app/models',</span><br><span class="line">       'root_dir'                  =&gt; '',</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-diff"><code class="language-diff">diff --git a/lib/tasks/auto_annotate_models.rake b/lib/tasks/auto_annotate_models.rake
+index 9088128..9c2f5d5 100644
+<span class="token coord">--- a/lib/tasks/auto_annotate_models.rake</span>
+<span class="token coord">+++ b/lib/tasks/auto_annotate_models.rake</span>
+@@ -16,7 +16,7 @@ if Rails.env.development?
+       'position_in_serializer'    => 'before',
+       'show_foreign_keys'         => 'true',
+       'show_complete_foreign_keys' => 'false',
+<span class="token deleted">-      'show_indexes'              => 'true',</span>
+<span class="token inserted">+      'show_indexes'              => 'false',</span>
+       'simple_indexes'            => 'false',
+       'model_dir'                 => 'app/models',
+       'root_dir'                  => '',
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>他にも何か見つけたら更新していきます。</p>
 
       
@@ -165,7 +274,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="cjfv4wzxy00018irc4yb2xgns" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="cjg3tx4hh001o2irco9gbqkq3" class="article-share-link">Share</a>
       
       
       
@@ -228,18 +337,25 @@ ga('send', 'pageview');
       
         
         <p>Vagrantを使うときに、どこの馬の骨ともしれないboxは使いたくないので chef 社が公式にサポートしてるboxを使っていました。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># Vagrantfile</span></span><br><span class="line">Vagrant.configure(<span class="number">2</span>) <span class="keyword">do</span> |config|</span><br><span class="line">  <span class="preprocessor"># こんなの</span></span><br><span class="line">  config.vm.box = <span class="string">"chef/centos-7.1"</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>8/27か28あたりに配布されなくなったようです。</p>
-<p><a href="https://vagrantcloud.com/chef" target="_blank" rel="external">https://vagrantcloud.com/chef</a></p>
+<pre><code># Vagrantfile
+Vagrant.configure(2) do |config|
+  # こんなの
+  config.vm.box = &quot;chef/centos-7.1&quot;
+end
+</code></pre><p>8/27か28あたりに配布されなくなったようです。</p>
+<p><a href="https://vagrantcloud.com/chef" target="_blank" rel="noopener">https://vagrantcloud.com/chef</a></p>
 <p>跡地でBentoというorganizationへ誘導しています。</p>
-<p><a href="https://atlas.hashicorp.com/bento/" target="_blank" rel="external">https://atlas.hashicorp.com/bento/</a></p>
+<p><a href="https://atlas.hashicorp.com/bento/" target="_blank" rel="noopener">https://atlas.hashicorp.com/bento/</a></p>
 <p>BentoというのもChef社にメンテナンスされているプロジェクトで、PackerテンプレートでVagrantのbase boxイメージを作ることができます。</p>
 <p>彼ら自身がchefをテストするためのboxイメージを作るためにも使っているとのこと。</p>
-<p><a href="https://github.com/chef/bento" target="_blank" rel="external">https://github.com/chef/bento</a></p>
+<p><a href="https://github.com/chef/bento" target="_blank" rel="noopener">https://github.com/chef/bento</a></p>
 <p>今後はこんな風にBento boxを使うことにします。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># Vagrantfile</span></span><br><span class="line">Vagrant.configure(<span class="number">2</span>) <span class="keyword">do</span> |config|</span><br><span class="line">  config.vm.box = <span class="string">"bento/centos-7.1"</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>(おそらく公式の)BentoのTwitterアイコンがすごく弁当箱です。集中線がジワジワくる。</p>
-<p><a href="https://twitter.com/bento_chef" target="_blank" rel="external">https://twitter.com/bento_chef</a></p>
+<pre><code># Vagrantfile
+Vagrant.configure(2) do |config|
+  config.vm.box = &quot;bento/centos-7.1&quot;
+end
+</code></pre><p>(おそらく公式の)BentoのTwitterアイコンがすごく弁当箱です。集中線がジワジワくる。</p>
+<p><a href="https://twitter.com/bento_chef" target="_blank" rel="noopener">https://twitter.com/bento_chef</a></p>
 <p><img src="https://pbs.twimg.com/profile_images/618930596438372352/rWntD1GI.png"></p>
 
       
@@ -247,7 +363,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/" data-id="cjfv4wzyx00138ircgl8yx96e" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/" data-id="cjg3tx4h400192irc7kthet1r" class="article-share-link">Share</a>
       
       
       
@@ -313,16 +429,26 @@ ga('send', 'pageview');
 <p>以下、Vagrantを開発環境で利用することを想定しています。</p>
 <p>下記のドキュメントを参考にしました。</p>
 <ul>
-<li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
+<li><a href="http://qiita.com/sawanoboly/items/ae3c96734c5cee72863c" target="_blank" rel="noopener">Knife-ZeroとVagrant(単品VM) - Qiita</a></li>
 </ul>
-<h2 id="TL;DR">TL;DR</h2><p>プライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する具体的な手順を説明します。</p>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><p>プライベートネットワークモードで立ち上げた2つのVMに、knife-zeroでレシピを適用する具体的な手順を説明します。</p>
 <p>基本方針は下記の通り。</p>
 <ul>
 <li>コマンドラインでのパラメータを極力減らす。</li>
 <li>IPアドレスの記述は.envrcに集約して、その他の設定ファイルやコマンドラインでは環境変数を使う。</li>
 </ul>
 <p>適切に設定ファイルを書けば、下記のような一連のコマンドでレシピの適用まで実行することができます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">cd</span> knife_zero_example</span><br><span class="line">% direnv allow</span><br><span class="line">% vagrant up</span><br><span class="line">% bundle install --path=vendor/bundle --binstubs</span><br><span class="line">% ./bin/berks vendor cookbooks</span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST001</span></span><br><span class="line">% ./bin/knife zero bootstrap <span class="variable">$VAGRANT_HOST002</span></span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host001.example build-essential</span><br><span class="line">% ./bin/knife node run_list <span class="built_in">set</span> host002.example build-essential</span><br><span class="line">% ./bin/knife zero converge <span class="string">'name:*.example'</span> <span class="operator">-a</span> knife_zero.host</span><br></pre></td></tr></table></figure>
+<pre><code class="bash">% cd knife_zero_example
+% direnv allow
+% vagrant up
+% bundle install --path=vendor/bundle --binstubs
+% ./bin/berks vendor cookbooks
+% ./bin/knife zero bootstrap $VAGRANT_HOST001
+% ./bin/knife zero bootstrap $VAGRANT_HOST002
+% ./bin/knife node run_list set host001.example build-essential
+% ./bin/knife node run_list set host002.example build-essential
+% ./bin/knife zero converge &#39;name:*.example&#39; -a knife_zero.host
+</code></pre>
         
           <p class="article-more-link">
             <a href="/blog/2015/08/25/vagrant-knife-zero-best-practice/#more">Read More</a>
@@ -333,7 +459,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cjfv4wzz1001b8irc5wz8udfu" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/25/vagrant-knife-zero-best-practice/" data-id="cjg3tx4h100182ircvmhxbjvb" class="article-share-link">Share</a>
       
       
       
@@ -397,14 +523,15 @@ ga('send', 'pageview');
         
         <p><a href="http://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/">先日ブログエンジンをHexoに移行した</a>のですが、その際に下記のページのテーマをひと通り試してみました。</p>
 <ul>
-<li><a href="https://hexo.io/themes/" target="_blank" rel="external">Themes | Hexo</a></li>
-<li><a href="http://js.romareas.net/demo/" target="_blank" rel="external">Hexo Templates Garelly</a></li>
-<li><a href="https://github.com/hexojs/hexo/wiki/Themes" target="_blank" rel="external">Themes · hexojs/hexo Wiki</a></li>
+<li><a href="https://hexo.io/themes/" target="_blank" rel="noopener">Themes | Hexo</a></li>
+<li><a href="http://js.romareas.net/demo/" target="_blank" rel="noopener">Hexo Templates Garelly</a></li>
+<li><a href="https://github.com/hexojs/hexo/wiki/Themes" target="_blank" rel="noopener">Themes · hexojs/hexo Wiki</a></li>
 </ul>
-<p>しかしどれもしっくりこなかったので、デフォルトのテーマ <a href="https://github.com/hexojs/hexo-theme-landscape" target="_blank" rel="external">Landscape</a> をベースにして自分好みのものを作りました。</p>
+<p>しかしどれもしっくりこなかったので、デフォルトのテーマ <a href="https://github.com/hexojs/hexo-theme-landscape" target="_blank" rel="noopener">Landscape</a> をベースにして自分好みのものを作りました。</p>
 <p>変更がそれなりの分量になったので、Ingenuousと名前をつけてリリースすることにしました。</p>
-<p><a href="https://github.com/kwhrtsk/hexo-theme-ingenuous" target="_blank" rel="external">kwhrtsk/hexo-theme-ingenuous</a></p>
-<p>欲しい機能を追加したり、スタイルを部分的に自分好みに修正したりしています。<br>基本方針は「自分の技術ブログに必要十分な機能とスタイル」です。</p>
+<p><a href="https://github.com/kwhrtsk/hexo-theme-ingenuous" target="_blank" rel="noopener">kwhrtsk/hexo-theme-ingenuous</a></p>
+<p>欲しい機能を追加したり、スタイルを部分的に自分好みに修正したりしています。
+基本方針は「自分の技術ブログに必要十分な機能とスタイル」です。</p>
 <p>主な追加機能・変更箇所は下記の通り。</p>
 <ul>
 <li>モバイルの画面で、コードブロックにより多くのコードが表示されるように修正</li>
@@ -421,7 +548,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/" data-id="cjfv4wzz5001h8irch7aafpu8" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/" data-id="cjg3tx4gt00122ircjrjggz0j" class="article-share-link">Share</a>
       
       
       
@@ -482,7 +609,7 @@ ga('send', 'pageview');
 
       
       
-        <p>ブログエンジンを<a href="http://octopress.org/">Octopress</a>から<a href="https://hexo.io/">Hexo</a>へ移行しました。</p>
+        <p>ブログエンジンを<a href="http://octopress.org/" target="_blank" rel="noopener">Octopress</a>から<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>へ移行しました。</p>
 <p>この記事では自分の場合の移行の手順についてまとめます。</p>
         
           <p class="article-more-link">
@@ -494,7 +621,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cjfv4wzz9001o8irch5w92ht1" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cjg3tx4gy00152irctbcsiby2" class="article-share-link">Share</a>
       
       
       
@@ -557,20 +684,23 @@ ga('send', 'pageview');
       
         <p>4/17に大阪で開催されたRailsの勉強会でLTしてきました。</p>
 <ul>
-<li><a href="https://riding-rails.doorkeeper.jp/events/22793">Railsをのりこなせ！ - Riding Rails勉強会</a></li>
-<li><a href="http://www.techscore.com/blog/2015/04/23/riding-rails-vol1-yattayo/">» Riding Rails 勉強会 #1 Rails をのりこなせ！やりました！発表資料も！ TECHSCORE BLOG</a></li>
+<li><a href="https://riding-rails.doorkeeper.jp/events/22793" target="_blank" rel="noopener">Railsをのりこなせ！ - Riding Rails勉強会</a></li>
+<li><a href="http://www.techscore.com/blog/2015/04/23/riding-rails-vol1-yattayo/" target="_blank" rel="noopener">» Riding Rails 勉強会 #1 Rails をのりこなせ！やりました！発表資料も！ TECHSCORE BLOG</a></li>
 </ul>
 <p>自分の発表資料をちょっと加筆修正したものを以下に公開しました。</p>
 <p><iframe src="https://www.slideshare.net/slideshow/embed_code/key/oDPA7cITu1ZJBy" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/secret/oDPA7cITu1ZJBy" title="Railsのエラーログとの付き合い方" target="_blank">Railsのエラーログとの付き合い方</a> </strong> from <strong><a href="http://www.slideshare.net/kwhrtsk" target="_blank">Taisuke Kawahara</a></strong> </div></p>
 <p>テーマはRailsのエラーモニタリングです。</p>
-<p>通知先はSlackという前提で、<br><a href="https://github.com/smartinez87/exception_notification">exception_notification</a>というgemで直接Slackに通知する方法と、<br>New RelicやAirbrakeといったWebサービス経由で通知する方法、<br><a href="https://github.com/errbit/errbit">Errbit</a> というOSSのAirbrakクローン経由でSlackに通知する方法を紹介しました。</p>
+<p>通知先はSlackという前提で、
+<a href="https://github.com/smartinez87/exception_notification" target="_blank" rel="noopener">exception_notification</a>というgemで直接Slackに通知する方法と、
+New RelicやAirbrakeといったWebサービス経由で通知する方法、
+<a href="https://github.com/errbit/errbit" target="_blank" rel="noopener">Errbit</a> というOSSのAirbrakクローン経由でSlackに通知する方法を紹介しました。</p>
 <p>ErrbitはHerokuの無料枠で運用することが可能で、詳細なセットアップの情報が日本語でも見つかります。</p>
-<p><a href="http://morizyun.github.io/blog/errbit-heroku-rails-error-ruby/">Errbit - Railsアプリの本番エラーをherokuで管理、メール通知する【無料枠】 - 酒と泪とRubyとRailsと</a></p>
+<p><a href="http://morizyun.github.io/blog/errbit-heroku-rails-error-ruby/" target="_blank" rel="noopener">Errbit - Railsアプリの本番エラーをherokuで管理、メール通知する【無料枠】 - 酒と泪とRubyとRailsと</a></p>
 <p>今回はHerokuを使わずにオンプレやAmazon EC2のようなIaaSに自分でセットアップする方法を検討しました。</p>
 <p>まずErrbitをセットアップするChefのレシピを探してみたのですが、見つかったものは対応しているErrbitのバージョンが古く、サポートもUbuntuのみでした。</p>
-<p><a href="https://supermarket.chef.io/cookbooks/errbit">errbit Cookbook - Chef Supermarket</a></p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit" target="_blank" rel="noopener">errbit Cookbook - Chef Supermarket</a></p>
 <p>自分はCentOSも好きなので、2015-04-17時点の最新のErrbitに対応していて、かつUbuntuとCentOSのどちらもサポートしているものを作成して公開しました。</p>
-<p><a href="https://supermarket.chef.io/cookbooks/errbit-server">errbit-server Cookbook - Chef Supermarket</a></p>
+<p><a href="https://supermarket.chef.io/cookbooks/errbit-server" target="_blank" rel="noopener">errbit-server Cookbook - Chef Supermarket</a></p>
 <p>今回はコミュニティクックブックを多めに使ってやってみました。大まかな構成は下記のとおりです。</p>
 <ul>
 <li>コミュニティクックブックでやっていること<ul>
@@ -613,7 +743,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/04/27/errbit/" data-id="cjfv4wzze001w8irclhia09vq" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/04/27/errbit/" data-id="cjg3tx4gn000y2ircc1rlqi6z" class="article-share-link">Share</a>
       
       
       
@@ -674,13 +804,14 @@ ga('send', 'pageview');
 
       
       
-        <p><br/></p>
+        <p><br></p>
 <p>少し前にRails4.2のActiveJobのバックエンドについて調べました。</p>
 <p><a href="http://chopschips.net/blog/2015/02/26/active-job/">Resque、SidekiqからSucker PunchまでActiveJobのバックエンドについてひと通り調べてみた</a></p>
-<p>このとき<a href="https://github.com/mperham/sidekiq">Sidekiq</a>のコードを読んで、<a href="https://github.com/celluloid/celluloid">Celluloid</a>によるアクターモデルで並行処理を実装していることを知りました。<br>ちょうどScalaやErlangでアクターを使う方法を調べていたところだったので興味がわき、Celluloidを利用したアプリケーションのサンプルとして読んでみることにしました。</p>
+<p>このとき<a href="https://github.com/mperham/sidekiq" target="_blank" rel="noopener">Sidekiq</a>のコードを読んで、<a href="https://github.com/celluloid/celluloid" target="_blank" rel="noopener">Celluloid</a>によるアクターモデルで並行処理を実装していることを知りました。
+ちょうどScalaやErlangでアクターを使う方法を調べていたところだったので興味がわき、Celluloidを利用したアプリケーションのサンプルとして読んでみることにしました。</p>
 <p>その時見つけた愉快なメソッドを紹介します。</p>
 <p>今回読んだSidekiqのバージョンは3.3.3です。</p>
-<h2 id="注意事項">注意事項</h2><ul>
+<h2 id="注意事項"><a href="#注意事項" class="headerlink" title="注意事項"></a>注意事項</h2><ul>
 <li>本エントリはSidekiqやアクターの解説記事ではありません。</li>
 <li>記事に機種依存文字が含まれています。<ul>
 <li>OSXのChromeとFirefox、iOSのSafariとChromeでのみ表示を確認しています。</li>
@@ -698,7 +829,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-id="cjfv4wzzi00238irc5z63tzo4" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/" data-id="cjg3tx4ga000p2irc0la88cgm" class="article-share-link">Share</a>
       
       
       
@@ -759,13 +890,14 @@ ga('send', 'pageview');
 
       
       
-        <p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/">7 must have Development Gems to install on every project</a></p>
+        <p><a href="http://www.rubyonrails365.com/7-must-have-gems-to-install-on-any-project/" target="_blank" rel="noopener">7 must have Development Gems to install on every project</a></p>
 <p>この記事を読んでいて、Rails PanelというChrome拡張を知りました。</p>
 <ul>
-<li><a href="https://github.com/qqshfox/meta_request">qqshfox/meta_request</a></li>
-<li><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg">RailsPanel - Chrome ウェブストア</a></li>
+<li><a href="https://github.com/qqshfox/meta_request" target="_blank" rel="noopener">qqshfox/meta_request</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/railspanel/gjpfobpafnhjhbajcjgccbbdofdckggg" target="_blank" rel="noopener">RailsPanel - Chrome ウェブストア</a></li>
 </ul>
-<h1 id="Rails_Panelでできること">Rails Panelでできること</h1><p>デベロッパーツールにRailsというパネルが追加されます。<br>このパネルでは、ページリクエスト単位で下記のような情報を表示することができます。</p>
+<h1 id="Rails-Panelでできること"><a href="#Rails-Panelでできること" class="headerlink" title="Rails Panelでできること"></a>Rails Panelでできること</h1><p>デベロッパーツールにRailsというパネルが追加されます。
+このパネルでは、ページリクエスト単位で下記のような情報を表示することができます。</p>
 <ul>
 <li>Breakdown: 処理時間の内訳(ActiveRecord, Rendering, Other)</li>
 <li>Params: コントローラから参照できるparamsの内容</li>
@@ -784,7 +916,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/03/06/rails-panel/" data-id="cjfv4wzzm002a8irc52zdzcvs" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/03/06/rails-panel/" data-id="cjg3tx4gi000v2ircb1e1880g" class="article-share-link">Share</a>
       
       
       
@@ -845,10 +977,13 @@ ga('send', 'pageview');
 
       
       
-        <h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由">ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
-<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、<br>ActiveJobはジョブを記述するためのインタフェースを抽象化して、<br>ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。<br>なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
+        <h1 id="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由"><a href="#ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由" class="headerlink" title="ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由"></a>ActiveJobのバックエンドと、永続化先としてRedisが好まれる理由</h1><p>Rails 4.2で、ActiveJobというクラスが導入されました。</p>
+<p>これ以前より、Railsで非同期処理を行う際にはResqueやSidekiq、Delayed Jobなどが広く使われていましたが、
+ActiveJobはジョブを記述するためのインタフェースを抽象化して、
+ジョブの実装を変えること無くジョブランナーを切り替えることを可能にするものです。
+なおActiveJobにおいては、バックエンドを指定しなければジョブは非同期実行しようとしても即座に実行されます。</p>
 <p>Rails 4.2.0時点では、ActiveJobのバックエンドとして以下のページにある9つのいずれかを使用できます。</p>
-<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html">ActiveJob::QueueAdapters</a></p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html" target="_blank" rel="noopener">ActiveJob::QueueAdapters</a></p>
 <ul>
 <li>Backburner</li>
 <li>Delayed Job</li>
@@ -861,12 +996,15 @@ ga('send', 'pageview');
 <li>Sucker Punch</li>
 </ul>
 <p>ちなみにRuby ToolboxのBackground Jobsというカテゴリの上位3つは、Resque、Sidekiq、Delayed Jobでした。この3つがよく使われている印象です。</p>
-<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
+<p><a href="https://www.ruby-toolbox.com/categories/Background_Jobs" target="_blank" rel="noopener">The Ruby Toolbox - Background Jobs: Save jobs in a queue and process them later wihout blocking your current thread</a></p>
 <p>特にResque、Sidekiqは、ジョブの情報を永続化する先としてRedisを必須としています。</p>
 <p>情報の保存先ならActiveRecord(RDBMS)でも良さそうなものですが、あえてRedisを必須としている理由は何だろうか考えてみました。</p>
-<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、<br>Redisの<a href="http://redis.io/topics/pubsub">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP">BLPOP</a>/<a href="http://redis.io/commands/brpop">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
-<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、<br>RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
-<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、<br>ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
+<p>ぱっと思いつくのは、「キューにジョブが積まれた」というイベントをワーカーへ伝えるための手段として、
+Redisの<a href="http://redis.io/topics/pubsub" target="_blank" rel="noopener">Pub/Sub</a>や<a href="http://redis.io/commands/BLPOP" target="_blank" rel="noopener">BLPOP</a>/<a href="http://redis.io/commands/brpop" target="_blank" rel="noopener">BRPOP</a>のようなメッセージング機構を使うのが簡単で都合が良かったのではないか？ということです。</p>
+<p>バックエンドにMySQLのようなRDBMSを使う場合、普通に考えるとワーカー側はジョブを保存したテーブルをロックしつつポーリングしないといけないのでスケールしなさそうだし、
+RabbitMQのようなメッセージングサービスを用いるのと比べて、RedisであればRailsエンジニアは元々better memcachedとして使用しているケースが多いので導入のハードルが低いです。</p>
+<p>というわけで、このエントリではResque、Sidekiqの2つについてはRedisのメッセージング機構を使っているかどうかを確認しつつ、
+ActiveJobのページに挙げられている9つのプロダクトについてジョブ情報の保存先を調べてまとめてみようと思います。</p>
 <p>9つの中で特にSucker Punchはジョブの保存先もワーカープロセスの起動も必要とせずに非同期処理を行えるので、簡単に作りたいならおすすめです。詳細は後述。</p>
         
           <p class="article-more-link">
@@ -878,84 +1016,11 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/02/26/active-job/" data-id="cjfv4wzzr002e8irc9cje57oi" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/02/26/active-job/" data-id="cjg3tx4ge000t2ircf0w4nib5" class="article-share-link">Share</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-macports-mysql2-gem" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/blog/2015/02/15/macports-mysql2-gem/" class="article-date">
-  <time datetime="2015-02-15T14:55:00.000Z" itemprop="datePublished">2015-02-15</time>
-</a>
-
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
-  </div>
-
-
-  </div>
-  <div class="article-inner">
-    
-
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-sharing">
-  <ul>
-    <li>
-      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
-    </li>
-    <li>
-      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" >Tweet</a>
-    </li>
-    <li>
-      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/"></div>
-    </li>
-  </ul>
-</div>
-
-      
-      
-        <p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
-<p>追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)</p>
-        
-          <p class="article-more-link">
-            <a href="/blog/2015/02/15/macports-mysql2-gem/#more">Read More</a>
-          </p>
-        
-      
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cjfv4wzzu002i8ircrlepnerr" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yosemite/">Yosemite</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
 
 
     </footer>
@@ -1006,6 +1071,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -1021,10 +1090,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1035,7 +1100,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -1045,7 +1110,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1055,7 +1120,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -1065,7 +1130,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1100,8 +1165,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -1115,7 +1180,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

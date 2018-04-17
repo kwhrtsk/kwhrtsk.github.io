@@ -9,26 +9,25 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,CentOS,Vagrant,yum,yum update,error,vboxsf,Guest Additions">
   
-  <meta name="description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。
-123456789101112$ vagrant up(snip)default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/">
+  <meta name="description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、 その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。 $ vagrant up  (snip)  default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/ruby/vagra">
+<meta name="keywords" content="CentOS,Vagrant,yum,yum update,error,vboxsf,Guest Additions">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処">
 <meta property="og:url" content="https://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。
-123456789101112$ vagrant up(snip)default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/">
+<meta property="og:description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、 その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。 $ vagrant up  (snip)  default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/ruby/vagra">
+<meta property="og:locale" content="ja">
 <meta property="og:updated_time" content="2015-08-17T15:41:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vagrantの上のCentOS 6.5でyum updateした後、vagrant upで発生したエラーの原因と対処">
-<meta name="twitter:description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。
-123456789101112$ vagrant up(snip)default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/">
+<meta name="twitter:description" content="概要Vagrant + VirtualBoxで動かしているCentOS 6.5のVMでyum updateしたら、 その後のvagrant up実行時にエラーが出るようになったので原因を調べてみました。 $ vagrant up  (snip)  default: /vagrant =&amp;gt; /Users/kawahara_taisuke/Documents/program/ruby/vagra">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -56,7 +55,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -89,7 +89,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -143,27 +143,176 @@ ga('send', 'pageview');
       
       
         
-        <h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
-<p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
+        <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、
+その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
+<pre><code>$ vagrant up
+
+(snip)
+
+default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test
+Failed to mount folders in Linux guest. This is usually because
+the &quot;vboxsf&quot; file system is not available. Please verify that
+the guest additions are properly installed in the guest and
+can work properly. The command attempted was:
+
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant
+</code></pre><p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
 <a id="more"></a>
-<h1 id="環境の詳細">環境の詳細</h1><p>Vagrantfileは下記の通り。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">Vagrant</span>.configure(<span class="number">2</span>) <span class="keyword">do</span> |config|</span><br><span class="line">  config.vm.box = <span class="string">"chef/centos-6.5"</span></span><br><span class="line">  config.vm.box_check_update = <span class="keyword">false</span></span><br><span class="line"></span><br><span class="line">  config.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.33.10"</span></span><br><span class="line"></span><br><span class="line">  config.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |vb|</span><br><span class="line">    <span class="comment"># Don't boot with headless mode</span></span><br><span class="line">    vb.gui = <span class="keyword">false</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment"># Use VBoxManage to customize the VM. For example to change memory:</span></span><br><span class="line">    vb.customize [<span class="string">"modifyvm"</span>, <span class="symbol">:id</span>, <span class="string">"--memory"</span>, <span class="string">"2048"</span>]</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>boxイメージはChef社のCentOS 6.5<br><a href="https://vagrantcloud.com/chef/centos-6.5" target="_blank" rel="external">https://vagrantcloud.com/chef/centos-6.5</a></p>
-<p>カーネルのアップデートによってVirtualBoxのGuest Additionsが動作しなくなり、<br>共有フォルダのマウントに失敗して上記のエラーが出るようになっていました。</p>
-<h1 id="エラー発生までの手順">エラー発生までの手順</h1><p>一回目の <code>vagrant up</code> は成功します。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up&#10;Bringing machine &#39;default&#39; up with &#39;virtualbox&#39; provider...&#10;==&#62; default: Importing base box &#39;chef/centos-6.5&#39;...&#10;==&#62; default: Matching MAC address for NAT networking...&#10;==&#62; default: Setting the name of the VM: vagrant-test_default_1410100159081_14315&#10;==&#62; default: Clearing any previously set network interfaces...&#10;==&#62; default: Preparing network interfaces based on configuration...&#10;&#10;(snip)&#10;&#10;==&#62; default: Checking for guest additions in VM...&#10;==&#62; default: Configuring and enabling network interfaces...&#10;==&#62; default: Mounting shared folders...&#10;    default: /vagrant =&#62; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test&#10;&#10;(snip)&#10;&#10;==&#62; default: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *&#10;==&#62; default: [2014-09-07T14:31:47+00:00] INFO: *** Chef 11.14.6 ***&#10;==&#62; default: [2014-09-07T14:31:47+00:00] INFO: Chef-client pid: 3272&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Run List is []&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Run List expands to []&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Starting Chef Run for localhost&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Running start handlers&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Start handlers complete.&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Chef Run complete in 0.050052809 seconds&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Running report handlers&#10;==&#62; default: [2014-09-07T14:31:49+00:00] INFO: Report handlers complete</span><br></pre></td></tr></table></figure>
+<h1 id="環境の詳細"><a href="#環境の詳細" class="headerlink" title="環境の詳細"></a>環境の詳細</h1><p>Vagrantfileは下記の通り。</p>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token constant">Vagrant</span><span class="token punctuation">.</span><span class="token function">configure</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span> <span class="token keyword">do</span> <span class="token operator">|</span>config<span class="token operator">|</span>
+  config<span class="token punctuation">.</span>vm<span class="token punctuation">.</span>box <span class="token operator">=</span> <span class="token string">"chef/centos-6.5"</span>
+  config<span class="token punctuation">.</span>vm<span class="token punctuation">.</span>box_check_update <span class="token operator">=</span> <span class="token keyword">false</span>
+
+  config<span class="token punctuation">.</span>vm<span class="token punctuation">.</span>network <span class="token string">"private_network"</span><span class="token punctuation">,</span> ip<span class="token punctuation">:</span> <span class="token string">"192.168.33.10"</span>
+
+  config<span class="token punctuation">.</span>vm<span class="token punctuation">.</span>provider <span class="token string">"virtualbox"</span> <span class="token keyword">do</span> <span class="token operator">|</span>vb<span class="token operator">|</span>
+    <span class="token comment" spellcheck="true"># Don't boot with headless mode</span>
+    vb<span class="token punctuation">.</span>gui <span class="token operator">=</span> <span class="token keyword">false</span>
+
+    <span class="token comment" spellcheck="true"># Use VBoxManage to customize the VM. For example to change memory:</span>
+    vb<span class="token punctuation">.</span>customize <span class="token punctuation">[</span><span class="token string">"modifyvm"</span><span class="token punctuation">,</span> <span class="token symbol">:id</span><span class="token punctuation">,</span> <span class="token string">"--memory"</span><span class="token punctuation">,</span> <span class="token string">"2048"</span><span class="token punctuation">]</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>boxイメージはChef社のCentOS 6.5<br><a href="https://vagrantcloud.com/chef/centos-6.5" target="_blank" rel="noopener">https://vagrantcloud.com/chef/centos-6.5</a></p>
+<p>カーネルのアップデートによってVirtualBoxのGuest Additionsが動作しなくなり、
+共有フォルダのマウントに失敗して上記のエラーが出るようになっていました。</p>
+<h1 id="エラー発生までの手順"><a href="#エラー発生までの手順" class="headerlink" title="エラー発生までの手順"></a>エラー発生までの手順</h1><p>一回目の <code>vagrant up</code> は成功します。</p>
+<pre class="line-numbers language-console"><code class="language-console">$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'chef/centos-6.5'...
+==> default: Matching MAC address for NAT networking...
+==> default: Setting the name of the VM: vagrant-test_default_1410100159081_14315
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+
+(snip)
+
+==> default: Checking for guest additions in VM...
+==> default: Configuring and enabling network interfaces...
+==> default: Mounting shared folders...
+    default: /vagrant => /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test
+
+(snip)
+
+==> default: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+==> default: [2014-09-07T14:31:47+00:00] INFO: *** Chef 11.14.6 ***
+==> default: [2014-09-07T14:31:47+00:00] INFO: Chef-client pid: 3272
+==> default: [2014-09-07T14:31:49+00:00] INFO: Run List is []
+==> default: [2014-09-07T14:31:49+00:00] INFO: Run List expands to []
+==> default: [2014-09-07T14:31:49+00:00] INFO: Starting Chef Run for localhost
+==> default: [2014-09-07T14:31:49+00:00] INFO: Running start handlers
+==> default: [2014-09-07T14:31:49+00:00] INFO: Start handlers complete.
+==> default: [2014-09-07T14:31:49+00:00] INFO: Chef Run complete in 0.050052809 seconds
+==> default: [2014-09-07T14:31:49+00:00] INFO: Running report handlers
+==> default: [2014-09-07T14:31:49+00:00] INFO: Report handlers complete
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>ゲストOSにログインして、<code>yum update</code>を実行します。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant ssh&#10;Last login: Fri Mar  7 16:57:20 2014 from 10.0.2.2&#10;[vagrant@localhost ~]$ sudo yum update -y&#10;Loaded plugins: fastestmirror&#10;Loading mirror speeds from cached hostfile&#10; * base: ftp.iij.ad.jp&#10; * extras: ftp.iij.ad.jp&#10; * updates: ftp.iij.ad.jp&#10;Setting up Update Process&#10;Resolving Dependencies&#10;--&#62; Running transaction check&#10;---&#62; Package audit.x86_64 0:2.2-2.el6 will be updated&#10;&#10;(snip)&#10;&#10;  Verifying  : libcurl-7.19.7-37.el6_4.x86_64                                                                                                                                                                                         121/121&#10;&#10;Installed:&#10;  kernel.x86_64 0:2.6.32-431.23.3.el6&#10;&#10;Updated:&#10;  audit.x86_64 0:2.2-4.el6_5                                   audit-libs.x86_64 0:2.2-4.el6_5                             ca-certificates.noarch 0:2014.1.98-65.0.el6_5             centos-release.x86_64 0:6-5.el6.centos.11.2&#10;  coreutils.x86_64 0:8.4-31.el6_5.2                            coreutils-libs.x86_64 0:8.4-31.el6_5.2                      cpio.x86_64 0:2.10-12.el6_5                               curl.x86_64 0:7.19.7-37.el6_5.3&#10;  device-mapper-persistent-data.x86_64 0:0.2.8-4.el6_5         dracut.noarch 0:004-336.el6_5.2                             dracut-kernel.noarch 0:004-336.el6_5.2                    e2fsprogs.x86_64 0:1.41.12-18.el6_5.1&#10;  e2fsprogs-libs.x86_64 0:1.41.12-18.el6_5.1                   ethtool.x86_64 2:3.5-1.4.el6_5                              glib2.x86_64 0:2.26.1-7.el6_5                             glibc.x86_64 0:2.12-1.132.el6_5.4&#10;  glibc-common.x86_64 0:2.12-1.132.el6_5.4                     grep.x86_64 0:2.6.3-4.el6_5.1                               grub.x86_64 1:0.97-84.el6_5                               initscripts.x86_64 0:9.03.40-2.el6.centos.4&#10;  iproute.x86_64 0:2.6.32-32.el6_5                             kernel-firmware.noarch 0:2.6.32-431.23.3.el6                krb5-libs.x86_64 0:1.10.3-15.el6_5.1                      libblkid.x86_64 0:2.17.2-12.14.el6_5&#10;  libcom_err.x86_64 0:1.41.12-18.el6_5.1                       libcurl.x86_64 0:7.19.7-37.el6_5.3                          libss.x86_64 0:1.41.12-18.el6_5.1                         libtasn1.x86_64 0:2.3-6.el6_5&#10;  libtirpc.x86_64 0:0.2.1-6.el6_5.2                            libuuid.x86_64 0:2.17.2-12.14.el6_5                         libxml2.x86_64 0:2.7.6-14.el6_5.2                         mysql-libs.x86_64 0:5.1.73-3.el6_5&#10;  nfs-utils.x86_64 1:1.2.3-39.el6_5.3                          nfs-utils-lib.x86_64 0:1.1.5-6.el6_5                        nspr.x86_64 0:4.10.6-1.el6_5                              nss.x86_64 0:3.16.1-4.el6_5&#10;  nss-softokn.x86_64 0:3.14.3-10.el6_5                         nss-softokn-freebl.x86_64 0:3.14.3-10.el6_5                 nss-sysinit.x86_64 0:3.16.1-4.el6_5                       nss-tools.x86_64 0:3.16.1-4.el6_5&#10;  nss-util.x86_64 0:3.16.1-1.el6_5                             openldap.x86_64 0:2.4.23-34.el6_5.1                         openssl.x86_64 0:1.0.1e-16.el6_5.15                       p11-kit.x86_64 0:0.18.5-2.el6_5.2&#10;  p11-kit-trust.x86_64 0:0.18.5-2.el6_5.2                      plymouth.x86_64 0:0.8.3-27.el6.centos.1                     plymouth-core-libs.x86_64 0:0.8.3-27.el6.centos.1         plymouth-scripts.x86_64 0:0.8.3-27.el6.centos.1&#10;  postfix.x86_64 2:2.6.6-6.el6_5                               psmisc.x86_64 0:22.6-19.el6_5                               python.x86_64 0:2.6.6-52.el6                              python-libs.x86_64 0:2.6.6-52.el6&#10;  selinux-policy.noarch 0:3.7.19-231.el6_5.3                   selinux-policy-targeted.noarch 0:3.7.19-231.el6_5.3         tzdata.noarch 0:2014e-1.el6                               upstart.x86_64 0:0.6.5-13.el6_5.3&#10;  util-linux-ng.x86_64 0:2.17.2-12.14.el6_5                    wget.x86_64 0:1.12-1.11.el6_5                               yum.noarch 0:3.2.29-43.el6.centos                         yum-plugin-fastestmirror.noarch 0:1.1.30-17.el6_5&#10;&#10;Complete!</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-console"><code class="language-console">$ vagrant ssh
+Last login: Fri Mar  7 16:57:20 2014 from 10.0.2.2
+[vagrant@localhost ~]$ sudo yum update -y
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.iij.ad.jp
+ * extras: ftp.iij.ad.jp
+ * updates: ftp.iij.ad.jp
+Setting up Update Process
+Resolving Dependencies
+--> Running transaction check
+---> Package audit.x86_64 0:2.2-2.el6 will be updated
+
+(snip)
+
+  Verifying  : libcurl-7.19.7-37.el6_4.x86_64                                                                                                                                                                                         121/121
+
+Installed:
+  kernel.x86_64 0:2.6.32-431.23.3.el6
+
+Updated:
+  audit.x86_64 0:2.2-4.el6_5                                   audit-libs.x86_64 0:2.2-4.el6_5                             ca-certificates.noarch 0:2014.1.98-65.0.el6_5             centos-release.x86_64 0:6-5.el6.centos.11.2
+  coreutils.x86_64 0:8.4-31.el6_5.2                            coreutils-libs.x86_64 0:8.4-31.el6_5.2                      cpio.x86_64 0:2.10-12.el6_5                               curl.x86_64 0:7.19.7-37.el6_5.3
+  device-mapper-persistent-data.x86_64 0:0.2.8-4.el6_5         dracut.noarch 0:004-336.el6_5.2                             dracut-kernel.noarch 0:004-336.el6_5.2                    e2fsprogs.x86_64 0:1.41.12-18.el6_5.1
+  e2fsprogs-libs.x86_64 0:1.41.12-18.el6_5.1                   ethtool.x86_64 2:3.5-1.4.el6_5                              glib2.x86_64 0:2.26.1-7.el6_5                             glibc.x86_64 0:2.12-1.132.el6_5.4
+  glibc-common.x86_64 0:2.12-1.132.el6_5.4                     grep.x86_64 0:2.6.3-4.el6_5.1                               grub.x86_64 1:0.97-84.el6_5                               initscripts.x86_64 0:9.03.40-2.el6.centos.4
+  iproute.x86_64 0:2.6.32-32.el6_5                             kernel-firmware.noarch 0:2.6.32-431.23.3.el6                krb5-libs.x86_64 0:1.10.3-15.el6_5.1                      libblkid.x86_64 0:2.17.2-12.14.el6_5
+  libcom_err.x86_64 0:1.41.12-18.el6_5.1                       libcurl.x86_64 0:7.19.7-37.el6_5.3                          libss.x86_64 0:1.41.12-18.el6_5.1                         libtasn1.x86_64 0:2.3-6.el6_5
+  libtirpc.x86_64 0:0.2.1-6.el6_5.2                            libuuid.x86_64 0:2.17.2-12.14.el6_5                         libxml2.x86_64 0:2.7.6-14.el6_5.2                         mysql-libs.x86_64 0:5.1.73-3.el6_5
+  nfs-utils.x86_64 1:1.2.3-39.el6_5.3                          nfs-utils-lib.x86_64 0:1.1.5-6.el6_5                        nspr.x86_64 0:4.10.6-1.el6_5                              nss.x86_64 0:3.16.1-4.el6_5
+  nss-softokn.x86_64 0:3.14.3-10.el6_5                         nss-softokn-freebl.x86_64 0:3.14.3-10.el6_5                 nss-sysinit.x86_64 0:3.16.1-4.el6_5                       nss-tools.x86_64 0:3.16.1-4.el6_5
+  nss-util.x86_64 0:3.16.1-1.el6_5                             openldap.x86_64 0:2.4.23-34.el6_5.1                         openssl.x86_64 0:1.0.1e-16.el6_5.15                       p11-kit.x86_64 0:0.18.5-2.el6_5.2
+  p11-kit-trust.x86_64 0:0.18.5-2.el6_5.2                      plymouth.x86_64 0:0.8.3-27.el6.centos.1                     plymouth-core-libs.x86_64 0:0.8.3-27.el6.centos.1         plymouth-scripts.x86_64 0:0.8.3-27.el6.centos.1
+  postfix.x86_64 2:2.6.6-6.el6_5                               psmisc.x86_64 0:22.6-19.el6_5                               python.x86_64 0:2.6.6-52.el6                              python-libs.x86_64 0:2.6.6-52.el6
+  selinux-policy.noarch 0:3.7.19-231.el6_5.3                   selinux-policy-targeted.noarch 0:3.7.19-231.el6_5.3         tzdata.noarch 0:2014e-1.el6                               upstart.x86_64 0:0.6.5-13.el6_5.3
+  util-linux-ng.x86_64 0:2.17.2-12.14.el6_5                    wget.x86_64 0:1.12-1.11.el6_5                               yum.noarch 0:3.2.29-43.el6.centos                         yum-plugin-fastestmirror.noarch 0:1.1.30-17.el6_5
+
+Complete!
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>次に<code>vagrant halt</code>して<code>vagrant up</code>すると、下記のように失敗します。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant halt&#10;==&#62; default: Attempting graceful shutdown of VM...&#10;$ vagrant up&#10;Bringing machine &#39;default&#39; up with &#39;virtualbox&#39; provider...&#10;==&#62; default: Clearing any previously set forwarded ports...&#10;==&#62; default: Clearing any previously set network interfaces...&#10;==&#62; default: Preparing network interfaces based on configuration...&#10;    default: Adapter 1: nat&#10;    default: Adapter 2: hostonly&#10;==&#62; default: Forwarding ports...&#10;    default: 22 =&#62; 2222 (adapter 1)&#10;==&#62; default: Running &#39;pre-boot&#39; VM customizations...&#10;==&#62; default: Booting VM...&#10;==&#62; default: Waiting for machine to boot. This may take a few minutes...&#10;    default: SSH address: 127.0.0.1:2222&#10;    default: SSH username: vagrant&#10;    default: SSH auth method: private key&#10;    default: Warning: Connection timeout. Retrying...&#10;==&#62; default: Machine booted and ready!&#10;==&#62; default: Checking for guest additions in VM...&#10;==&#62; default: Configuring and enabling network interfaces...&#10;==&#62; default: Mounting shared folders...&#10;    default: /vagrant =&#62; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test&#10;Failed to mount folders in Linux guest. This is usually because&#10;the &#34;vboxsf&#34; file system is not available. Please verify that&#10;the guest additions are properly installed in the guest and&#10;can work properly. The command attempted was:&#10;&#10;mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant&#10;mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
-<p><code>yum update</code>でカーネルが更新されたことでVirtualBoxのGuest Additionsが動作しなくなり、<br><code>vagrant up</code> の途中で共有フォルダのマウントに失敗していた、というのがこのエラーの原因だったようです。</p>
+<pre class="line-numbers language-console"><code class="language-console">$ vagrant halt
+==> default: Attempting graceful shutdown of VM...
+$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Clearing any previously set forwarded ports...
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+    default: Adapter 2: hostonly
+==> default: Forwarding ports...
+    default: 22 => 2222 (adapter 1)
+==> default: Running 'pre-boot' VM customizations...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+    default: Warning: Connection timeout. Retrying...
+==> default: Machine booted and ready!
+==> default: Checking for guest additions in VM...
+==> default: Configuring and enabling network interfaces...
+==> default: Mounting shared folders...
+    default: /vagrant => /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test
+Failed to mount folders in Linux guest. This is usually because
+the "vboxsf" file system is not available. Please verify that
+the guest additions are properly installed in the guest and
+can work properly. The command attempted was:
+
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>yum update</code>でカーネルが更新されたことでVirtualBoxのGuest Additionsが動作しなくなり、
+<code>vagrant up</code> の途中で共有フォルダのマウントに失敗していた、というのがこのエラーの原因だったようです。</p>
 <p>もう一度ゲストOSにログインして、Guest Additionsを再ビルドします。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># &#12499;&#12523;&#12489;&#12395;&#24517;&#35201;&#12394;&#12497;&#12483;&#12465;&#12540;&#12472;&#12434;&#12452;&#12531;&#12473;&#12488;&#12540;&#12523;&#10;$ sudo yum install -y gcc perl kernel-devel&#10;&#10;# &#12499;&#12523;&#12489;&#12434;&#23455;&#34892;&#10;sudo /etc/init.d/vboxadd setup&#10;Removing existing VirtualBox non-DKMS kernel modules       [  OK  ]&#10;Building the VirtualBox Guest Additions kernel modules&#10;Building the main Guest Additions module                   [  OK  ]&#10;Building the shared folder support module                  [  OK  ]&#10;Building the OpenGL support module                         [  OK  ]&#10;Doing non-kernel setup of the Guest Additions              [  OK  ]</span><br></pre></td></tr></table></figure>
-<p>新しいVMを立ち上げた時に<code>yum update</code>を一回実行しておきたい、というのはよくあると思うので、できれば自動化したいところ。<br>/etc/init.d/vboxadd setupはカーネルをアップデートして再起動した後でなければ意味が無いため、手順は少し複雑になります。</p>
+<pre class="line-numbers language-console"><code class="language-console"># ビルドに必要なパッケージをインストール
+$ sudo yum install -y gcc perl kernel-devel
+
+# ビルドを実行
+sudo /etc/init.d/vboxadd setup
+Removing existing VirtualBox non-DKMS kernel modules       [  OK  ]
+Building the VirtualBox Guest Additions kernel modules
+Building the main Guest Additions module                   [  OK  ]
+Building the shared folder support module                  [  OK  ]
+Building the OpenGL support module                         [  OK  ]
+Doing non-kernel setup of the Guest Additions              [  OK  ]
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新しいVMを立ち上げた時に<code>yum update</code>を一回実行しておきたい、というのはよくあると思うので、できれば自動化したいところ。
+/etc/init.d/vboxadd setupはカーネルをアップデートして再起動した後でなければ意味が無いため、手順は少し複雑になります。</p>
 <p>chefで書いてみたらこんな感じです。/etc/rc.localにスクリプトを追加した後、実行後に自己消去します。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">execute <span class="string">'yum-update'</span> <span class="keyword">do</span></span><br><span class="line">  command &lt;&lt;-<span class="constant">SCRIPT</span></span><br><span class="line">    yum update -y                        &amp;&amp; \</span><br><span class="line">    yum install -y gcc perl kernel-devel &amp;&amp; \</span><br><span class="line">    cat &lt;&lt;<span class="constant">EOF</span> <span class="prompt">&gt;&gt; </span>/etc/rc.local</span><br><span class="line">/etc/init.d/vboxadd setup; touch /root/.yum-updated</span><br><span class="line">mv /etc/rc.local /etc/rc.local.off; sed -e <span class="string">'\\$d'</span> /etc/rc.local.off | sed -e <span class="string">'\\$d'</span> &gt; <span class="regexp">/etc/rc</span>.local; rm -f /etc/rc.local.off</span><br><span class="line"><span class="constant">EOF</span></span><br><span class="line">    shutdown -r now</span><br><span class="line">  <span class="constant">SCRIPT</span></span><br><span class="line">  creates <span class="string">'/root/.yum-updated'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>もっとスマートな書き方がある気がする。<br>なお共有フォルダを有効にするには、このレシピの適用後に最低でも<code>vagrant reload</code>を一回実行する必要があります。</p>
+<pre class="line-numbers language-ruby"><code class="language-ruby">execute <span class="token string">'yum-update'</span> <span class="token keyword">do</span>
+  command <span class="token operator">&lt;</span><span class="token operator">&lt;</span><span class="token operator">-</span><span class="token constant">SCRIPT</span>
+    yum update <span class="token operator">-</span>y                        <span class="token operator">&amp;&amp;</span> \
+    yum install <span class="token operator">-</span>y gcc perl kernel<span class="token operator">-</span>devel <span class="token operator">&amp;&amp;</span> \
+    cat <span class="token operator">&lt;</span><span class="token operator">&lt;</span><span class="token constant">EOF</span> <span class="token operator">></span><span class="token operator">></span> <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local
+<span class="token operator">/</span>etc<span class="token operator">/</span>init<span class="token punctuation">.</span>d<span class="token operator">/</span>vboxadd setup<span class="token punctuation">;</span> touch <span class="token regex">/root/</span><span class="token punctuation">.</span>yum<span class="token operator">-</span>updated
+mv <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local<span class="token punctuation">.</span>off<span class="token punctuation">;</span> sed <span class="token operator">-</span>e <span class="token string">'\\$d'</span> <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local<span class="token punctuation">.</span>off <span class="token operator">|</span> sed <span class="token operator">-</span>e <span class="token string">'\\$d'</span> <span class="token operator">></span> <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local<span class="token punctuation">;</span> rm <span class="token operator">-</span>f <span class="token operator">/</span>etc<span class="token operator">/</span>rc<span class="token punctuation">.</span>local<span class="token punctuation">.</span>off
+<span class="token constant">EOF</span>
+    shutdown <span class="token operator">-</span>r now
+  <span class="token constant">SCRIPT</span>
+  creates <span class="token string">'/root/.yum-updated'</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>もっとスマートな書き方がある気がする。
+なお共有フォルダを有効にするには、このレシピの適用後に最低でも<code>vagrant reload</code>を一回実行する必要があります。</p>
 <p>だいぶ無理筋な感じがするので素直に<code>yum update</code>後のboxを作ったほうが良いかもしれません。</p>
 
       
@@ -190,7 +339,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cjfv4x003002w8irc0tszct4y" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cjg3tx4g4000h2ircb6ojke65" class="article-share-link">Share</a>
       
       
       
@@ -259,6 +408,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -274,10 +427,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -288,7 +437,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -298,7 +447,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -308,7 +457,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -318,7 +467,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -353,8 +502,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -368,7 +517,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

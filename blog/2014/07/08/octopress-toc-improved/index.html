@@ -9,35 +9,25 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,octopress,目次,見出し">
   
-  <meta name="description" content="以前このような記事を書きました。
-Octopressで見出しの目次を作る方法 - 割り箸ポテチ
-この記事を読まれた方から、より良い方法を教えて頂きました。
-Octopressで見出しタグを目次にする方法 - Qiita
-jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。修正する理由は下記で解説されています。jekyll-toc-generatorを個別ペ">
+  <meta name="description" content="以前このような記事を書きました。 Octopressで見出しの目次を作る方法 - 割り箸ポテチ この記事を読まれた方から、より良い方法を教えて頂きました。 Octopressで見出しタグを目次にする方法 - Qiita jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。 修正する理由は下記で解説されています。 jekyll-toc-generatorを個">
+<meta name="keywords" content="octopress,目次,見出し">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Octopressで見出しの目次を作る方法 改">
 <meta property="og:url" content="https://chopschips.net/blog/2014/07/08/octopress-toc-improved/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="以前このような記事を書きました。
-Octopressで見出しの目次を作る方法 - 割り箸ポテチ
-この記事を読まれた方から、より良い方法を教えて頂きました。
-Octopressで見出しタグを目次にする方法 - Qiita
-jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。修正する理由は下記で解説されています。jekyll-toc-generatorを個別ペ">
+<meta property="og:description" content="以前このような記事を書きました。 Octopressで見出しの目次を作る方法 - 割り箸ポテチ この記事を読まれた方から、より良い方法を教えて頂きました。 Octopressで見出しタグを目次にする方法 - Qiita jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。 修正する理由は下記で解説されています。 jekyll-toc-generatorを個">
+<meta property="og:locale" content="ja">
 <meta property="og:updated_time" content="2017-10-23T13:42:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Octopressで見出しの目次を作る方法 改">
-<meta name="twitter:description" content="以前このような記事を書きました。
-Octopressで見出しの目次を作る方法 - 割り箸ポテチ
-この記事を読まれた方から、より良い方法を教えて頂きました。
-Octopressで見出しタグを目次にする方法 - Qiita
-jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。修正する理由は下記で解説されています。jekyll-toc-generatorを個別ペ">
+<meta name="twitter:description" content="以前このような記事を書きました。 Octopressで見出しの目次を作る方法 - 割り箸ポテチ この記事を読まれた方から、より良い方法を教えて頂きました。 Octopressで見出しタグを目次にする方法 - Qiita jekyll-toc-generatorというjekyllのプラグインを修正して使う方法です。 修正する理由は下記で解説されています。 jekyll-toc-generatorを個">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -65,7 +55,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -98,7 +89,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -155,17 +146,39 @@ ga('send', 'pageview');
         <p>以前このような記事を書きました。</p>
 <p><a href="http://chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
 <p>この記事を読まれた方から、より良い方法を教えて頂きました。</p>
-<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e" target="_blank" rel="external">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
-<p><a href="https://github.com/dafi/jekyll-toc-generator" target="_blank" rel="external">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。<br>修正する理由は下記で解説されています。<br><a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/" target="_blank" rel="external">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
-<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。<br>勉強になりました。その手があったか。</p>
+<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e" target="_blank" rel="noopener">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
+<p><a href="https://github.com/dafi/jekyll-toc-generator" target="_blank" rel="noopener">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。
+修正する理由は下記で解説されています。
+<a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/" target="_blank" rel="noopener">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
+<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。
+勉強になりました。その手があったか。</p>
 <p>で、試してみたところ概ね自分の望むとおりに動いていました。素晴らしいです。</p>
-<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、<br>カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、<br>オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
+<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、
+カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、
+オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
 <p>修正した後のコードは下記です。</p>
 <a id="more"></a>
-<p><a href="https://github.com/KawaharaTaisuke/jekyll-toc-generator/commit/18fbd3be566304a566bb2209b3189262a2bf892a" target="_blank" rel="external">https://github.com/KawaharaTaisuke/jekyll-toc-generator/commit/18fbd3be566304a566bb2209b3189262a2bf892a</a></p>
-<p><code>page_url</code>オプションでページの絶対パスを指定できます。<br><code>source/_includes/article.html</code>の修正例は下記の通り。</p>
-<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"># source/_includes/article.html</span><br><span class="line"></span><br><span class="line"># (snip)</span><br><span class="line"></span><br><span class="line">&#123;% raw %&#125;</span><br><span class="line">&#123;% if index %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"entry-content"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">toc</span>_<span class="variable">generate</span> <span class="variable">page</span>_<span class="variable">url</span>: <span class="variable">post.url</span> | <span class="variable">excerpt</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  &#123;% capture excerpted %&#125;</span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">has</span>_<span class="variable">excerpt</span> &#125;&#125;</span><span class="xml">&#123;% endcapture %&#125;</span><br><span class="line">  &#123;% if excerpted == 'true' %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="title">footer</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">a</span> <span class="attribute">rel</span>=<span class="value">"full-article"</span> <span class="attribute">href</span>=<span class="value">"</span></span></span><span class="expression">&#123;&#123; <span class="variable">root</span>_<span class="variable">url</span> &#125;&#125;</span><span class="xml"><span class="tag"><span class="value"></span></span></span><span class="expression">&#123;&#123; <span class="variable">post.url</span> &#125;&#125;</span><span class="xml"><span class="tag"><span class="value">"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">site.excerpt</span>_<span class="variable">link</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">a</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">footer</span>&gt;</span></span><br><span class="line">  &#123;% endif %&#125;</span><br><span class="line">&#123;% else %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"entry-content"</span>&gt;</span></span><span class="expression">&#123;&#123; <span class="variable">content</span> | <span class="variable">toc</span>_<span class="variable">generate</span> <span class="variable">page</span>_<span class="variable">url</span>: <span class="variable">post.url</span> &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">&#123;% endif %&#125;</span><br><span class="line">&#123;% endraw %&#125;</span></span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/KawaharaTaisuke/jekyll-toc-generator/commit/18fbd3be566304a566bb2209b3189262a2bf892a" target="_blank" rel="noopener">https://github.com/KawaharaTaisuke/jekyll-toc-generator/commit/18fbd3be566304a566bb2209b3189262a2bf892a</a></p>
+<p><code>page_url</code>オプションでページの絶対パスを指定できます。
+<code>source/_includes/article.html</code>の修正例は下記の通り。</p>
+<pre><code># source/_includes/article.html
 
+# (snip)
+
+{% raw %}
+{% if index %}
+  <div class="entry-content">{{ content | toc_generate page_url: post.url | excerpt }}</div>
+  {% capture excerpted %}{{ content | has_excerpt }}{% endcapture %}
+  {% if excerpted == 'true' %}
+    <footer>
+      <a rel="full-article" href="{{ root_url }}{{ post.url }}">{{ site.excerpt_link }}</a>
+    </footer>
+  {% endif %}
+{% else %}
+<div class="entry-content">{{ content | toc_generate page_url: post.url }}</div>
+{% endif %}
+{% endraw %}
+</code></pre>
       
       
         
@@ -190,7 +203,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cjfv4x00b00358irce05vc5v6" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cjg3tx4fo00072irctxdo9ma4" class="article-share-link">Share</a>
       
       
       
@@ -259,6 +272,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -274,10 +291,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -288,7 +301,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -298,7 +311,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -308,7 +321,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -318,7 +331,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -353,8 +366,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -368,7 +381,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

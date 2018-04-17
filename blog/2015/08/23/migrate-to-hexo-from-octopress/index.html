@@ -9,26 +9,25 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,hexo,octopress,移行">
   
-  <meta name="description" content="ブログエンジンをOctopressからHexoへ移行しました。
-この記事では自分の場合の移行の手順についてまとめます。">
+  <meta name="description" content="ブログエンジンをOctopressからHexoへ移行しました。 この記事では自分の場合の移行の手順についてまとめます。">
+<meta name="keywords" content="hexo,octopress,移行">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OctopressからHexoへの移行">
 <meta property="og:url" content="https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="ブログエンジンをOctopressからHexoへ移行しました。
-この記事では自分の場合の移行の手順についてまとめます。">
+<meta property="og:description" content="ブログエンジンをOctopressからHexoへ移行しました。 この記事では自分の場合の移行の手順についてまとめます。">
+<meta property="og:locale" content="ja">
 <meta property="og:updated_time" content="2017-10-23T13:42:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OctopressからHexoへの移行">
-<meta name="twitter:description" content="ブログエンジンをOctopressからHexoへ移行しました。
-この記事では自分の場合の移行の手順についてまとめます。">
+<meta name="twitter:description" content="ブログエンジンをOctopressからHexoへ移行しました。 この記事では自分の場合の移行の手順についてまとめます。">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -56,7 +55,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -89,7 +89,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -143,20 +143,42 @@ ga('send', 'pageview');
       
       
         
-        <p>ブログエンジンを<a href="http://octopress.org/" target="_blank" rel="external">Octopress</a>から<a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>へ移行しました。</p>
+        <p>ブログエンジンを<a href="http://octopress.org/" target="_blank" rel="noopener">Octopress</a>から<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>へ移行しました。</p>
 <p>この記事では自分の場合の移行の手順についてまとめます。</p>
 <a id="more"></a>
-<h2 id="コンテンツデータの移行">コンテンツデータの移行</h2><p>記事や画像などのコンテンツデータの移行は、自分の場合はほぼこれだけでOKでした。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新しいhexoのルートディレクトリを作成</span></span><br><span class="line">mkdir hexo</span><br><span class="line"><span class="built_in">cd</span> hexo</span><br><span class="line">hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 投稿記事をコピー</span></span><br><span class="line">cp -pr ../octopress/<span class="built_in">source</span>/_posts/*.markdown <span class="built_in">source</span>/_posts/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拡張子をmdに変更</span></span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> *.markdown; <span class="keyword">do</span> <span class="built_in">echo</span> mv <span class="variable">$f</span> <span class="variable">$&#123;f:r&#125;</span>.md; <span class="keyword">done</span> | sh -x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 投稿の先頭行(`---`)を削除</span></span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> <span class="built_in">source</span>/_posts/*.md; <span class="keyword">do</span> sed -i <span class="string">""</span> <span class="operator">-e</span> <span class="string">'1,1d'</span> <span class="variable">$f</span>; <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 画像をコピー</span></span><br><span class="line">cp -pr ../octopress/<span class="built_in">source</span>/images <span class="built_in">source</span>/</span><br><span class="line"></span><br><span class="line"><span class="comment"># その他のファイルをコピー(CNAMEは独自ドメインの場合のみ)</span></span><br><span class="line">cp -p ../octopress/public/&#123;CNAME,favicon.ico&#125; <span class="built_in">source</span>/</span><br></pre></td></tr></table></figure>
-<p>ただし、Octopressの <code>include</code> に相当する機能はHexoには無いので、その記事についてはベタッとinclude先をコピーしました。</p>
-<h2 id="設定ファイルの編集(_config-yml)">設定ファイルの編集(<code>_config.yml</code>)</h2><p>従来の投稿のパーマリンク、および今後のパーマリンクの構造をOctopressと同じにするため、<code>_config.yml</code> で下記のように設定を変更しました。</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">permalink:</span> blog/<span class="symbol">:year/</span><span class="symbol">:month/</span><span class="symbol">:day/</span><span class="symbol">:title/</span></span><br><span class="line"><span class="symbol">new_post_name:</span> <span class="symbol">:year-</span><span class="symbol">:month-</span><span class="symbol">:day-</span><span class="symbol">:title</span>.md</span><br></pre></td></tr></table></figure>
-<p>デプロイ先はGitHubなので、下記の設定を追加しました。</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">deploy</span>:</span><br><span class="line">  <span class="attribute">type</span>: git</span><br><span class="line">  <span class="attribute">repo</span>: git<span class="variable">@github</span>.<span class="attribute">com</span>:kwhrtsk/kwhrtsk.github.io.git</span><br></pre></td></tr></table></figure>
-<p>テーマはしっくり来るものがなかったので、Landscapeをベースに自作したものを使っています。<br>見た目はほとんどLandscapeのままですが、特にモバイルでのコードの表示量や、サイドバーにAbout追加したり細かい修正を加えています。</p>
+<h2 id="コンテンツデータの移行"><a href="#コンテンツデータの移行" class="headerlink" title="コンテンツデータの移行"></a>コンテンツデータの移行</h2><p>記事や画像などのコンテンツデータの移行は、自分の場合はほぼこれだけでOKでした。</p>
+<pre><code># 新しいhexoのルートディレクトリを作成
+mkdir hexo
+cd hexo
+hexo init
+
+# 投稿記事をコピー
+cp -pr ../octopress/source/_posts/*.markdown source/_posts/
+
+# 拡張子をmdに変更
+for f in *.markdown; do echo mv $f ${f:r}.md; done | sh -x
+
+# 投稿の先頭行(`---`)を削除
+for f in source/_posts/*.md; do sed -i &quot;&quot; -e &#39;1,1d&#39; $f; done
+
+# 画像をコピー
+cp -pr ../octopress/source/images source/
+
+# その他のファイルをコピー(CNAMEは独自ドメインの場合のみ)
+cp -p ../octopress/public/{CNAME,favicon.ico} source/
+</code></pre><p>ただし、Octopressの <code>include</code> に相当する機能はHexoには無いので、その記事についてはベタッとinclude先をコピーしました。</p>
+<h2 id="設定ファイルの編集-config-yml"><a href="#設定ファイルの編集-config-yml" class="headerlink" title="設定ファイルの編集(_config.yml)"></a>設定ファイルの編集(<code>_config.yml</code>)</h2><p>従来の投稿のパーマリンク、および今後のパーマリンクの構造をOctopressと同じにするため、<code>_config.yml</code> で下記のように設定を変更しました。</p>
+<pre><code>permalink: blog/:year/:month/:day/:title/
+new_post_name: :year-:month-:day-:title.md
+</code></pre><p>デプロイ先はGitHubなので、下記の設定を追加しました。</p>
+<pre><code>deploy:
+  type: git
+  repo: git@github.com:kwhrtsk/kwhrtsk.github.io.git
+</code></pre><p>テーマはしっくり来るものがなかったので、Landscapeをベースに自作したものを使っています。
+見た目はほとんどLandscapeのままですが、特にモバイルでのコードの表示量や、サイドバーにAbout追加したり細かい修正を加えています。</p>
 <p>これについては別の記事で。</p>
 <p><a href="http://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a></p>
-<h2 id="プラグインの追加">プラグインの追加</h2><p>下記のプラグインを追加しました。</p>
+<h2 id="プラグインの追加"><a href="#プラグインの追加" class="headerlink" title="プラグインの追加"></a>プラグインの追加</h2><p>下記のプラグインを追加しました。</p>
 <ul>
 <li><code>hexo-generator-feed</code><ul>
 <li>/atom.xmlの出力のため</li>
@@ -175,12 +197,18 @@ ga('send', 'pageview');
 </ul>
 </li>
 </ul>
-<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">npm</span> install --save         <span class="string">\</span></span><br><span class="line">  hexo-generator-feed      <span class="string">\</span></span><br><span class="line">  hexo-generator-sitemap   <span class="string">\</span></span><br><span class="line">  hexo-generator-robotstxt <span class="string">\</span></span><br><span class="line">  hexo-deployer-git</span><br></pre></td></tr></table></figure>
-<p>ここまでやれば、次のコマンドでローカルにサーバを立ち上げて、<a href="http://localhost:4000/" target="_blank" rel="external">http://localhost:4000/</a> でプレビューを確認できます。<br>記事や<code>_config.yml</code>の変更は随時反映されます。</p>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo <span class="keyword">server</span></span><br></pre></td></tr></table></figure>
-<p>デプロイは下記のコマンドです。</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">hexo</span> deploy</span><br></pre></td></tr></table></figure>
-<p><code>.deploy_git/</code> ディレクトリ以下にデプロイ用のリポジトリが作られて、<br><code>_config.yml</code>で指定したリポジトリにpushされます。(octopressのコミットはすべて消えます)</p>
+<pre><code>npm install --save         \
+  hexo-generator-feed      \
+  hexo-generator-sitemap   \
+  hexo-generator-robotstxt \
+  hexo-deployer-git
+</code></pre><p>ここまでやれば、次のコマンドでローカルにサーバを立ち上げて、<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> でプレビューを確認できます。
+記事や<code>_config.yml</code>の変更は随時反映されます。</p>
+<pre><code>hexo server
+</code></pre><p>デプロイは下記のコマンドです。</p>
+<pre><code>hexo deploy
+</code></pre><p><code>.deploy_git/</code> ディレクトリ以下にデプロイ用のリポジトリが作られて、
+<code>_config.yml</code>で指定したリポジトリにpushされます。(octopressのコミットはすべて消えます)</p>
 
       
       
@@ -206,7 +234,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cjfv4wzz9001o8irch5w92ht1" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/" data-id="cjg3tx4gy00152irctbcsiby2" class="article-share-link">Share</a>
       
       
       
@@ -275,6 +303,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -290,10 +322,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -304,7 +332,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -314,7 +342,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -324,7 +352,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -334,7 +362,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -369,8 +397,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -384,7 +412,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

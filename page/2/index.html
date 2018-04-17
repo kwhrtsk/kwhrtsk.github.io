@@ -15,6 +15,7 @@
 <meta property="og:url" content="https://chopschips.net/page/2/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
+<meta property="og:locale" content="ja">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="割り箸ポテチ">
 <meta name="twitter:description" content="このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。">
@@ -24,7 +25,7 @@
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -52,7 +53,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -85,7 +87,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -93,6 +95,79 @@ ga('send', 'pageview');
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-macports-mysql2-gem" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2015/02/15/macports-mysql2-gem/" class="article-date">
+  <time datetime="2015-02-15T14:55:00.000Z" itemprop="datePublished">2015-02-15</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2015/02/15/macports-mysql2-gem/">Mac(Yosemite)にMySQL 5.6とmysql2 gemをインストールする方法</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        <p>Mac(OSX 10.10: Yosemite, 10.11: El Capitan)にMySQL 5.6とmysql2 gemをインストールする方法のメモです。<br>MacPortsを使う方法と、Oracleが配布しているコミュニティ版を使う方法について述べます。</p>
+<p>追記(2016-03-11): El Capitanの場合の手順を追加(コミュニティ版のみ確認)</p>
+        
+          <p class="article-more-link">
+            <a href="/blog/2015/02/15/macports-mysql2-gem/#more">Read More</a>
+          </p>
+        
+      
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2015/02/15/macports-mysql2-gem/" data-id="cjg3tx4g8000m2irc2xbgv3gr" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yosemite/">Yosemite</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ruby/">ruby</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-chef-12" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -143,29 +218,56 @@ ga('send', 'pageview');
         
         <p>Chef バージョン12がリリースされました。</p>
 <p>ところで下記のニュースで気になる記述がありました。</p>
-<blockquote><p>ビジネスモデル面でも変更があり、<br>オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、<br>新たにフリーミアムサブスクリプションモデルを導入した。<br>新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（ホステッド版では5ノードまで）の設定管理が可能となっている。</p>
-<footer><strong>Source Forge.JP Magazine</strong><cite><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化</a></cite></footer></blockquote>
-<p><strong>オープンソース版のライセンスが変わって、25ノードまでの台数制限が入った</strong><br>ようにも読めます。</p>
+<blockquote><p>ビジネスモデル面でも変更があり、
+オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、
+新たにフリーミアムサブスクリプションモデルを導入した。
+新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（ホステッド版では5ノードまで）の設定管理が可能となっている。</p>
+<footer><strong>Source Forge.JP Magazine</strong><cite><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="noopener">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化</a></cite></footer></blockquote>
+<p><strong>オープンソース版のライセンスが変わって、25ノードまでの台数制限が入った</strong>
+ようにも読めます。</p>
 <p><strong>マジか。</strong></p>
 <p>さすがにそれは無いだろうと思ったけど念の為に本家の情報を確認。</p>
-<p><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></p>
+<p><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Chef | IT automation for speed and awesomeness | Chef</a></p>
 <p>上記のページより、ライセンスと価格についての表示を引用します。</p>
 <img src="/images/post_20140910_chef_12/ss_01.png">
 <p>CHEF Essentialsというのがオープンソース版ですね。ここに下記のような記述があります。</p>
 <blockquote><p>Premium Features</p>
-<p>・Access to premium features for up to 25 nodes<br>・Hosting available for up to 5 nodes</p>
-<footer><strong>Chef</strong><cite><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Plans and Pricing</a></cite></footer></blockquote>
-<p>つまり25ノードに制限されるのは、Essentials版そのものではなく、<br>SubscriptionとEnterprise Subscriptionの欄に書かれている<br><strong>Premium Features</strong>だけです。</p>
+<p>・Access to premium features for up to 25 nodes
+・Hosting available for up to 5 nodes</p>
+<footer><strong>Chef</strong><cite><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Plans and Pricing</a></cite></footer></blockquote>
+<p>つまり25ノードに制限されるのは、Essentials版そのものではなく、
+SubscriptionとEnterprise Subscriptionの欄に書かれている
+<strong>Premium Features</strong>だけです。</p>
 <blockquote><p>Premium Features</p>
-<p>・Management console with reporting and role-based access control<br>・Analytics platform<br>・High availability<br>・Replication<br>・Available as hosted service</p>
+<p>・Management console with reporting and role-based access control
+・Analytics platform
+・High availability
+・Replication
+・Available as hosted service</p>
 </blockquote>
 <p>以下の機能はEssentials版でも無制限に利用できます。</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">✔ Chef server</span><br><span class="line"></span><br><span class="line">    ✔ Manage <span class="number">10</span>,<span class="number">000</span>+ Nodes <span class="operator">with</span> <span class="operator">a</span> single Chef server</span><br><span class="line">    ✔ Maintain <span class="operator">a</span> searchable blueprint <span class="operator">of</span> your infrastructure</span><br><span class="line">    ✔ Easy Installation <span class="operator">with</span> Omnibus installer</span><br><span class="line"></span><br><span class="line">✔ Chef client</span><br><span class="line"></span><br><span class="line">    ✔ Easily manage Linux, Windows, Mac OS, Solaris, <span class="operator">and</span> FreeBSD</span><br><span class="line"></span><br><span class="line">✔ Chef development kit</span><br><span class="line"></span><br><span class="line">    ✔ Everything you need <span class="built_in">to</span> <span class="built_in">start</span> managing applications <span class="operator">and</span> infrastructure <span class="operator">with</span> Chef</span><br><span class="line">    ✔ Download <span class="operator">and</span> install <span class="operator">in</span> just <span class="operator">a</span> few clicks</span><br><span class="line"></span><br><span class="line">✔ Integration <span class="operator">with</span> all major cloud providers</span><br><span class="line">✔ Easily manage containers <span class="operator">in</span> <span class="operator">a</span> versionable, testable <span class="operator">and</span> repeatable way.</span><br></pre></td></tr></table></figure>
-<p>ありえないと思ったんだけどドキドキした。</p>
-<p>何か勘違いがあれば <a href="https://twitter.com/KawaharaTaisuke" target="_blank" rel="external">@KawaharaTaisuke</a> 宛までご指摘いただけましたら幸いです。</p>
-<h2 id="リンク">リンク</h2><ul>
-<li><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化 | SourceForge.JP Magazine</a></li>
-<li><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></li>
+<pre><code>✔ Chef server
+
+    ✔ Manage 10,000+ Nodes with a single Chef server
+    ✔ Maintain a searchable blueprint of your infrastructure
+    ✔ Easy Installation with Omnibus installer
+
+✔ Chef client
+
+    ✔ Easily manage Linux, Windows, Mac OS, Solaris, and FreeBSD
+
+✔ Chef development kit
+
+    ✔ Everything you need to start managing applications and infrastructure with Chef
+    ✔ Download and install in just a few clicks
+
+✔ Integration with all major cloud providers
+✔ Easily manage containers in a versionable, testable and repeatable way. 
+</code></pre><p>ありえないと思ったんだけどドキドキした。</p>
+<p>何か勘違いがあれば <a href="https://twitter.com/KawaharaTaisuke" target="_blank" rel="noopener">@KawaharaTaisuke</a> 宛までご指摘いただけましたら幸いです。</p>
+<h2 id="リンク"><a href="#リンク" class="headerlink" title="リンク"></a>リンク</h2><ul>
+<li><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="noopener">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化 | SourceForge.JP Magazine</a></li>
+<li><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Chef | IT automation for speed and awesomeness | Chef</a></li>
 </ul>
 
       
@@ -173,7 +275,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/10/chef-12/" data-id="cjfv4x000002t8ircr1l99oqc" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/10/chef-12/" data-id="cjg3tx4fz000f2irck6j0aohh" class="article-share-link">Share</a>
       
       
       
@@ -231,8 +333,30 @@ ga('send', 'pageview');
       
       
         <p>knife-soloをインストールしたら何故かchef 12.0.0.alphaがインストールされてしまいました。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ gem install knife-solo</span><br><span class="line">Fetching: chef-zero-<span class="number">2.2</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-zero-<span class="number">2.2</span></span><br><span class="line">Fetching: chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span>.gem (<span class="number">100</span>%)</span><br><span class="line">Successfully installed chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Thanks <span class="keyword">for</span> installing knife-solo!</span><br><span class="line"></span><br><span class="line">If you run into any issues please let us know at:</span><br><span class="line">  https:<span class="comment">//github.com/matschaffer/knife-solo/issues</span></span><br><span class="line"></span><br><span class="line">If you are upgrading knife-solo please uninstall any old versions by</span><br><span class="line">running `gem clean knife-solo` to avoid any errors.</span><br><span class="line"></span><br><span class="line">See http:<span class="comment">//bit.ly/CHEF-3255 for more information on the knife bug</span></span><br><span class="line">that causes <span class="keyword">this</span>.</span><br><span class="line">Successfully installed knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-<span class="number">12.0</span><span class="number">.0</span>.alpha<span class="number">.1</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Installing ri documentation <span class="keyword">for</span> chef-zero-<span class="number">2.2</span></span><br><span class="line">Parsing documentation <span class="keyword">for</span> knife-solo-<span class="number">0.4</span><span class="number">.2</span></span><br><span class="line">Done installing documentation <span class="keyword">for</span> chef, chef-zero, knife-solo after <span class="number">20</span> seconds</span><br><span class="line"><span class="number">3</span> gems installed</span><br></pre></td></tr></table></figure>
-<p>opscodeのchefのインストーラはまだ未対応なのか、<code>knife solo prepare</code>が失敗するようになってしまいました。</p>
+<pre><code>$ gem install knife-solo
+Fetching: chef-zero-2.2.gem (100%)
+Successfully installed chef-zero-2.2
+Fetching: chef-12.0.0.alpha.1.gem (100%)
+Successfully installed chef-12.0.0.alpha.1
+Thanks for installing knife-solo!
+
+If you run into any issues please let us know at:
+  https://github.com/matschaffer/knife-solo/issues
+
+If you are upgrading knife-solo please uninstall any old versions by
+running `gem clean knife-solo` to avoid any errors.
+
+See http://bit.ly/CHEF-3255 for more information on the knife bug
+that causes this.
+Successfully installed knife-solo-0.4.2
+Parsing documentation for chef-12.0.0.alpha.1
+Installing ri documentation for chef-12.0.0.alpha.1
+Parsing documentation for chef-zero-2.2
+Installing ri documentation for chef-zero-2.2
+Parsing documentation for knife-solo-0.4.2
+Done installing documentation for chef, chef-zero, knife-solo after 20 seconds
+3 gems installed
+</code></pre><p>opscodeのchefのインストーラはまだ未対応なのか、<code>knife solo prepare</code>が失敗するようになってしまいました。</p>
         
           <p class="article-more-link">
             <a href="/blog/2014/09/09/chef-alpha/#more">Read More</a>
@@ -243,7 +367,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/09/chef-alpha/" data-id="cjfv4wzzy002r8ircwvnq928u" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/09/chef-alpha/" data-id="cjg3tx4fu000b2irc4aso80vm" class="article-share-link">Share</a>
       
       
       
@@ -304,9 +428,21 @@ ga('send', 'pageview');
 
       
       
-        <h1 id="概要">概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、<br>その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ vagrant up</span><br><span class="line"></span><br><span class="line">(snip)</span><br><span class="line"></span><br><span class="line">default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test</span><br><span class="line">Failed <span class="built_in">to</span> mount <span class="built_in">folders</span> <span class="operator">in</span> Linux guest. This is usually because</span><br><span class="line"><span class="operator">the</span> <span class="string">"vboxsf"</span> <span class="built_in">file</span> <span class="keyword">system</span> is <span class="operator">not</span> available. Please verify that</span><br><span class="line"><span class="operator">the</span> guest additions are properly installed <span class="operator">in</span> <span class="operator">the</span> guest <span class="operator">and</span></span><br><span class="line">can work properly. The <span class="command"><span class="keyword">command</span> <span class="title">attempted</span> <span class="title">was</span>:</span></span><br><span class="line"></span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant</span><br><span class="line">mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant</span><br></pre></td></tr></table></figure>
-<p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
+        <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Vagrant + VirtualBoxで動かしているCentOS 6.5のVMで<code>yum update</code>したら、
+その後の<code>vagrant up</code>実行時にエラーが出るようになったので原因を調べてみました。</p>
+<pre><code>$ vagrant up
+
+(snip)
+
+default: /vagrant =&gt; /Users/kawahara_taisuke/Documents/program/ruby/vagrant-test
+Failed to mount folders in Linux guest. This is usually because
+the &quot;vboxsf&quot; file system is not available. Please verify that
+the guest additions are properly installed in the guest and
+can work properly. The command attempted was:
+
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`getent group vagrant | cut -d: -f3` vagrant /vagrant
+mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g vagrant` vagrant /vagrant
+</code></pre><p>忘れた頃にまた踏みそうなのでメモしておきます。</p>
         
           <p class="article-more-link">
             <a href="/blog/2014/09/08/vagrant-problem-with-yum-update/#more">Read More</a>
@@ -317,7 +453,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cjfv4x003002w8irc0tszct4y" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/08/vagrant-problem-with-yum-update/" data-id="cjg3tx4g4000h2ircb6ojke65" class="article-share-link">Share</a>
       
       
       
@@ -378,19 +514,22 @@ ga('send', 'pageview');
 
       
       
-        <h1 id="前提と目標">前提と目標</h1><p>下記のような開発環境の構築手順をメモしておきます。</p>
+        <h1 id="前提と目標"><a href="#前提と目標" class="headerlink" title="前提と目標"></a>前提と目標</h1><p>下記のような開発環境の構築手順をメモしておきます。</p>
 <ul>
 <li>Mac OSX 10.9.4</li>
 <li>Scala 2.11.0</li>
 <li>SBT 0.13 (ビルドツール)</li>
-<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA 13.1</a> のCommunity Edition</li>
+<li><a href="http://www.jetbrains.com/idea/" target="_blank" rel="noopener">IntelliJ IDEA 13.1</a> のCommunity Edition</li>
 <li>IdeaVIMの設定(操作をvimライクに)</li>
 <li>ターミナル用のScala環境の構築(scalaenv)</li>
 </ul>
 <p>IntelliJ IDEA上でHello Worldを動かすところまでの手順を説明します。</p>
 <p>ScalaとSBTはIntelliJのプラグインによって自動的にインストールされるため、個別にインストールする必要はありません。</p>
-<p>現時点では、デフォルトのScalaのバージョンは2.10.4ですが、<br>SBTのビルド定義にバージョンを書けば、プロジェクトごとに異なるバージョンのScalaコンパイラでビルドできます。<br>具体例として2.11.0を使う方法を後述します。</p>
-<p>また、上記の方法はIntelliJ IDEAのプラグインがScala一式をインストールしてしまうので、<br>ターミナル用の実行環境としてscalaenvを少し紹介します。</p>
+<p>現時点では、デフォルトのScalaのバージョンは2.10.4ですが、
+SBTのビルド定義にバージョンを書けば、プロジェクトごとに異なるバージョンのScalaコンパイラでビルドできます。
+具体例として2.11.0を使う方法を後述します。</p>
+<p>また、上記の方法はIntelliJ IDEAのプラグインがScala一式をインストールしてしまうので、
+ターミナル用の実行環境としてscalaenvを少し紹介します。</p>
 <p>大半がIDEでの設定なので画像多め。</p>
         
           <p class="article-more-link">
@@ -402,7 +541,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/07/scala-get-started/" data-id="cjfv4x00700318ircdduhkke3" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/07/scala-get-started/" data-id="cjg3tx4fr000a2irch0pbmrqk" class="article-share-link">Share</a>
       
       
       
@@ -466,11 +605,16 @@ ga('send', 'pageview');
         <p>以前このような記事を書きました。</p>
 <p><a href="http://chopschips.net/blog/2014/06/16/octopress-toc/">Octopressで見出しの目次を作る方法 - 割り箸ポテチ</a></p>
 <p>この記事を読まれた方から、より良い方法を教えて頂きました。</p>
-<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
-<p><a href="https://github.com/dafi/jekyll-toc-generator">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。<br>修正する理由は下記で解説されています。<br><a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
-<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。<br>勉強になりました。その手があったか。</p>
+<p><a href="http://qiita.com/syui/items/564d1517fb1511c7069e" target="_blank" rel="noopener">Octopressで見出しタグを目次にする方法 - Qiita</a></p>
+<p><a href="https://github.com/dafi/jekyll-toc-generator" target="_blank" rel="noopener">jekyll-toc-generator</a>というjekyllのプラグインを修正して使う方法です。
+修正する理由は下記で解説されています。
+<a href="http://syui.github.io/blog/2014/07/07/github-content-plugin/" target="_blank" rel="noopener">jekyll-toc-generatorを個別ページで表示する場合の問題点 - MBA-HACK2</a></p>
+<p>rdiscountの見出し作成機能を使わず、フィルタで本文をパースして見出しを構成してしまうというアプローチでした。
+勉強になりました。その手があったか。</p>
 <p>で、試してみたところ概ね自分の望むとおりに動いていました。素晴らしいです。</p>
-<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、<br>カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、<br>オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
+<p>ただ一点だけ、<code>&lt;!-- more --&gt;</code>と<code>excerpt</code>で後半を省略する場合に、
+カレントページへのアンカーのままだとリンク先が省略されて意図した動作をしなくなるので、
+オプションで絶対パスを指定できるようにして使うことにしました。(あとatomに載った場合も困る)</p>
 <p>修正した後のコードは下記です。</p>
         
           <p class="article-more-link">
@@ -482,7 +626,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cjfv4x00b00358irce05vc5v6" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/07/08/octopress-toc-improved/" data-id="cjg3tx4fo00072irctxdo9ma4" class="article-share-link">Share</a>
       
       
       
@@ -544,14 +688,25 @@ ga('send', 'pageview');
       
       
         <p>これからRailsを覚える友人に書籍を薦める機会があればこの2冊を選びます。</p>
-<iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774165166&ref=qf_sp_asin_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe><br><iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774164100&ref=tf_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774165166&ref=qf_sp_asin_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<iframe src="http://rcm-fe.amazon-adsystem.com/e/cm?t=chopschips03-22&o=9&p=8&l=as1&asins=4774164100&ref=tf_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
 
-<p>特に1冊目の<br><a href="http://www.amazon.co.jp/gp/product/4774165166/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774165166&linkCode=as2&tag=chopschips03-22">パーフェクト Ruby on Rails</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774165166" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /><br>は<strong>「これからRailsを覚える同僚に紹介する」</strong>という用途にも最適な一冊だと思います。</p>
-<p>こういう書籍の内容は”Railsの標準機能”の枠に収まっている事が多いのですが、実際の開発現場においてはRails本体の機能ではないものの、<br>多くの現場でデファクトスタンダードになっているgemが数多く存在します。</p>
-<p>そのような情報に関してはアンテナを広げてキャッチアップしていくしかないのですが、<br>この書籍はRails非標準の内容にまで深く踏み込んでおり、初学者の最初の一歩をブーストしてくれます。<br>もちろん非標準の内容については広く普及しているかどうか(かつ長くその地位を保てるか)意見のわかれる点でもあるのですが、<br>少なくとも自分の主観で読み進めて違和感のある部分はほとんどありませんでした。</p>
-<p>Railsで初めてWebアプリ開発を行うという方には適切ではないかもしれませんが、<br>他の言語・フレームワークの経験があるような技術者にはこれくらいの内容のほうが効率が良いです。</p>
+<p>特に1冊目の
+<a href="http://www.amazon.co.jp/gp/product/4774165166/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774165166&linkCode=as2&tag=chopschips03-22" target="_blank" rel="noopener">パーフェクト Ruby on Rails</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774165166" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;">
+は<strong>「これからRailsを覚える同僚に紹介する」</strong>という用途にも最適な一冊だと思います。</p>
+<p>こういう書籍の内容は”Railsの標準機能”の枠に収まっている事が多いのですが、実際の開発現場においてはRails本体の機能ではないものの、
+多くの現場でデファクトスタンダードになっているgemが数多く存在します。</p>
+<p>そのような情報に関してはアンテナを広げてキャッチアップしていくしかないのですが、
+この書籍はRails非標準の内容にまで深く踏み込んでおり、初学者の最初の一歩をブーストしてくれます。
+もちろん非標準の内容については広く普及しているかどうか(かつ長くその地位を保てるか)意見のわかれる点でもあるのですが、
+少なくとも自分の主観で読み進めて違和感のある部分はほとんどありませんでした。</p>
+<p>Railsで初めてWebアプリ開発を行うという方には適切ではないかもしれませんが、
+他の言語・フレームワークの経験があるような技術者にはこれくらいの内容のほうが効率が良いです。</p>
 <p>具体的にどこがよかったかについては後半で述べます。</p>
-<p>2冊目の<br><a href="http://www.amazon.co.jp/gp/product/4774164100/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774164100&linkCode=as2&tag=chopschips03-22">Ruby on Rails 4 アプリケーションプログラミング</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774164100" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /><br>は、1冊めを補完する目的でおすすめです。<br>バリデータやビューのヘルパなどのリファレンス的な情報が豊富です。</p>
+<p>2冊目の
+<a href="http://www.amazon.co.jp/gp/product/4774164100/ref=as_li_tf_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=4774164100&linkCode=as2&tag=chopschips03-22" target="_blank" rel="noopener">Ruby on Rails 4 アプリケーションプログラミング</a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=chopschips03-22&l=as2&o=9&a=4774164100" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;">
+は、1冊めを補完する目的でおすすめです。
+バリデータやビューのヘルパなどのリファレンス的な情報が豊富です。</p>
 <p>今回は、特に”パーフェクトRuby on Rails”について良いと思った点をメモしておこうと思います。</p>
         
           <p class="article-more-link">
@@ -563,7 +718,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/" data-id="cjfv4x00e00388irct8bvf1ix" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/06/18/perfect-ruby-on-rails/" data-id="cjg3tx4fl00062ircj80ge0xf" class="article-share-link">Share</a>
       
       
       
@@ -625,7 +780,7 @@ ga('send', 'pageview');
       
       
         <p>以下の記事でWOVN.ioというサイトの多言語化(翻訳支援)サービスが紹介されているのを見ました。</p>
-<p><a href="http://jp.techcrunch.com/2014/06/16/wovnio/">JavaScript 1行でサイトを多言語化、ボタン一発翻訳の「WOVN.io」が良さそう | TechCrunch Japan</a></p>
+<p><a href="http://jp.techcrunch.com/2014/06/16/wovnio/" target="_blank" rel="noopener">JavaScript 1行でサイトを多言語化、ボタン一発翻訳の「WOVN.io」が良さそう | TechCrunch Japan</a></p>
 <p>さっそく試してみました。簡単に使用感など紹介してみたいと思います。</p>
         
           <p class="article-more-link">
@@ -637,7 +792,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/06/17/wovn/" data-id="cjfv4x00j003f8ircxbnifiwc" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/06/17/wovn/" data-id="cjg3tx4fc00052irchv0osdj4" class="article-share-link">Share</a>
       
       
       
@@ -718,7 +873,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/06/16/octopress-toc/" data-id="cjfv4x00p003m8irczhecsxcf" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/06/16/octopress-toc/" data-id="cjg3tx4f300022ircnxx6p5by" class="article-share-link">Share</a>
       
       
       
@@ -779,7 +934,12 @@ ga('send', 'pageview');
 
       
       
-        <h1 id="rbenvとruby-buildのインストール方法">rbenvとruby-buildのインストール方法</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/rbenv.git ~/.rbenv</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$HOME/.rbenv/bin:$PATH"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'eval "$(rbenv init -)"'</span> &gt;&gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+        <h1 id="rbenvとruby-buildのインストール方法"><a href="#rbenvとruby-buildのインストール方法" class="headerlink" title="rbenvとruby-buildのインストール方法"></a>rbenvとruby-buildのインストール方法</h1><pre><code class="bash">$ git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+$ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+$ echo &#39;export PATH=&quot;$HOME/.rbenv/bin:$PATH&quot;&#39; &gt;&gt; ~/.bash_profile
+$ echo &#39;eval &quot;$(rbenv init -)&quot;&#39; &gt;&gt; ~/.bash_profile
+$ source ~/.bash_profile
+</code></pre>
 <p><code>.bash_profile</code>は自分の使っているシェルに応じて<code>.zshrc</code>などに読み替えてください。</p>
         
           <p class="article-more-link">
@@ -791,7 +951,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/06/15/rbenv/" data-id="cjfv4x013003p8irc7947qk50" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/06/15/rbenv/" data-id="cjg3tx4en00002ircc4y1fpf4" class="article-share-link">Share</a>
       
       
       
@@ -846,6 +1006,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -861,10 +1025,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -875,7 +1035,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -885,7 +1045,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -895,7 +1055,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -905,7 +1065,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -940,8 +1100,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -955,7 +1115,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>

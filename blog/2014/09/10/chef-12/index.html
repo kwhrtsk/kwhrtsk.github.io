@@ -9,30 +9,27 @@
   
     <meta name="keywords" content="割り箸ポテチ, 河原太介,chef,chef 12,オープンソース,オープンソース版,essential,使用制限,ライセンス,台数制限">
   
-  <meta name="description" content="Chef バージョン12がリリースされました。
-ところで下記のニュースで気になる記述がありました。
-ビジネスモデル面でも変更があり、オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、新たにフリーミアムサブスクリプションモデルを導入した。新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（">
+  <meta name="description" content="Chef バージョン12がリリースされました。 ところで下記のニュースで気になる記述がありました。 ビジネスモデル面でも変更があり、 オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、 新たにフリーミアムサブスクリプションモデルを導入した。 新たに導入された無料の「Chef Essentials」プランでは、25ノード">
+<meta name="keywords" content="chef,chef 12,オープンソース,オープンソース版,essential,使用制限,ライセンス,台数制限">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Chef 12のオープンソース版と25ノード制限について">
 <meta property="og:url" content="https://chopschips.net/blog/2014/09/10/chef-12/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
-<meta property="og:description" content="Chef バージョン12がリリースされました。
-ところで下記のニュースで気になる記述がありました。
-ビジネスモデル面でも変更があり、オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、新たにフリーミアムサブスクリプションモデルを導入した。新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（">
+<meta property="og:description" content="Chef バージョン12がリリースされました。 ところで下記のニュースで気になる記述がありました。 ビジネスモデル面でも変更があり、 オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、 新たにフリーミアムサブスクリプションモデルを導入した。 新たに導入された無料の「Chef Essentials」プランでは、25ノード">
+<meta property="og:locale" content="ja">
 <meta property="og:image" content="https://chopschips.net/images/post_20140910_chef_12/ss_01.png">
 <meta property="og:updated_time" content="2015-08-23T14:11:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chef 12のオープンソース版と25ノード制限について">
-<meta name="twitter:description" content="Chef バージョン12がリリースされました。
-ところで下記のニュースで気になる記述がありました。
-ビジネスモデル面でも変更があり、オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、新たにフリーミアムサブスクリプションモデルを導入した。新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（">
+<meta name="twitter:description" content="Chef バージョン12がリリースされました。 ところで下記のニュースで気になる記述がありました。 ビジネスモデル面でも変更があり、 オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、 新たにフリーミアムサブスクリプションモデルを導入した。 新たに導入された無料の「Chef Essentials」プランでは、25ノード">
+<meta name="twitter:image" content="https://chopschips.net/images/post_20140910_chef_12/ss_01.png">
 <meta name="twitter:creator" content="@kwhrtsk">
   
     <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
   
   
   <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -60,7 +57,8 @@ ga('send', 'pageview');
 <!-- End Google Adsense -->
 
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   <div id="container">
@@ -93,7 +91,7 @@ ga('send', 'pageview');
         
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
       </div>
     </div>
   </div>
@@ -149,29 +147,56 @@ ga('send', 'pageview');
         
         <p>Chef バージョン12がリリースされました。</p>
 <p>ところで下記のニュースで気になる記述がありました。</p>
-<blockquote><p>ビジネスモデル面でも変更があり、<br>オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、<br>新たにフリーミアムサブスクリプションモデルを導入した。<br>新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（ホステッド版では5ノードまで）の設定管理が可能となっている。</p>
-<footer><strong>Source Forge.JP Magazine</strong><cite><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化</a></cite></footer></blockquote>
-<p><strong>オープンソース版のライセンスが変わって、25ノードまでの台数制限が入った</strong><br>ようにも読めます。</p>
+<blockquote><p>ビジネスモデル面でも変更があり、
+オープンソース版（「Chef Essentials」）と商用版（「Chef Enterprise」）を単一のコードベースに統一し、
+新たにフリーミアムサブスクリプションモデルを導入した。
+新たに導入された無料の「Chef Essentials」プランでは、25ノードまで（ホステッド版では5ノードまで）の設定管理が可能となっている。</p>
+<footer><strong>Source Forge.JP Magazine</strong><cite><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="noopener">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化</a></cite></footer></blockquote>
+<p><strong>オープンソース版のライセンスが変わって、25ノードまでの台数制限が入った</strong>
+ようにも読めます。</p>
 <p><strong>マジか。</strong></p>
 <p>さすがにそれは無いだろうと思ったけど念の為に本家の情報を確認。</p>
-<p><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></p>
+<p><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Chef | IT automation for speed and awesomeness | Chef</a></p>
 <p>上記のページより、ライセンスと価格についての表示を引用します。</p>
 <img src="/images/post_20140910_chef_12/ss_01.png">
 <p>CHEF Essentialsというのがオープンソース版ですね。ここに下記のような記述があります。</p>
 <blockquote><p>Premium Features</p>
-<p>・Access to premium features for up to 25 nodes<br>・Hosting available for up to 5 nodes</p>
-<footer><strong>Chef</strong><cite><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Plans and Pricing</a></cite></footer></blockquote>
-<p>つまり25ノードに制限されるのは、Essentials版そのものではなく、<br>SubscriptionとEnterprise Subscriptionの欄に書かれている<br><strong>Premium Features</strong>だけです。</p>
+<p>・Access to premium features for up to 25 nodes
+・Hosting available for up to 5 nodes</p>
+<footer><strong>Chef</strong><cite><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Plans and Pricing</a></cite></footer></blockquote>
+<p>つまり25ノードに制限されるのは、Essentials版そのものではなく、
+SubscriptionとEnterprise Subscriptionの欄に書かれている
+<strong>Premium Features</strong>だけです。</p>
 <blockquote><p>Premium Features</p>
-<p>・Management console with reporting and role-based access control<br>・Analytics platform<br>・High availability<br>・Replication<br>・Available as hosted service</p>
+<p>・Management console with reporting and role-based access control
+・Analytics platform
+・High availability
+・Replication
+・Available as hosted service</p>
 </blockquote>
 <p>以下の機能はEssentials版でも無制限に利用できます。</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">✔ Chef server</span><br><span class="line"></span><br><span class="line">    ✔ Manage <span class="number">10</span>,<span class="number">000</span>+ Nodes <span class="operator">with</span> <span class="operator">a</span> single Chef server</span><br><span class="line">    ✔ Maintain <span class="operator">a</span> searchable blueprint <span class="operator">of</span> your infrastructure</span><br><span class="line">    ✔ Easy Installation <span class="operator">with</span> Omnibus installer</span><br><span class="line"></span><br><span class="line">✔ Chef client</span><br><span class="line"></span><br><span class="line">    ✔ Easily manage Linux, Windows, Mac OS, Solaris, <span class="operator">and</span> FreeBSD</span><br><span class="line"></span><br><span class="line">✔ Chef development kit</span><br><span class="line"></span><br><span class="line">    ✔ Everything you need <span class="built_in">to</span> <span class="built_in">start</span> managing applications <span class="operator">and</span> infrastructure <span class="operator">with</span> Chef</span><br><span class="line">    ✔ Download <span class="operator">and</span> install <span class="operator">in</span> just <span class="operator">a</span> few clicks</span><br><span class="line"></span><br><span class="line">✔ Integration <span class="operator">with</span> all major cloud providers</span><br><span class="line">✔ Easily manage containers <span class="operator">in</span> <span class="operator">a</span> versionable, testable <span class="operator">and</span> repeatable way.</span><br></pre></td></tr></table></figure>
-<p>ありえないと思ったんだけどドキドキした。</p>
-<p>何か勘違いがあれば <a href="https://twitter.com/KawaharaTaisuke" target="_blank" rel="external">@KawaharaTaisuke</a> 宛までご指摘いただけましたら幸いです。</p>
-<h2 id="リンク">リンク</h2><ul>
-<li><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="external">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化 | SourceForge.JP Magazine</a></li>
-<li><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="external">Chef | IT automation for speed and awesomeness | Chef</a></li>
+<pre><code>✔ Chef server
+
+    ✔ Manage 10,000+ Nodes with a single Chef server
+    ✔ Maintain a searchable blueprint of your infrastructure
+    ✔ Easy Installation with Omnibus installer
+
+✔ Chef client
+
+    ✔ Easily manage Linux, Windows, Mac OS, Solaris, and FreeBSD
+
+✔ Chef development kit
+
+    ✔ Everything you need to start managing applications and infrastructure with Chef
+    ✔ Download and install in just a few clicks
+
+✔ Integration with all major cloud providers
+✔ Easily manage containers in a versionable, testable and repeatable way. 
+</code></pre><p>ありえないと思ったんだけどドキドキした。</p>
+<p>何か勘違いがあれば <a href="https://twitter.com/KawaharaTaisuke" target="_blank" rel="noopener">@KawaharaTaisuke</a> 宛までご指摘いただけましたら幸いです。</p>
+<h2 id="リンク"><a href="#リンク" class="headerlink" title="リンク"></a>リンク</h2><ul>
+<li><a href="http://sourceforge.jp/magazine/14/09/10/064900" target="_blank" rel="noopener">ITインフラ自動化ツール「Chef 12」がリリース、オープンソース版と商用版でコードを統一化 | SourceForge.JP Magazine</a></li>
+<li><a href="http://www.getchef.com/chef/#plans-and-pricing" target="_blank" rel="noopener">Chef | IT automation for speed and awesomeness | Chef</a></li>
 </ul>
 
       
@@ -198,7 +223,7 @@ ga('send', 'pageview');
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2014/09/10/chef-12/" data-id="cjfv4x000002t8ircr1l99oqc" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2014/09/10/chef-12/" data-id="cjg3tx4fz000f2irck6j0aohh" class="article-share-link">Share</a>
       
       
       
@@ -267,6 +292,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2018/04/11/rails-5-2-0/">Rails 5.2.0 で問題の起きるgem(simple_form, annotate)</a>
           </li>
         
@@ -282,10 +311,6 @@ ga('send', 'pageview');
             <a href="/blog/2015/08/24/hexo-theme-ingenuous/">技術ブログのためのHexoのテーマ Ingenuous をリリースしました</a>
           </li>
         
-          <li>
-            <a href="/blog/2015/08/23/migrate-to-hexo-from-octopress/">OctopressからHexoへの移行</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -296,7 +321,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 18px;">chef</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/hexo/" style="font-size: 12px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 14px;">octopress</a> <a href="/tags/rails/" style="font-size: 16px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 20px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 14px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
     </div>
   </div>
 
@@ -306,7 +331,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-tag" class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -316,7 +341,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-category" class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -326,7 +351,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -361,8 +386,8 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 <div id="fb-root"></div>
@@ -376,7 +401,7 @@ ga('send', 'pageview');
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
 
 
   </div>
