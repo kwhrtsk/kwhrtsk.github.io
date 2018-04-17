@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
-<meta property="og:updated_time" content="2018-04-17T16:36:00.240Z">
+<meta property="og:updated_time" content="2018-04-17T16:43:35.194Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bash&#x2F;zshとfzfでDocker関連コマンドの補完を行う方法">
 <meta name="twitter:description" content="dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒です。 公式のbash/zsh用補完スクリプトを使うと各種ID類も補完できるようになるのですが、 Docker for Macをインストールするだけではそれらのスクリプトは有効にならないので、使い方を解説します。 また、fzfを使って候補のフィルタリングや複数選択を楽に行えるようにする方法についても説明します">
@@ -223,26 +223,28 @@ bashの場合も <code>docker-fzf.bash</code> を取得して <code>~/.bash_prof
 # mkdir -p mkdir ~/.ghq/github.com/Mike-Now/
 # cd ~/.ghq/github.com/Mike-Now/
 # git clone https://github.com/Mike-Now/docker-fzf-completion
-</code></pre><pre><code># ~/.zshrc
+</code></pre><pre class="line-numbers language-zsh"><code class="language-zsh"># ~/.zshrc
 
 source ~/.ghq/github.com/Mike-Now/docker-fzf-completion/docker-fzf.zsh
-</code></pre><p>ただ、このままだと<code>docker rmi</code>のようにイメージを選択するコマンドでパラメータにイメージ名が入力されてしまうため、
-<code>none</code>のような名前のイメージが大量にあると正常に動作しません。
-下記のように修正するとイメージ名の代わりにイメージIDを入力するようになります。</p>
-<pre><code>diff --git a/docker-fzf.zsh b/docker-fzf.zsh
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>ただ、このままだと<code>docker rmi</code>のようにイメージを選択するコマンドでパラメータにイメージ名(リポジトリ:タグ)が入力されてしまうため、
+<code>&lt;none&gt;</code>と表示されているような無名のイメージに対しては正常に動作しません。
+<code>docker-fzf.zsh</code>を下記のように修正するとイメージ名の代わりにイメージIDを入力するようになるので無名のイメージに対しても操作できるようになります。</p>
+<pre class="line-numbers language-diff"><code class="language-diff">diff --git a/docker-fzf.zsh b/docker-fzf.zsh
 index e661ec9..db3dd6a 100644
---- a/docker-fzf.zsh
-+++ b/docker-fzf.zsh
+<span class="token coord">--- a/docker-fzf.zsh</span>
+<span class="token coord">+++ b/docker-fzf.zsh</span>
 @@ -13,7 +13,7 @@ _fzf_complete_docker_run () {
  }
 
  _fzf_complete_docker_common_post() {
--    awk -F&quot;\t&quot; &#39;{print $1}&#39;
-+    awk -F&quot;\t&quot; &#39;{print $2}&#39;
+<span class="token deleted">-    awk -F"\t" '{print $1}'</span>
+<span class="token inserted">+    awk -F"\t" '{print $2}'</span>
  }
 
  _fzf_complete_docker_common () {
-</code></pre><p>上記の修正を加えたフォークを下記に置いています。(オリジナルはMITライセンス)</p>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上記の修正を加えたフォークを下記に置いています。(オリジナルはMITライセンス)</p>
 <p><a href="https://github.com/kwhrtsk/docker-fzf-completion/blob/master/docker-fzf.zsh" target="_blank" rel="noopener">https://github.com/kwhrtsk/docker-fzf-completion/blob/master/docker-fzf.zsh</a></p>
 <h2 id="docker-fzf-completionの使い方"><a href="#docker-fzf-completionの使い方" class="headerlink" title="docker-fzf-completionの使い方"></a>docker-fzf-completionの使い方</h2><p><code>docker run</code>や<code>docker rm</code>のようなコマンドの後、<code>FZF_COMPLETION_TRIGGER</code>で指定した文字列(下記の例では<code>,</code>)を入力してタブを押すと補完が始まります(クリックで拡大)。</p>
 <img src="/images/post_20180417_docker_completion/docker-fzf-completion.gif">
@@ -279,7 +281,7 @@ index e661ec9..db3dd6a 100644
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3w3gb3001wn0rc7ytzuwge" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg3wdpw3001ncqrc2rjxe5cf" class="article-share-link">Share</a>
       
       
       
