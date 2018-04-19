@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-completion.gif">
 <meta property="og:image" content="https://chopschips.net/images/post_20180417_docker_completion/docker-fzf-completion.gif">
-<meta property="og:updated_time" content="2018-04-18T15:35:33.436Z">
+<meta property="og:updated_time" content="2018-04-19T14:52:02.110Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bash&#x2F;zshとfzfでDocker関連コマンドの補完を行う方法">
 <meta name="twitter:description" content="dockerコマンドはパラメータにコンテナIDやイメージIDを取るケースがあって入力が面倒です。 公式のbash/zsh用補完スクリプトを使うと各種ID類も補完できるようになるのですが、 Docker for Macをインストールするだけではそれらのスクリプトは有効にならないので、使い方を解説します。 また、fzfを使って候補のフィルタリングや複数選択を楽に行えるようにする方法についても説明します">
@@ -156,7 +156,7 @@ ga('send', 'pageview');
 公式のbash/zsh用補完スクリプトを使うと各種ID類も補完できるようになるのですが、
 Docker for Macをインストールするだけではそれらのスクリプトは有効にならないので、使い方を解説します。</p>
 <p>また、fzfを使って候補のフィルタリングや複数選択を楽に行えるようにする方法についても説明します。</p>
-<p>最終的にはこんな感じになります(クリックで拡大)。スマホで見てる人はズームしてください。</p>
+<p>最終的にはこんな感じになります。</p>
 <img src="/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <h1 id="dockerとdocker-composeの補完スクリプト"><a href="#dockerとdocker-composeの補完スクリプト" class="headerlink" title="dockerとdocker-composeの補完スクリプト"></a>dockerとdocker-composeの補完スクリプト</h1><p>Docker for Macにはbashとzsh用の補完スクリプトが同梱されています。</p>
 <pre><code>% ls -1 /Applications/Docker.app/Contents/Resources/etc/
@@ -167,7 +167,7 @@ docker-machine.zsh-completion
 docker.bash-completion
 docker.fish-completion
 docker.zsh-completion
-</code></pre><p>適切に設定すれば下記のようにサブコマンドやイメージIDなどを補完できます(クリックで拡大)。</p>
+</code></pre><p>適切に設定すれば下記のようにサブコマンドやイメージIDなどを補完できます。</p>
 <img src="/images/post_20180417_docker_completion/docker-completion.gif">
 <a id="more"></a>
 <h2 id="zshの場合"><a href="#zshの場合" class="headerlink" title="zshの場合"></a>zshの場合</h2><p>下記のように補完スクリプトのリンクを作って <code>~/.zshrc</code> で読み込むようにすると、
@@ -241,12 +241,9 @@ bashの場合も <code>docker-fzf.bash</code> を取得して <code>~/.bash_prof
 <li><code>start</code>には停止中のコンテナしか補完しないetc</li>
 </ul>
 </li>
-<li>イメージに対する操作で<code>リポジトリ名:タグ</code>の代わりに<code>IMAGE_ID</code>を使うように修正<ul>
-<li><code>&lt;none&gt;:&lt;none&gt;</code>と表示されているようなケースで正常に動作しないため</li>
+<li>イメージに対する操作で<code>リポジトリ名:タグ</code>が空(<code>&lt;none&gt;:&lt;none&gt;</code>)の場合は代わりに<code>IMAGE_ID</code>を使うように修正</li>
 </ul>
-</li>
-</ul>
-<h2 id="docker-fzf-completionの使い方"><a href="#docker-fzf-completionの使い方" class="headerlink" title="docker-fzf-completionの使い方"></a>docker-fzf-completionの使い方</h2><p><code>docker run</code>や<code>docker rm</code>のようなコマンドの後、<code>FZF_COMPLETION_TRIGGER</code>で指定した文字列(下記の例では<code>,</code>)を入力してタブを押すと補完が始まります(クリックで拡大)。</p>
+<h2 id="docker-fzf-completionの使い方"><a href="#docker-fzf-completionの使い方" class="headerlink" title="docker-fzf-completionの使い方"></a>docker-fzf-completionの使い方</h2><p><code>docker run</code>や<code>docker rm</code>のようなコマンドの後、<code>FZF_COMPLETION_TRIGGER</code>で指定した文字列(下記の例では<code>,</code>)を入力してタブを押すと補完が始まります。</p>
 <img src="/images/post_20180417_docker_completion/docker-fzf-completion.gif">
 <ul>
 <li>プロンプトに文字列を入力するとフィルタされます。</li>
@@ -281,7 +278,7 @@ bashの場合も <code>docker-fzf.bash</code> を取得して <code>~/.bash_prof
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg596elz0023lrrcx99vmahx" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="cjg6nc8ey001uabrcnudg3k4j" class="article-share-link">Share</a>
       
       
       
