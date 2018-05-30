@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails,helm">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第六回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  はじめにHelmについて簡単に">
+<meta name="keywords" content="docker,kubernetes,k8s,rails,helm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門6 Helm編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/helm-with-rails/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第六回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  はじめにHelmについて簡単に">
+<meta property="og:locale" content="ja">
+<meta property="og:updated_time" content="2018-05-30T16:27:46.988Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門6 Helm編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第六回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  はじめにHelmについて簡単に">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-helm-with-rails" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/helm-with-rails/" class="article-date">
+  <time datetime="2018-05-30T13:50:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/helm-with-rails/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/helm-with-rails/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/helm-with-rails/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#準備"><span class="toc-number">2.</span> <span class="toc-text">準備</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Helmとは"><span class="toc-number">3.</span> <span class="toc-text">Helmとは</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Helmをk8sにインストールする方法"><span class="toc-number">4.</span> <span class="toc-text">Helmをk8sにインストールする方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Helmによるパッケージ管理のチュートリアル"><span class="toc-number">5.</span> <span class="toc-text">Helmによるパッケージ管理のチュートリアル</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-update-repo-リポジトリ情報の更新"><span class="toc-number">5.1.</span> <span class="toc-text">helm update repo: リポジトリ情報の更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-search-Chartの検索"><span class="toc-number">5.2.</span> <span class="toc-text">helm search: Chartの検索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-inspect-Chartの詳細情報の表示"><span class="toc-number">5.3.</span> <span class="toc-text">helm inspect: Chartの詳細情報の表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-install-Chartのインストール（デプロイ）"><span class="toc-number">5.4.</span> <span class="toc-text">helm install: Chartのインストール（デプロイ）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-list-クラスタ上のChartインスタンス-Release-の一覧を表示"><span class="toc-number">5.5.</span> <span class="toc-text">helm list: クラスタ上のChartインスタンス(Release)の一覧を表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-upgrade-Chartの更新のデプロイ"><span class="toc-number">5.6.</span> <span class="toc-text">helm upgrade: Chartの更新のデプロイ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-delete-ReleaseとAPIオブジェクトの削除"><span class="toc-number">5.7.</span> <span class="toc-text">helm delete: ReleaseとAPIオブジェクトの削除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NamespaceとContextについて"><span class="toc-number">6.</span> <span class="toc-text">NamespaceとContextについて</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-get-contexts-Contextの一覧の表示"><span class="toc-number">6.1.</span> <span class="toc-text">kubectl config get-contexts: Contextの一覧の表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-current-context-現在有効になっているContext名の表示"><span class="toc-number">6.2.</span> <span class="toc-text">kubectl config current-context: 現在有効になっているContext名の表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-view-Contextの詳細の表示"><span class="toc-number">6.3.</span> <span class="toc-text">kubectl config view: Contextの詳細の表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-set-context-Contextの作成または更新"><span class="toc-number">6.4.</span> <span class="toc-text">kubectl config set-context: Contextの作成または更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-use-context-有効なContextを変更"><span class="toc-number">6.5.</span> <span class="toc-text">kubectl config use-context: 有効なContextを変更</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl-config-delete-context-Contextの削除"><span class="toc-number">6.6.</span> <span class="toc-text">kubectl config delete-context: Contextの削除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectxとkubens"><span class="toc-number">6.7.</span> <span class="toc-text">kubectxとkubens</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Namespaceの削除について"><span class="toc-number">6.8.</span> <span class="toc-text">Namespaceの削除について</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Chartの作り方"><span class="toc-number">7.</span> <span class="toc-text">Chartの作り方</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-upgrade-–install-作ったChartのデプロイ"><span class="toc-number">7.1.</span> <span class="toc-text">helm upgrade –install: 作ったChartのデプロイ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-template-テンプレートのレンダリング"><span class="toc-number">7.2.</span> <span class="toc-text">helm template: テンプレートのレンダリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-create-新しいChartの作成"><span class="toc-number">7.3.</span> <span class="toc-text">helm create: 新しいChartの作成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#テンプレート"><span class="toc-number">7.4.</span> <span class="toc-text">テンプレート</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#パラメータ化"><span class="toc-number">7.4.1.</span> <span class="toc-text">パラメータ化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#オブジェクトの名前"><span class="toc-number">7.4.2.</span> <span class="toc-text">オブジェクトの名前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ラベル"><span class="toc-number">7.4.3.</span> <span class="toc-text">ラベル</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#関数とパイプライン"><span class="toc-number">7.4.4.</span> <span class="toc-text">関数とパイプライン</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#フロー制御"><span class="toc-number">7.4.5.</span> <span class="toc-text">フロー制御</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#values-yaml"><span class="toc-number">7.5.</span> <span class="toc-text">values.yaml</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#values-yamlに含まれる秘密情報の暗号化"><span class="toc-number">7.6.</span> <span class="toc-text">values.yamlに含まれる秘密情報の暗号化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCP-KMSの準備"><span class="toc-number">7.6.1.</span> <span class="toc-text">GCP KMSの準備</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#yaml-vault"><span class="toc-number">7.6.2.</span> <span class="toc-text">yaml_vault</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sops"><span class="toc-number">7.6.3.</span> <span class="toc-text">sops</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Subchart"><span class="toc-number">7.7.</span> <span class="toc-text">Subchart</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#まとめ"><span class="toc-number">7.8.</span> <span class="toc-text">まとめ</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#自作のChartによるワークフロー"><span class="toc-number">8.</span> <span class="toc-text">自作のChartによるワークフロー</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-upgrade-Chartの更新を反映"><span class="toc-number">8.1.</span> <span class="toc-text">helm upgrade: Chartの更新を反映</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-history-Releaseの履歴を表示"><span class="toc-number">8.2.</span> <span class="toc-text">helm history: Releaseの履歴を表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-rollback-Releaseを前のリビジョンに戻す"><span class="toc-number">8.3.</span> <span class="toc-text">helm rollback: Releaseを前のリビジョンに戻す</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-get-Releaseの詳細を表示"><span class="toc-number">8.4.</span> <span class="toc-text">helm get: Releaseの詳細を表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helm-diff-Chartの差分を表示"><span class="toc-number">8.5.</span> <span class="toc-text">helm diff: Chartの差分を表示</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#おわりに"><span class="toc-number">9.</span> <span class="toc-text">おわりに</span></a></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。
+この記事はシリーズ連載記事の第六回です。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a></li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a></li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a></li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a></li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a></li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a></li>
+</ul>
+<p>はじめにHelmについて簡単に紹介した後、
+前回の <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a>
+で作成したマニフェストをもとにHelmチャートの作り方を説明します。</p>
+<p>サンプルコードは全て下記のリポジトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>macOSでの作業を前提としています。</li>
+<li>使用したツールのバージョンなどは <a href="/blog/2018/05/30/docker-with-rails/#前提">初回</a> の記事を参照してください。</li>
+<li>ツールのインストール手順は <a href="/blog/2018/05/30/kubernetes-tutorial/#開発環境の構築">第三回</a> の記事を参照してください。</li>
+</ul>
+<h1 id="準備"><a href="#準備" class="headerlink" title="準備"></a>準備</h1><p>まずサンプルアプリのコードをチェックアウトしてminikubeを起動してください。
+前回とほぼ同じですが、minikubeのメモリを3GBに増やしています。
+これは2GBだと後述するSentryの起動に失敗するためです。
+すでに2GBで作っている場合はminikubeインスタンスを作り直すか、
+Sentryを使った<code>helm</code>コマンドのチュートリアルを飛ばしてください。
+Railsのサンプルアプリは2GBでも動作します。</p>
+<p>また、今回は初めから<code>Ingress</code>アドオンを有効にしています。
+minikubeインスタンスを削除した場合は忘れずにもう一度有効にしてください。</p>
+<pre><code># サンプルアプリのコードをチェックアウト
+$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+
+# minikubeを起動
+$ minikube start --cpus=3 --memory=3072 --vm-driver=hyperkit --disk-size=12g
+
+# Ingressアドオンをインストール
+$ minikube addons enable ingress
+
+# kubernetesのダッシュボードをオープン
+$ minikube dashboard
+</code></pre><h1 id="Helmとは"><a href="#Helmとは" class="headerlink" title="Helmとは"></a>Helmとは</h1><p><a href="https://helm.sh/" target="_blank" rel="noopener">Helm - The Kubernetes Package Manager</a></p>
+<p>アプリケーションに必要なマニフェストファイル一式をパッケージ化して管理するためのツールです。
+これを使うと必要なコンテナをまとめてk8sにデプロイすることができます。
+このパッケージは<code>Chart</code>と呼ばれます。</p>
+<p>HelmではマニフェストファイルをGoの<a href="https://golang.org/pkg/text/template/" target="_blank" rel="noopener">text/template</a>形式でテンプレート化することができ、
+イメージのタグやレプリカの数など、マニフェストの一部をパラメータ化することができます。
+これらのパラメータは通常デフォルト値を持ち、Chartパッケージをk8sにデプロイ（インストール）する際に上書きできます。</p>
+<p>Helmでは公式リポジトリで配布されているChartをk8sクラスタにデプロイすることもできるし、
+自分で開発しているプライベートなアプリのChartを作成して、Helmでk8sにデプロイすることもできます。</p>
+<ul>
+<li><a href="https://docs.helm.sh/" target="_blank" rel="noopener">Helm Docs</a></li>
+</ul>
+<h1 id="Helmをk8sにインストールする方法"><a href="#Helmをk8sにインストールする方法" class="headerlink" title="Helmをk8sにインストールする方法"></a>Helmをk8sにインストールする方法</h1><p>Helmはクライアント・サーバモデルのアプリケーションです。
+k8sクラスタ側にTillerと呼ばれるサーバモジュールをインストールします。
+クライアントは<code>helm</code>コマンドです。</p>
+<p>minikubeの場合は下記のコマンドでTillerをインストールできます。</p>
+<pre><code># インストールが完了するまでブロック
+$ helm init --wait
+</code></pre><p>Tillerがインストールされているかどうかは下記のコマンドで確認できます。</p>
+<pre><code>$ helm version
+Client: &amp;version.Version{SemVer:&quot;v2.9.1&quot;, GitCommit:&quot;20adb27c7c5868466912eebdf6664e7390ebe710&quot;, GitTreeState:&quot;clean&quot;}
+Server: &amp;version.Version{SemVer:&quot;v2.9.1&quot;, GitCommit:&quot;20adb27c7c5868466912eebdf6664e7390ebe710&quot;, GitTreeState:&quot;clean&quot;}
+
+</code></pre><p>アンインストールは下記のコマンドです。</p>
+<pre><code>$ helm reset
+</code></pre><h1 id="Helmによるパッケージ管理のチュートリアル"><a href="#Helmによるパッケージ管理のチュートリアル" class="headerlink" title="Helmによるパッケージ管理のチュートリアル"></a>Helmによるパッケージ管理のチュートリアル</h1><p>この章では<a href="https://github.com/getsentry/sentry" target="_blank" rel="noopener">Sentry</a> というWebアプリを題材に、
+Chartを使ってアプリケーションをminikubeにデプロイするデモをします。</p>
+<p>Sentryはアプリケーションのエラー情報を収集してSlackなどに通知するためのサービスです。
+SentryのWebサービスはPythonで実装されていますが、Ruby用のクライアントもgemとして配布されており、Railsにも簡単に組み込むことができます。</p>
+<ul>
+<li><a href="https://github.com/getsentry/raven-ruby" target="_blank" rel="noopener">Raven is a Ruby client for Sentry</a></li>
+<li><a href="https://docs.sentry.io/clients/ruby/integrations/rails/" target="_blank" rel="noopener">Ruby on Rails – Sentry Documentation</a></li>
+</ul>
+<p><a href="https://sentry.io/welcome/" target="_blank" rel="noopener">SaaS</a>を利用することもできるのですが、
+<a href="https://hub.docker.com/_/sentry/" target="_blank" rel="noopener">公式のDockerイメージ</a>が配布されており、
+Dockerを使って自前で運用することもできます。</p>
+<p>Sentryサービスの内部構成はPythonのWebアプリ、バックグラウンドジョブのためのワーカー、PostgreSQLサーバ、Redisサーバとそれなりに複雑です。
+ただ、Helm Chartを使えば比較的簡単にセットアップすることが可能です。</p>
+<p>この章では<code>helm</code>コマンドのチュートリアルとしてminikube上にSentryをセットアップする手順を示します。</p>
+<a id="more"></a>
+<h2 id="helm-update-repo-リポジトリ情報の更新"><a href="#helm-update-repo-リポジトリ情報の更新" class="headerlink" title="helm update repo: リポジトリ情報の更新"></a>helm update repo: リポジトリ情報の更新</h2><p>公式のChartリポジトリはここです。</p>
+<p><a href="https://github.com/kubernetes/charts" target="_blank" rel="noopener">https://github.com/kubernetes/charts</a></p>
+<p>このリポジトリはstableとincubatorの二つに別れています。</p>
+<p><code>helm</code>コマンドはローカルにこのリポジトリの情報をキャッシュしています。
+下記のコマンドでこのキャッシュを更新することができます。</p>
+<pre><code>$ helm repo update
+...Skip local chart repository
+...Successfully got an update from the &quot;stable&quot; chart repository
+...Successfully got an update from the &quot;jenkins-x&quot; chart repository
+Update Complete. ⎈ Happy Helming!⎈
+</code></pre><h2 id="helm-search-Chartの検索"><a href="#helm-search-Chartの検索" class="headerlink" title="helm search: Chartの検索"></a>helm search: Chartの検索</h2><p><code>helm search</code>コマンドでstableのChartを検索することができます。</p>
+<pre><code>$ helm search sentry
+NAME            CHART VERSION   APP VERSION     DESCRIPTION
+stable/sentry   0.1.14          8.17            Sentry is a cross-platform crash reporting and ...
+</code></pre><p>少しややこしいですが、CHART VERSIONはマニフェストやパラメータ定義などこのChart自体のバージョンを示し、
+APP VERSIONはSentryのバージョンを示しています。</p>
+<p>パラメータなしで実行すると全てのChartを表示します。</p>
+<h2 id="helm-inspect-Chartの詳細情報の表示"><a href="#helm-inspect-Chartの詳細情報の表示" class="headerlink" title="helm inspect: Chartの詳細情報の表示"></a>helm inspect: Chartの詳細情報の表示</h2><p>Chartのメタ情報やパラメータのデフォルト値、READMEなどを表示するコマンドがあります。</p>
+<pre><code>$ helm inspect stable/sentry
+</code></pre><p>後述する<code>helm install</code>の<code>-f</code>や<code>--set</code>オプションで指定できるパラメータの一覧などを確認することができます。</p>
+<h2 id="helm-install-Chartのインストール（デプロイ）"><a href="#helm-install-Chartのインストール（デプロイ）" class="headerlink" title="helm install: Chartのインストール（デプロイ）"></a>helm install: Chartのインストール（デプロイ）</h2><p>下記のコマンドを実行すると、<code>stable/sentry</code>というChartをminikubeにデプロイします。</p>
+<pre><code>$ helm install stable/sentry \
+  --name sentry \
+  --namespace sentry \
+  --wait \
+  --timeout 600 \
+  --version 0.1.14 \
+  --set service.type=NodePort \
+  --set ingress.enabled=true \
+  --set ingress.hostname=$(minikube ip).nip.io \
+  --set image.tag=8.22 \
+  --set email.host=&quot;&quot; \
+  --set sentrySecret=sentry \
+  --set postgresql.postgresPassword=postgres \
+  --set redis.redisPassword=redis
+</code></pre><p>色々オプションを指定していますが、実際のところは<code>helm install stable/sentry</code>だけでも動作します。
+今回は比較的よく使いそうなオプションをまとめて紹介します。</p>
+<p>はじめに、特に重要な<code>--name</code>オプションについて説明します。
+k8sにデプロイされたChartのインスタンスは<code>Release</code>と呼ばれ、一意な名前を持ちます
+(Helmでは同じChartの<code>Release</code>を二つ以上デプロイすることができます)。
+この名前を<code>--name</code>オプションで指定することができます。この例では<code>sentry</code>という名前をつけていますが、
+本来は<code>staging</code>や<code>production</code>など環境を示すような名前をつける方が良いかもしれません。</p>
+<p>名前を指定しない場合は<code>happy-panda</code>のように辞書から単語を二つ適当に拾ってきてくっつけたみたいな名前が自動的に与えられます。
+<code>helm upgrade</code>や<code>helm delete</code>など、特定の<code>Release</code>を対象とするコマンドはこの名前で対象を指定するので、
+できるだけわかりやすい名前を自分でつけるのがおすすめです。</p>
+<p>その他のオプションの意味は次の通りです。</p>
+<ul>
+<li><code>--namespace</code>オプションでは、このChartのAPIオブジェクトを作成する<code>Namespace</code>を<code>sentry</code>にしています。<code>Namespace</code>については後述します。</li>
+<li><code>--wait</code>オプションをつけると、各オブジェクトの状態が準備完了になるまで待機してからコマンドを終了します。</li>
+<li><code>--timeout</code>オプションは<code>--wait</code>のタイムアウト値(秒)です。筆者の環境では<code>stable/sentry</code>の初期化に5分強かかるので、10分に拡張しています。</li>
+<li><code>--version</code>オプションはインストールするChartのバージョンです。指定しないと最新版がインストールされます。</li>
+<li><code>--set</code>オプションはChartに定義されているパラメータを入力しています。この例では次のパラメータの値をデフォルトから変更しています。<ul>
+<li><code>service.type</code>: <code>Service</code>オブジェクトのタイプです。デフォルトは<code>LoadBalancer</code>なのですが、minikubeが対応していないため<code>NodePort</code>に変更しています。
+<code>--wait</code>オプションをつけている場合、<code>LoadBalancer</code>のままだと<code>Service</code>オブジェクトの状態が準備完了にならず、コマンドがタイムアウトして失敗します。</li>
+<li><code>ingress.enabled</code>: デフォルトでは<code>Ingress</code>を使わない設定になっていますが、この例では有効にしています。</li>
+<li><code>ingress.hostname</code>: <code>minikube ip</code>とワイルドカードDNSを組み合わせたURLにしています。</li>
+<li><code>image.tag</code>: <code>sentry</code>イメージのタグです。Sentry自体のバージョンを意味します。デフォルトは8.17ですが、新しいバージョンが出ているので8.22に変更しています。</li>
+<li><code>email.host</code>: 招待メールやレポートなどメールを送信するためのSMTPサーバを指定します。空文字を指定するとメール送信機能が無効化されます。</li>
+<li><code>sentrySecret</code>: Sentry内部での暗号処理の鍵です。省略するとランダムな文字列が自動的に割り当てられます。<a id="note2-link" href="#note2">*2</a></li>
+<li><code>postgres.postgresPassword</code>: PostgreSQLサーバのパスワードです。省略するとランダムな文字列が自動的に割り当てられます。<a id="note2-link" href="#note2">*2</a></li>
+<li><code>redis.redisPassword</code>: Redisサーバのパスワードです。省略するとランダムな文字列が自動的に割り当てられます。<a id="note2-link" href="#note2">*2</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="note2" href="#note2-link">*2</a>: これらのパラメータを省略してランダム文字列にした場合、
+<code>email.host</code>のような別のパラメータを更新した場合にもランダム文字列が再生成されてDBに接続できなくなるなどの問題が起きるため、
+継続的に運用する予定なら明示的に設定しておくのが無難です。</p>
+<p><code>--set</code>では見ての通り複数のパラメータを指定できます。パラメータの一覧を書いたYAMLファイルを<code>-f</code>オプションに渡すことでも同様のことができます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># values-custom.yaml</span>
+<span class="token key atrule">service</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> NodePort
+
+<span class="token key atrule">ingress</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+
+<span class="token key atrule">image</span><span class="token punctuation">:</span>
+  <span class="token key atrule">tag</span><span class="token punctuation">:</span> <span class="token number">8.22</span>
+
+<span class="token key atrule">email</span><span class="token punctuation">:</span>
+  <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">""</span>
+
+<span class="token key atrule">sentrySecret</span><span class="token punctuation">:</span> sentry
+
+<span class="token key atrule">postgresql</span><span class="token punctuation">:</span>
+  <span class="token key atrule">postgresPassword</span><span class="token punctuation">:</span> postgres
+
+<span class="token key atrule">redis</span><span class="token punctuation">:</span>
+  <span class="token key atrule">redisPassword</span><span class="token punctuation">:</span> redis
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上記のようなYAMLファイルを用意して、<code>-f</code>オプションに渡します。
+この例では、<code>ingress.hostname</code>のみ<code>minikube ip</code>コマンドの出力を使いたいので<code>--set</code>で指定しています。</p>
+<pre><code>$ helm install stable/sentry \
+  --name sentry \
+  --namespace sentry \
+  --wait \
+  --timeout 600 \
+  --version 0.1.14 \
+  --f values-custom.yaml \
+  --set ingress.hostname=$(minikube ip).nip.io
+</code></pre><p>このChartのソースコードは下記にあります。他にどのようなパラメータがあるかなどはここを参照してください。</p>
+<p><a href="https://github.com/kubernetes/charts/blob/master/stable/sentry" target="_blank" rel="noopener">kubernetes/charts | stable/sentry</a></p>
+<p>結構時間がかかるので、別の端末にログを表示して進捗を確認できるようにしておくと良いでしょう。</p>
+<pre><code>$ stern --namespace sentry &quot;.*&quot;
+</code></pre><p>完了すると下記のようなメッセージが表示されます。</p>
+<pre><code>NAME:   sentry
+LAST DEPLOYED: Tue May 22 00:07:12 2018
+NAMESPACE: sentry
+STATUS: DEPLOYED
+
+RESOURCES:
+==&gt; v1/Secret
+NAME               TYPE    DATA  AGE
+sentry-postgresql  Opaque  1     5m
+sentry-redis       Opaque  1     5m
+sentry-sentry      Opaque  3     5m
+
+==&gt; v1/PersistentVolumeClaim
+NAME               STATUS  VOLUME                                    CAPACITY  ACCESS MODES  STORAGECLASS  AGE
+sentry-postgresql  Bound   pvc-a3af7917-5d08-11e8-9576-9a07dd1ebfb4  8Gi       RWO           standard      5m
+sentry-redis       Bound   pvc-a3b0850d-5d08-11e8-9576-9a07dd1ebfb4  8Gi       RWO           standard      5m
+sentry-sentry      Bound   pvc-a3b159e9-5d08-11e8-9576-9a07dd1ebfb4  10Gi      RWO           standard      5m
+
+==&gt; v1/Service
+NAME               TYPE       CLUSTER-IP      EXTERNAL-IP  PORT(S)         AGE
+sentry-postgresql  ClusterIP  10.106.179.194  &lt;none&gt;       5432/TCP        5m
+sentry-redis       ClusterIP  10.104.155.56   &lt;none&gt;       6379/TCP        5m
+sentry-sentry      NodePort   10.101.218.50   &lt;none&gt;       9000:31416/TCP  5m
+
+==&gt; v1beta1/Deployment
+NAME                  DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE
+sentry-postgresql     1        1        1           1          5m
+sentry-redis          1        1        1           1          5m
+sentry-sentry-cron    1        1        1           1          5m
+sentry-sentry-web     1        1        1           1          5m
+sentry-sentry-worker  2        2        2           2          5m
+
+==&gt; v1beta1/Ingress
+NAME           HOSTS                 ADDRESS        PORTS  AGE
+sentry-sentry  192.168.64.29.nip.io  192.168.64.29  80     5m
+
+==&gt; v1/Pod(related)
+NAME                                   READY  STATUS   RESTARTS  AGE
+sentry-postgresql-5795779885-hh88k     1/1    Running  0         5m
+sentry-redis-6f8d889d4d-r5wbh          1/1    Running  0         5m
+sentry-sentry-cron-8578df4d69-2kzd9    1/1    Running  0         5m
+sentry-sentry-web-6b857b74c8-96fsq     1/1    Running  1         5m
+sentry-sentry-worker-66cf9bb6db-2qzkh  1/1    Running  0         5m
+sentry-sentry-worker-66cf9bb6db-x9plg  1/1    Running  0         5m
+
+
+NOTES:
+1. Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace sentry -o jsonpath=&quot;{.spec.ports[0].nodePort}&quot; services sentry-sentry)
+  export NODE_IP=$(kubectl get nodes --namespace sentry -o jsonpath=&quot;{.items[0].status.addresses[0].address}&quot;)
+  echo http://$NODE_IP:$NODE_PORT/auth/login/sentry
+
+2. Log in with
+
+  USER: admin@sentry.local
+  Get login password with
+    kubectl get secret --namespace sentry sentry-sentry -o jsonpath=&quot;{.data.user-password}&quot; | base64 --decode
+</code></pre><p>作成されたAPIオブジェクトのレポートと、Chart側で設定された初期メッセージが<code>NOTES</code>以下に表示されています。</p>
+<p><code>1. Get the application URL...</code>にはログインURLの取得方法が書いてありますが、これは<code>NodePort</code>を使う場合のものです。
+今回はパラメータで<code>Ingress</code>を有効にしているので、ログインURLは <code>open http://$(minikube ip).nip.io/</code> でOKです。
+<code>2. Log in with</code>手順に従って初期ユーザのパスワードを取得し、Sentryの管理画面にログインできることを確認してください。
+ユーザ名は <code><a href="mailto:admin@sentry.local" target="_blank" rel="noopener">admin@sentry.local</a></code> で、パスワードは上記の<code>kubectl get secret</code>コマンドを実行して表示されるテキストです。
+最後に<code>%</code>が化けて表示されるようですが、その前までのテキストを入力してください。</p>
+<p>公式のChartはだいたいインストール後にこのようなヘルプメッセージが表示されます。
+このメッセージもGoのテンプレート構文で記述されています。</p>
+<p><a href="https://github.com/kubernetes/charts/blob/master/stable/sentry/templates/NOTES.txt" target="_blank" rel="noopener">kubernetes/charts | stable/sentry/templates/NOTES.txt</a></p>
+<h2 id="helm-list-クラスタ上のChartインスタンス-Release-の一覧を表示"><a href="#helm-list-クラスタ上のChartインスタンス-Release-の一覧を表示" class="headerlink" title="helm list: クラスタ上のChartインスタンス(Release)の一覧を表示"></a>helm list: クラスタ上のChartインスタンス(Release)の一覧を表示</h2><p>k8sクラスタにインストール済みのReleaseの一覧は下記のコマンドで確認できます。</p>
+<pre><code>$ helm list
+NAME    REVISION        UPDATED                         STATUS          CHART           NAMESPACE
+sentry  1               Tue May 22 00:07:12 2018        DEPLOYED        sentry-0.1.14   sentry
+</code></pre><h2 id="helm-upgrade-Chartの更新のデプロイ"><a href="#helm-upgrade-Chartの更新のデプロイ" class="headerlink" title="helm upgrade: Chartの更新のデプロイ"></a>helm upgrade: Chartの更新のデプロイ</h2><p><code>Release</code>名を指定して、</p>
+<pre><code>$ helm upgrade sentry
+</code></pre><h2 id="helm-delete-ReleaseとAPIオブジェクトの削除"><a href="#helm-delete-ReleaseとAPIオブジェクトの削除" class="headerlink" title="helm delete: ReleaseとAPIオブジェクトの削除"></a>helm delete: ReleaseとAPIオブジェクトの削除</h2><p>作成したReleaseによって作られたAPIオブジェクトを削除する場合は、下記のコマンドを実行します。</p>
+<pre><code>$ helm delete --purge sentry
+</code></pre><p>パラメータにはReleaseの名前を指定します。
+<code>--purge</code>オプションをつけるとRelease自体も削除します。
+このオプションをつけない場合、APIオブジェクトだけが削除され、Releaseは削除されずにHelmの管理DBに残る点に注意してください。
+purgeするまでその名前のReleaseを新しく作ることはできません。</p>
+<p>なお、<code>stable/sentry</code>の場合は少し厄介で、<a href="https://github.com/kubernetes/charts/tree/master/stable/sentry#uninstalling-the-chart" target="_blank" rel="noopener">READMEにも書かれている</a>通り<code>helm delete</code>しただけでは<code>Job</code>のオブジェクトが残ります。</p>
+<pre><code>$ kubectl get all --namespace sentry
+NAME                           READY     STATUS      RESTARTS   AGE
+pod/sentry-db-init-9mnqq       0/1       Completed   0          22h
+pod/sentry-db-init-ckgzj       0/1       Error       0          22h
+pod/sentry-user-create-8dgbj   0/1       Completed   0          22h
+
+NAME                           DESIRED   SUCCESSFUL   AGE
+job.batch/sentry-db-init       1         1            22h
+job.batch/sentry-user-create   1         1            22h
+</code></pre><p>これらのオブジェクトは下記のように個別に削除する必要があります。</p>
+<pre><code>$ kubectl delete job/sentry-db-init job/sentry-user-create
+</code></pre><p><code>sentry-db-init</code>の<code>sentry</code>部分は<code>Release</code>の名前です。別の名前で<code>helm install</code>するとここも変わるので注意してください。
+後述するようにネームスペースごと削除してしまう方が簡単です。</p>
+<pre><code>$ kubectl delete ns sentry
+</code></pre><h1 id="NamespaceとContextについて"><a href="#NamespaceとContextについて" class="headerlink" title="NamespaceとContextについて"></a>NamespaceとContextについて</h1><p>k8sには<code>Namespace</code>というオブジェクトがあり、<code>Deployment</code>や<code>Service</code>など主要なオブジェクトは基本的にいずれかの<code>Namespace</code>に属しています。
+前回の記事まで全く<code>Namespace</code>を指定してこなかったのですが、ずっと<code>default</code>という組み込みの<code>Namespace</code>が操作の対象になっていました。</p>
+<pre><code># defaultネームスペースのPodのリストを表示
+$ kubectl get pods
+
+# sentryネームスペースのPodのリストを表示
+$ kubectl -n sentry get pods
+</code></pre><p>また、これまでのサンプルでは<code>Service</code>のエンドポイントにアクセスする際にはそのサービスの名前をDNS名として指定しました。
+同一のネームスペース内のオブジェクトから接続する場合はそれで良いのですが、
+異なるネームスペースのオブジェクトから接続する場合には<code>${サービス名}.${ネームスペース名}</code>のようにドメインを追加する必要があります。</p>
+<p>ところで、<code>default</code>以外のネームスペースを主に使う場合に、<code>kubectl</code>のパラメータにその都度<code>-n</code>オプションを指定するのは面倒です。</p>
+<p><code>kubectl</code>コマンドには<code>Context</code>という概念があり、コマンド側で接続先のk8sクラスタやデフォルトのネームスペースを記憶しています。</p>
+<ul>
+<li>接続先のクラスタやデフォルトのネームスペースなどの情報を<code>Context</code>という単位で保存</li>
+<li><code>Context</code>は複数保存でき、有効になっているのはそのうちの一つ(<code>CURRENT</code>)</li>
+<li>有効な<code>Context</code>を切り替えることで接続先クラスタやデフォルトのネームスペースを変更可能</li>
+</ul>
+<p>これらの設定は <code>~/.kube/config</code> に記録されています。</p>
+<h2 id="kubectl-config-get-contexts-Contextの一覧の表示"><a href="#kubectl-config-get-contexts-Contextの一覧の表示" class="headerlink" title="kubectl config get-contexts: Contextの一覧の表示"></a>kubectl config get-contexts: Contextの一覧の表示</h2><p>minikubeしか使っていない場合は下記のようになっていると思います。</p>
+<pre><code>$ kubectl config get-contexts
+CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+*         minikube   minikube   minikube
+</code></pre><h2 id="kubectl-config-current-context-現在有効になっているContext名の表示"><a href="#kubectl-config-current-context-現在有効になっているContext名の表示" class="headerlink" title="kubectl config current-context: 現在有効になっているContext名の表示"></a>kubectl config current-context: 現在有効になっているContext名の表示</h2><pre><code>$ kubectl config current-context
+minikube
+</code></pre><h2 id="kubectl-config-view-Contextの詳細の表示"><a href="#kubectl-config-view-Contextの詳細の表示" class="headerlink" title="kubectl config view: Contextの詳細の表示"></a>kubectl config view: Contextの詳細の表示</h2><p><code>~/.kube/config</code>の中身を表示しているだけです。</p>
+<pre><code>$ kubectl config view
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /Users/kawahara_taisuke/.minikube/ca.crt
+    server: https://192.168.64.29:8443
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /Users/kawahara_taisuke/.minikube/client.crt
+    client-key: /Users/kawahara_taisuke/.minikube/client.key
+</code></pre><h2 id="kubectl-config-set-context-Contextの作成または更新"><a href="#kubectl-config-set-context-Contextの作成または更新" class="headerlink" title="kubectl config set-context: Contextの作成または更新"></a>kubectl config set-context: Contextの作成または更新</h2><p>現在の<code>Context</code>のネームスペースを<code>sentry</code>に変更するにはこうします。</p>
+<pre><code>$ kubectl config set-context $(kubectl config current-context) --namespace=sentry
+Context &quot;minikube&quot; modified.
+
+# 変わっていることを確認
+$ kubectl config get-contexts
+CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+*         minikube   minikube   minikube   sentry
+</code></pre><p>無指定(default)に戻す場合はこうします。</p>
+<pre><code>$ kubectl config unset contexts.minikube.namespace
+Property &quot;contexts.minikube.namespace&quot; unset.
+
+# 戻っていることを確認
+$ kubectl config get-contexts
+CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+*         minikube   minikube   minikube
+</code></pre><p>存在しない名前を指定すると新しい<code>Context</code>を作ります。
+次の例はクラスタがminikubeでネームスペースがsentryである<code>Context</code>の例です。</p>
+<pre><code>$ kubectl config set-context minikube-sentry --cluster=minikube --user=minikube --namespace=sentry
+
+$ kubectl config get-contexts
+CURRENT   NAME              CLUSTER    AUTHINFO   NAMESPACE
+*         minikube          minikube   minikube
+          minikube-sentry   minikube   minikube   sentry
+</code></pre><h2 id="kubectl-config-use-context-有効なContextを変更"><a href="#kubectl-config-use-context-有効なContextを変更" class="headerlink" title="kubectl config use-context: 有効なContextを変更"></a>kubectl config use-context: 有効なContextを変更</h2><pre><code>$ kubectl config use-context minikube-sentry
+
+% kubectl config get-contexts
+CURRENT   NAME              CLUSTER    AUTHINFO   NAMESPACE
+          minikube          minikube   minikube
+*         minikube-sentry   minikube   minikube   sentry
+</code></pre><h2 id="kubectl-config-delete-context-Contextの削除"><a href="#kubectl-config-delete-context-Contextの削除" class="headerlink" title="kubectl config delete-context: Contextの削除"></a>kubectl config delete-context: Contextの削除</h2><p>指定したコンテキストを削除できます。</p>
+<pre><code>$ kubectl config delete-context minikube-sentry
+</code></pre><h2 id="kubectxとkubens"><a href="#kubectxとkubens" class="headerlink" title="kubectxとkubens"></a>kubectxとkubens</h2><p><code>Context</code>とネームスペースの切り替えは見ての通り煩雑です。
+<a href="https://github.com/ahmetb/kubectx" target="_blank" rel="noopener">kubectxとkubens</a>というツールを使えばもっと簡単に切り替えの操作を行うことができます。</p>
+<p>macOSの場合はHomebrewでインストール可能です。</p>
+<pre><code>$ brew install kubectx
+</code></pre><p>インストール時に<code>--with-short-name</code>オプションをつけると、コマンド名を<code>kctx</code>と<code>kns</code>に変更できます。
+<code>kubectl</code>との前方一致部分が減るのでシェルでの補完が少し楽になります。</p>
+<p><code>kctx(kubectx)</code>は<code>Context</code>の一覧表示と切り替え、削除、リネームが可能です。</p>
+<pre><code>$ kctx                        # パラメータ無しだとContext一覧を表示(有効なものは黄色で表示)
+$ kctx minikube-sentry        # 指定したContextに切り替え(Tabで補完が効く)
+$ kctx -                      # 一つ前のContextに戻る
+$ kctx -d minikube-sentry     # Contextを削除
+$ kctx sentry=minikube-sentry # minikube-sentry を sentry にリネーム
+$ kctx sentry=.               # 現在のContextを sentry にリネーム
+</code></pre><p><code>kns(kubens)</code>は現在の<code>Context</code>に対して、ネームスペースの一覧表示と切り替えが可能です。</p>
+<pre><code>$ kns         # ネームスペースの一覧表示(現在のネームスペースを黄色で表示)
+$ kns sentry  # 指定したネームスペースをデフォルトに変更(Tabで補完が効く)
+$ kns -       # 一つ前のネームスペースに変更
+</code></pre><p>なお、<code>kubectx(kctx)</code>では<code>Context</code>の作成や削除はできませんので<code>kubectl</code>コマンドを使う必要があります。
+ただ、知っての通りminikubeの場合は<code>minikube start</code>の際に自動的に<code>Context</code>が作成されますし、
+GCPのGKEの場合も指定したGKEクラスタに接続するための<code>Context</code>を作成する機能が<code>gcloud</code>コマンドに組み込まれています。</p>
+<p><a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials" target="_blank" rel="noopener">gcloud container clusters get-credentials  |  Cloud SDK  |  Google Cloud</a></p>
+<p>minikubeやGKEを使っている限りでは<code>Context</code>を作成したり編集したりする機会はそれほど多くないと思いますので、
+<code>kctx</code>と<code>kns</code>の使い方を覚えておけばほとんどの場合十分です。</p>
+<h2 id="Namespaceの削除について"><a href="#Namespaceの削除について" class="headerlink" title="Namespaceの削除について"></a>Namespaceの削除について</h2><p><code>helm install</code>で<code>--namespace</code>オプションを指定すると、当該ネームスペースがない場合は自動的に作成されます。
+このネームスペースは<code>helm delete</code>しても残ります。</p>
+<p>ネームスペースを削除する場合には<code>kubectl delete</code>を使います。</p>
+<pre><code>$ kubectl delete namespace sentry
+# または
+$ kubectl delete ns sentry
+</code></pre><p><strong>ネームスペース内のオブジェクトが全て削除される点に注意してください。</strong></p>
+<p>永続ボリュームも確認無しで削除されるため、事故によるデータロストに十分注意する必要があります。
+<code>PV</code>オブジェクトが削除された場合に、データの実体(GCPのPersistentDiskやAWSのEBSなど)が削除されず残るようにするためには、
+<code>StorageClass</code>の<a href="https://kubernetes.io/docs/concepts/storage/storage-classes/#reclaim-policy" target="_blank" rel="noopener">reclaimPolicy</a>を<code>Retain</code>に変更しておく必要があります。</p>
+<h1 id="Chartの作り方"><a href="#Chartの作り方" class="headerlink" title="Chartの作り方"></a>Chartの作り方</h1><p>前節では既存のパッケージを使う方法を見てきました。
+今節では自分でパッケージを作り、k8sクラスタにデプロイする方法を見ていきます。</p>
+<p>具体的には、<a href="/blog/2018/05/30/docker-compose-with-rails/#サンプルアプリケーション">第2回で取り上げたサンプルアプリ</a>のHelm Chartを作成します。
+構成は<a href="/blog/2018/05/30/practical-kubernetes-with-rails/#Step4-Ingress">Step4のマニフェストファイル</a>と同等にします。</p>
+<p>最終的なコードは下記に置いてあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/chart/" target="_blank" rel="noopener">k8s/chart/</a></p>
+<p>なお、このドキュメントでは作ったHelm Chartをアプリのパッケージとして公開するというより、
+プライベートなアプリのk8sマニフェストをHelmで管理できるようにChart化する、
+という使い方を想定しています。</p>
+<p>このような使い方においては、作成したChartをリポジトリサーバに登録する必要はなく、
+<code>helm</code>コマンドでローカルFS上のChartディレクトリを直接指定することでChartのデプロイを行うことができます。</p>
+<h2 id="helm-upgrade-–install-作ったChartのデプロイ"><a href="#helm-upgrade-–install-作ったChartのデプロイ" class="headerlink" title="helm upgrade –install: 作ったChartのデプロイ"></a>helm upgrade –install: 作ったChartのデプロイ</h2><p>サンプルコードのChartをデプロイしてみましょう。</p>
+<p>もしもまだであれば、<a href="#準備">準備</a>の節を参照して、サンプルコードのチェックアウトとminikubeの起動を済ませて置いてください。</p>
+<p>次に、サンプルアプリのイメージをminikube上でビルドしておいてください。</p>
+<pre><code>$ cd rails-k8s-demoapp
+$ (eval $(minikube docker-env) &amp;&amp; $ docker build . -t demoapp:0.0.1)
+</code></pre><p>また、Step4と同じく<code>Ingress</code>のTLS証明書用の<code>Secret</code>オブジェクトは<code>kubectl</code>コマンドで作成します。
+証明書と鍵の内容をChartのパラメータ化することも不可能ではないのですが煩雑なので、
+公式リポジトリのChartも<code>Secret</code>オブジェクトの名前だけをパラメータ化しているものが多いようです。
+今回はそれにならいます。</p>
+<p>ちょっと手を抜いてMakefileを利用して作成します。手順はStep4の時と同じなので詳細は前回の記事を参照してください。</p>
+<pre><code>cd k8s/chart
+$ make kubectl-create-secret-tls
+</code></pre><p>Tiller(Helmのサーバモジュール)のインストールがまだであれば下記を実行します。</p>
+<pre><code>$ helm init --wait
+</code></pre><p>次に、<code>helm upgrade</code>コマンドでChartをminikubeにデプロイします。</p>
+<pre><code>$ helm upgrade staging . --install --wait \
+  --set ingress.host=demoapp-puma.$(minikube ip).nip.io
+</code></pre><p><code>staging</code>は<code>Release</code>の名前です。
+<code>--install</code>オプションをつけると、<code>Release</code>が存在しない場合のみ<code>helm install</code>のような動作をするようになります。
+初回と2回目以降でコマンドを分けずに済むので便利です。</p>
+<p><code>--set</code>では、<code>ingress.host</code>というパラメータを指定しています。</p>
+<p>最後にブラウザでWebアプリを開きます。</p>
+<pre><code>$ open https://demoapp-puma.$(minikube ip).nip.io/
+</code></pre><p>Makefileに同様のタスクを定義しているので、下記のコマンドでも同じことができます。</p>
+<pre><code>$ make helm-init
+$ make minikube-docker-build
+$ make kubectl-create-secret-tls
+$ make helm-upgrade
+$ make open
+
+# または単に
+$ make
+</code></pre><p><code>Release</code>と証明書の削除は次のコマンドです。</p>
+<pre><code>make clean
+</code></pre><h2 id="helm-template-テンプレートのレンダリング"><a href="#helm-template-テンプレートのレンダリング" class="headerlink" title="helm template: テンプレートのレンダリング"></a>helm template: テンプレートのレンダリング</h2><p>Chartに含まれるテンプレートが最終的にどのようなYAMLデータになるかを事前に確認するには、
+<code>helm template</code>コマンドを使います。</p>
+<pre><code>$ cd rails-k8s-demoapp/k8s/chart
+$ helm template . --name staging
+</code></pre><p>上記のコマンドは、すべてのテンプレートにパラメータを埋め込んだ結果を表示します。</p>
+<ul>
+<li><code>.</code>はChartディレクトリのパスです。<code>stable/sentry</code>のようにリポジトリのChartを指定することもできます。</li>
+<li><code>--name</code>オプションは<code>Release</code>の名前です。この他に、<code>--set</code>や<code>-f</code>でパラメータを指定することもできます。
+レンダリングの際はそれらの値を埋め込んだ結果が表示されます。</li>
+</ul>
+<p>また、特定のテンプレートのみレンダリングしたい場合は<code>-x</code>オプションを指定します。</p>
+<pre><code>$ helm template . --name staging -x templates/puma-deploy.yaml
+</code></pre><p><code>-x</code>オプションの値は、カレントディレクトリからの相対パスではなく、
+Chartのルートディレクトリからの相対パスを指定する必要がある点に注意してください。</p>
+<h2 id="helm-create-新しいChartの作成"><a href="#helm-create-新しいChartの作成" class="headerlink" title="helm create: 新しいChartの作成"></a>helm create: 新しいChartの作成</h2><p><code>demoapp</code>という名前のChartを作るには下記のようにします。</p>
+<pre><code>$ cd rails-k8s-demoapp/k8s
+$ helm create demoapp
+</code></pre><p>次のような構成のディレクトリが作られます。</p>
+<pre><code>demoapp/
+ Chart.yaml
+ values.yaml
+ charts/
+ templates/
+    NOTES.txt
+    _helpers.tpl
+    deployment.yaml
+    ingress.yaml
+    service.yaml
+</code></pre><p>作成後、<code>demoapp</code>ディレクトリはリネームしても問題ありません。</p>
+<ul>
+<li><code>Chart.yaml</code>には、Chartの名前やバージョンなどの情報が記述されます。</li>
+<li><code>values.yaml</code>には、Chartのパラメータのデフォルト値が記述されます。</li>
+<li><code>charts/</code>には、このChartが依存している別のChartを保存します。今回は扱いません。</li>
+<li><code>templates/</code>には、次のファイルを保存します。<ul>
+<li><code>NOTES.txt</code>は、Chartのインストール後に表示するメッセージです。</li>
+<li><code>_helpers.tpl</code>には、テンプレート全般で再利用するための部分テンプレートを書きます。</li>
+<li>残りの<code>*.yaml</code>がマニフェストのテンプレートです。</li>
+</ul>
+</li>
+</ul>
+<p><code>helm create</code>で作成した直後のChartは、<code>Deployment</code>と<code>Service</code>を一つずつ作成して、
+<code>Ingress</code>経由でそれを外部に公開するというk8sの基本構成が記述されています。
+なので、それらを一旦削除します。</p>
+<pre><code>rm demoapp/values.yaml demoapp/templates/*.yaml
+</code></pre><p>次に、Step4のマニフェスト一式を<code>demoapp/templates/</code>以下にコピーします。</p>
+<pre><code>cp manifests-step4/*.yaml demoapp/templates/
+</code></pre><p>さて、これでおおよそ動くChartができました。<code>Ingress</code>以外はこのままでも動作します <a id="note1-link" href="#note1">*1</a>。
+<code>demoapp/templates/</code>に置くのはテンプレートなので、テンプレートとしての構文を一切使わないYAMLのままでもとりあえず動くのです。
+マニフェストファイルが存在するプロジェクトをHelm Chart化する場合には、
+このように一旦<code>templates/</code>ディレクトリに置いてから各マニフェストファイルをテンプレート構文で書き換えていくことになります。</p>
+<p>そうやって作成したChartが下記のパスにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/chart/" target="_blank" rel="noopener">k8s/chart/</a></p>
+<p>次節以降では、このChartの中のテンプレートとStep4のマニフェストを比較しつつ、Chartの書き方を解説します。</p>
+<p><a id="note1" href="#note1-link">*1</a>: <code>Ingress</code>については、ホスト名を示すパラメータが<code>$(minikube ip)</code>というコマンドで取得するまでわからないため、
+下記のように元々<code>sed</code>で<code>${MINIKUBE_IP}</code>を書き換えてから<code>kubectl apply -f -</code>に流し込む前提のマニフェストでした。
+Chart化する際には、テンプレートの機能を使ってパラメータとしてこのホスト名を指定できるようにします。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step4/puma-ing.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> extensions/v1beta1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Ingress
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+  <span class="token comment" spellcheck="true"># 省略</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> demoapp<span class="token punctuation">-</span>puma.$<span class="token punctuation">{</span>MINIKUBE_IP<span class="token punctuation">}</span>.nip.io
+    <span class="token key atrule">secretName</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma<span class="token punctuation">-</span>tls
+  <span class="token key atrule">rules</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">host</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma.$<span class="token punctuation">{</span>MINIKUBE_IP<span class="token punctuation">}</span>.nip.io
+    <span class="token comment" spellcheck="true"># 省略</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre><code>export MINIKUBE_IP=$(minikube ip)
+cat *.yaml | sed s/\${MINIKUBE_IP}/$(MINIKUBE_IP)/ | kubectl apply --record -f -
+</code></pre><p>詳細な説明は <a href="/blog/2018/05/30/practical-kubernetes-with-rails/#Ingress%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88">前回の記事</a>を参照してください。</p>
+<h2 id="テンプレート"><a href="#テンプレート" class="headerlink" title="テンプレート"></a>テンプレート</h2><p>Helm Chartのテンプレート構文は、ほぼ<a href="https://golang.org/pkg/text/template/" target="_blank" rel="noopener">Go言語のtext/template</a>です。
+ただし、下記のように拡張されています。</p>
+<ul>
+<li><a href="https://godoc.org/github.com/Masterminds/sprig" target="_blank" rel="noopener">Sprig</a>のtemplate functionが50個ほど使えるようになっています。</li>
+<li>ValuesやChart, Releaseなどの<a href="https://docs.helm.sh/chart_template_guide/#built-in-objects" target="_blank" rel="noopener">組み込みオブジェクト</a>が追加されています。</li>
+</ul>
+<p>はじめに、Step4時点での<code>puma</code>の<code>Deployment</code>を例に、Chartのテンプレート化の勘所とテンプレート記法の基本を説明します。</p>
+<p>元になるマニフェストは下記です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step4/puma-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">2</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">:</span>0.0.1
+          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> IfNotPresent
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ./bin/start<span class="token punctuation">-</span>puma
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>これをテンプレート化したものが下記です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/chart/templates/puma-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.puma.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">chart</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.chart" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">heritage</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Service <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.puma.replicas <span class="token punctuation">}</span><span class="token punctuation">}</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+      <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+        <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.rails.image.repository <span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">:</span><span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.rails.image.tag <span class="token punctuation">}</span><span class="token punctuation">}</span>
+          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> IfNotPresent
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ./bin/start<span class="token punctuation">-</span>puma
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>このようにテンプレートでは<code>&#123;&#123; &#125;&#125;</code>の中にコード片を埋め込んでいきます。</p>
+<p>いっぱい差分があるように見えますが、書き換えられているものは次の三つです。</p>
+<ul>
+<li>レプリカの数やイメージの名前など、パラメータ化されたもの</li>
+<li>オブジェクトの名前</li>
+<li>ラベル</li>
+</ul>
+<p>次節以降で、一つずつ詳細を見ていきます。</p>
+<h3 id="パラメータ化"><a href="#パラメータ化" class="headerlink" title="パラメータ化"></a>パラメータ化</h3><p>Chart版のマニフェストでは、レプリカの数とイメージの名前がパラメータ化されています。
+Step4のマニフェストとChartのテンプレートから関連する部分だけを抜き出して比較します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># before: k8s/manifests-step4/puma-deploy.yaml</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">2</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">:</span>0.0.1
+
+<span class="token comment" spellcheck="true"># after: k8s/chart/templates/puma-deploy.yaml</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.puma.replicas <span class="token punctuation">}</span><span class="token punctuation">}</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.rails.image.repository <span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">:</span><span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.rails.image.tag <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>Values</code>という組み込みオブジェクトの値を参照しています。
+これはChartの利用者側で任意に変更可能なパラメータを管理するオブジェクトです。
+パラメータのデフォルト値はChartディレクトリの<code>values.yaml</code>ファイルに記述します。
+この値は<code>helm install</code>または<code>helm upgrade</code>の際に<code>--set</code>オプションや<code>-f</code>オプションで上書きすることができます。
+(詳細は前半のSentryのデモを参照してください)</p>
+<p>サンプルコードの<code>values.yaml</code>から今回関連のある部分だけを以下に抜き出しています。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">puma</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">2</span>
+
+<span class="token key atrule">rails</span><span class="token punctuation">:</span>
+  <span class="token key atrule">image</span><span class="token punctuation">:</span>
+    <span class="token key atrule">repository</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">tag</span><span class="token punctuation">:</span> 0.0.1
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>このYAMLデータの中身を<code>.Values.puma.replicas</code>のように<code>.</code>区切りで指定することができます。</p>
+<h3 id="オブジェクトの名前"><a href="#オブジェクトの名前" class="headerlink" title="オブジェクトの名前"></a>オブジェクトの名前</h3><p>次に、オブジェクトの名前に関する部分だけを抜き出して比較します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># before: k8s/manifests-step4/puma-deploy.yaml</span>
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+
+<span class="token comment" spellcheck="true"># after: k8s/chart/templates/puma-deploy.yaml</span>
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.puma.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>template</code>というのは、定義済みの部分テンプレートを呼び出す<code>Action</code>です。
+Helmの場合、<code>templates/_helpers.tpl</code>で<code>define</code>により定義した値を埋め込むことになります。
+この例では、<code>demoapp.puma.name</code>という定義を参照しています。</p>
+<p>以下、<code>templates/_helpers.tpl</code>から関連のある部分だけ抜き出します。</p>
+<pre class="line-numbers language-go"><code class="language-go"><span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token comment" spellcheck="true">/* k8s/chart/templates/_helpers.tpl */</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> define <span class="token string">"demoapp.fullname"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token keyword">if</span> <span class="token punctuation">.</span>Values<span class="token punctuation">.</span>fullnameOverride <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token punctuation">.</span>Values<span class="token punctuation">.</span>fullnameOverride <span class="token operator">|</span> trunc <span class="token number">63</span> <span class="token operator">|</span> trimSuffix <span class="token string">"-"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token keyword">else</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> $name <span class="token operator">:=</span> <span class="token keyword">default</span> <span class="token punctuation">.</span>Chart<span class="token punctuation">.</span>Name <span class="token punctuation">.</span>Values<span class="token punctuation">.</span>nameOverride <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token keyword">if</span> contains $name <span class="token punctuation">.</span>Release<span class="token punctuation">.</span>Name <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token punctuation">.</span>Release<span class="token punctuation">.</span>Name <span class="token operator">|</span> trunc <span class="token number">63</span> <span class="token operator">|</span> trimSuffix <span class="token string">"-"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> <span class="token keyword">else</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> printf <span class="token string">"%s-%s"</span> <span class="token punctuation">.</span>Release<span class="token punctuation">.</span>Name $name <span class="token operator">|</span> trunc <span class="token number">63</span> <span class="token operator">|</span> trimSuffix <span class="token string">"-"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> end <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> end <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> end <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> define <span class="token string">"demoapp.puma.name"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> include <span class="token string">"demoapp.fullname"</span> <span class="token punctuation">.</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token operator">-</span>puma
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> end <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> define <span class="token string">"demoapp.rails-env.name"</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> include <span class="token string">"demoapp.fullname"</span> <span class="token punctuation">.</span> <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token operator">-</span>rails<span class="token operator">-</span>env
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token operator">-</span> end <span class="token operator">-</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>demoapp.fullname</code>、<code>demoapp.puma.name</code>, <code>demoapp.rials-env.name</code>の三つの<code>define</code>があります。
+前者は<code>helm create</code>した時から存在するもので、残り二つは筆者が追加したものです。</p>
+<p>結構ボリュームがあるのですが、ほとんどの状況では次のようなシンプルな結果になります。</p>
+<hr>
+<ul>
+<li><code>demoapp.fullname</code>は、Chart.yamlに書かれた<code>name</code>フィールドの値に<code>Release</code>の名前をプレフィクスとしてつけた文字列を返します。
+サンプルの場合は、<code>Release</code>の名前が<code>staging</code>なら<code>staging-demoapp</code>になります。</li>
+<li><code>demoapp.puma.name</code>は、<code>Release</code>が<code>staging</code>の場合は<code>staging-demoapp-puma</code>になります。
+<code>include</code>は、<code>define</code>定義の中でさらに別の部分テンプレートを参照する時に使います。</li>
+<li><code>demoapp.rails-env.name</code>は、<code>Release</code>が<code>staging</code>の場合は<code>staging-demoapp-rails-env</code>になります。</li>
+</ul>
+<hr>
+<p>つまりChart化した後のオブジェクト名には、元々のマニフェストでの名前である<code>demoapp-puma</code>に
+プレフィクスとして<code>Release</code>の名前をつけていることになります。
+Helm Chartでは、このようにオブジェクトの名前に<code>Release</code>の名前をプレフィクスとしてつけるのが慣例です。</p>
+<p>なお、<code>define</code>を追加せず<code>demoapp.fullname</code>だけを使って下記のように書くことも可能です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.fullname" . <span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">-</span>puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.fullname" . <span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.fullname" . <span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>公式のHelmチャートにはこのように書かれているものも多いですが、
+typoに気づきにくいという問題があるので、このサンプルでは前記のように<code>define</code>して共通化しています。</p>
+<p>ところで、<code>template</code>関数の呼び出しの際には名前を示す一つ目のパラメータの後ろに<code>.</code>がありますが、
+これはカレントスコープを渡していることを示しています。
+テンプレート定義の内部で<code>.Values</code>や<code>.Release</code>などの組み込みオブジェクトを参照する場合には、
+呼び出し時にスコープを渡す必要がある点に注意してください。
+これは<code>include</code>も同様です。</p>
+<p><a href="https://docs.helm.sh/chart_template_guide/#setting-the-scope-of-a-template" target="_blank" rel="noopener">SETTING THE SCOPE OF A TEMPLATE</a></p>
+<h3 id="ラベル"><a href="#ラベル" class="headerlink" title="ラベル"></a>ラベル</h3><p>最後に、ラベルに関連するところだけを抜き出して比較します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># before: k8s/manifests-step4/puma-deploy.yaml</span>
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+
+<span class="token comment" spellcheck="true"># after: k8s/chart/templates/puma-deploy.yaml</span>
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">chart</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.chart" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">heritage</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Service <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+      <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Release.Name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>元々<code>app</code>と<code>component</code>だったところに、<code>chart</code>、<code>release</code>、<code>heritage</code>が追加されています。
+これらのラベルは、Helmの公式ドキュメントでBest Practiceのページに標準的なラベルとして定義されているものです。</p>
+<p><a href="https://docs.helm.sh/chart_best_practices/#standard-labels" target="_blank" rel="noopener">STANDARD LABELS - Chart Best Practices</a></p>
+<p><code>chart</code>はChartの名前、<code>release</code>は<code>Release</code>の名前を示すラベルです。
+<code>heritage</code>は常に<code>Tiller</code>という文字列になります。これはこのオブジェクトがHelm(Tiller)によって管理されているということを示します。</p>
+<p><code>release</code>のみ、<code>.spec.selector.matchLabels</code>にも追加されている点に注意してください。
+これは同一のChartが同じ<code>Namespace</code>内に複数の<code>Release</code>としてデプロイされた場合に、適切に分離されるために必要です。
+<code>chart</code>と<code>heritage</code>は動作に直接影響しませんが、慣例として推奨されているラベルです。</p>
+<h3 id="関数とパイプライン"><a href="#関数とパイプライン" class="headerlink" title="関数とパイプライン"></a>関数とパイプライン</h3><p>関数とパイプラインを使いこなすことでテンプレートはより便利になります。</p>
+<p><code>Secret</code>オブジェクトの定義では、データの値を次に示すようにBASE64エンコードして記述する必要がありました。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step4/rails-env-secret.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Secret
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">SECRET_KEY_BASE</span><span class="token punctuation">:</span> MTIz    <span class="token comment" spellcheck="true"># echo -n "123" | base64</span>
+  <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> c2VjcmV0 <span class="token comment" spellcheck="true"># echo -n "secret" | base64</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>いちいちエンコードしてからファイルに記述するのは面倒です。</p>
+<p>Helmのテンプレートでは先に述べたように<a href="https://godoc.org/github.com/Masterminds/sprig" target="_blank" rel="noopener">Sprig</a>の関数が組み込まれているため、
+<code>b64enc</code>という関数を使って次のように<code>Secret</code>を定義することができます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/chart/templates/rails-env-secret.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Secret
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">SECRET_KEY_BASE</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.env.secret.SECRET_KEY_BASE <span class="token punctuation">|</span> b64enc <span class="token punctuation">}</span><span class="token punctuation">}</span>
+  <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> .Values.env.secret.MYSQL_PASSWORD <span class="token punctuation">|</span> b64enc <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/chart/values.yaml</span>
+
+<span class="token key atrule">env</span><span class="token punctuation">:</span>
+  <span class="token key atrule">secret</span><span class="token punctuation">:</span>
+    <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> secret
+    <span class="token key atrule">SECRET_KEY_BASE</span><span class="token punctuation">:</span> <span class="token string">"123"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>&#123;&#123; &#125;&#125;</code>の中身はパイプラインであり、
+<code>|</code> 演算子を使って別の関数のパラメータとすることができます。
+関数が二つ以上のパラメータをとる場合、<code>|</code>の後ろの関数には最後のパラメータとして<code>|</code>の前の結果が渡されます。</p>
+<p>比較的よく使われる関数に<code>default</code>と<code>quote</code>があります。これを使った例を一つ見てみましょう。</p>
+<pre><code>{{ .Values.rails.testValue | default "abc" | b64enc | quote }}
+</code></pre><p><code>default</code>は、二つ目のパラメータが空の場合は一つ目の値を、空でない場合は二つ目の値を返す関数です。
+<code>quote</code>は、パラメータの前後に<code>&quot;</code>をつけた文字列を返す関数です。
+上記の例では、<code>.Values.rails.testValue</code>をBASE64エンコードして<code>&quot;</code>で囲むという処理です。
+<code>.Values.rails.testValue</code>が空だった場合は<code>abc</code>という文字列を代わりにエンコードしてクォートします。</p>
+<h3 id="フロー制御"><a href="#フロー制御" class="headerlink" title="フロー制御"></a>フロー制御</h3><p>今回のサンプルでは特に使っていないのですが、テンプレートでは<code>if/else</code>による分岐や<code>range</code>によるループを使用できます。</p>
+<p><a href="https://docs.helm.sh/chart_template_guide/#flow-control" target="_blank" rel="noopener">Flow Control</a></p>
+<p><code>stable/sentry</code>の<code>ingress.yaml</code>が参考になると思います。</p>
+<p><a href="https://github.com/kubernetes/charts/blob/master/stable/sentry/templates/ingress.yaml" target="_blank" rel="noopener">https://github.com/kubernetes/charts/blob/master/stable/sentry/templates/ingress.yaml</a></p>
+<h2 id="values-yaml"><a href="#values-yaml" class="headerlink" title="values.yaml"></a>values.yaml</h2><p>ここでは<code>values.yaml</code>について説明します。サンプルコードの<code>values.yaml</code>は次のような内容です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">mysql</span><span class="token punctuation">:</span>
+  <span class="token key atrule">image</span><span class="token punctuation">:</span>
+    <span class="token key atrule">repository</span><span class="token punctuation">:</span> mysql
+    <span class="token key atrule">tag</span><span class="token punctuation">:</span> 5.7.21
+  <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+    <span class="token key atrule">size</span><span class="token punctuation">:</span> 8Gi
+    <span class="token key atrule">className</span><span class="token punctuation">:</span> standard
+
+<span class="token key atrule">redis</span><span class="token punctuation">:</span>
+  <span class="token key atrule">image</span><span class="token punctuation">:</span>
+    <span class="token key atrule">repository</span><span class="token punctuation">:</span> redis
+    <span class="token key atrule">tag</span><span class="token punctuation">:</span> 4.0.9
+  <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+    <span class="token key atrule">size</span><span class="token punctuation">:</span> 8Gi
+    <span class="token key atrule">className</span><span class="token punctuation">:</span> standard
+
+<span class="token key atrule">puma</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">2</span>
+
+<span class="token key atrule">sidekiq</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">timeout</span><span class="token punctuation">:</span> <span class="token number">60</span>
+
+<span class="token key atrule">rails</span><span class="token punctuation">:</span>
+  <span class="token key atrule">image</span><span class="token punctuation">:</span>
+    <span class="token key atrule">repository</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">tag</span><span class="token punctuation">:</span> 0.0.1
+    <span class="token key atrule">setupDbTag</span><span class="token punctuation">:</span> 0.0.1
+
+<span class="token key atrule">ingress</span><span class="token punctuation">:</span>
+  <span class="token key atrule">tlsSecretName</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma<span class="token punctuation">-</span>tls
+  <span class="token comment" spellcheck="true"># required from --set parameter</span>
+  <span class="token comment" spellcheck="true"># helm upgrade release-name . --set ingress.host=demoapp-puma.${MINIKUBE_IP}.nip.io</span>
+  <span class="token comment" spellcheck="true"># host: demoapp-puma.${MINIKUBE_IP}.nip.io</span>
+
+<span class="token key atrule">env</span><span class="token punctuation">:</span>
+  <span class="token key atrule">configmap</span><span class="token punctuation">:</span>
+    <span class="token key atrule">MYSQL_USER</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">MYSQL_DATABASE</span><span class="token punctuation">:</span> demoapp_production
+    <span class="token key atrule">RAILS_SERVE_STATIC_FILES</span><span class="token punctuation">:</span> <span class="token string">"true"</span>
+    <span class="token key atrule">RAILS_LOG_TO_STDOUT</span><span class="token punctuation">:</span> <span class="token string">"true"</span>
+  <span class="token key atrule">secret</span><span class="token punctuation">:</span>
+    <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> secret
+    <span class="token key atrule">MYSQL_ROOT_PASSWORD</span><span class="token punctuation">:</span> topsecret
+    <span class="token key atrule">SECRET_KEY_BASE</span><span class="token punctuation">:</span> <span class="token string">"123"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注意が必要なのは下記の点です。</p>
+<ul>
+<li><code>Job</code>オブジェクトで参照するイメージのタグは<code>Deployment</code>と分ける必要があります。
+具体的には<code>.rails.image.tag</code>と<code>.rails.image.setupDbTag</code>です。<code>Job</code>のイメージは変更不可なので、分けておかないとアプリを更新できなくなります。</li>
+<li>秘匿情報は集約しておく方が管理が楽です。
+この例では<code>.env.secret</code>の下にまとめています。こうしておくと<a href="https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree" target="_blank" rel="noopener">sops</a>や<a href="https://github.com/joker1007/yaml_vault" target="_blank" rel="noopener">yaml_vault</a>でファイルの一部だけ暗号化するのが簡単になります。
+これについては次節で詳細を説明します。</li>
+</ul>
+<p>参考:</p>
+<ul>
+<li><a href="https://docs.helm.sh/chart_template_guide/#values-files" target="_blank" rel="noopener">Values Files</a></li>
+<li><a href="https://docs.helm.sh/chart_best_practices/#values" target="_blank" rel="noopener">Values - Best Practices</a></li>
+</ul>
+<h2 id="values-yamlに含まれる秘密情報の暗号化"><a href="#values-yamlに含まれる秘密情報の暗号化" class="headerlink" title="values.yamlに含まれる秘密情報の暗号化"></a>values.yamlに含まれる秘密情報の暗号化</h2><p>先の例では、DBのパスワードやRailsの<code>SECRET_KEY_BASE</code>などの秘密情報が<code>values.yaml</code>に平文で書き込まれていました。
+プライベートなアプリの場合でも、こういった秘密情報は平文のままでリポジトリにコミットするべきではありません。</p>
+<p>ここでは、YAMLファイルを暗号化する方法を二つ紹介します。</p>
+<h3 id="GCP-KMSの準備"><a href="#GCP-KMSの準備" class="headerlink" title="GCP KMSの準備"></a>GCP KMSの準備</h3><p>紹介する方法は、いずれもGCP KMSまたはAWS KMSで暗号鍵を管理できます。
+今回はGCP KMSを使う方法を紹介します。</p>
+<p><a href="https://cloud.google.com/sdk/" target="_blank" rel="noopener">Cloud SDK</a>をインストールした後、適当なプロジェクトを作成しください。
+その後、下記のコマンドを実行して鍵を作成してください。</p>
+<pre><code># ログイン
+$ gcloud auth login
+
+# キーリングの作成
+$ gcloud kms keyrings create demoapp --location global
+
+# キーの作成
+$ gcloud kms keys create values-key --location global --keyring demoapp --purpose encryption
+
+# 作成したキーの確認
+$ gcloud kms keys list --location global --keyring demoapp
+NAME                                                                                PURPOSE          LABELS  PRIMARY_ID  PRIMARY_STATE
+projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key  ENCRYPT_DECRYPT          1           ENABLED
+</code></pre><p>この例では、プロジェクトIDは<code>rails-k8s-demoapp</code>です。各自の環境に合わせて読み替えてください。</p>
+<p>途中、下記のようなメッセージが出た場合は、ブラウザでリンクを開いてKMSを有効化してください。</p>
+<pre><code>ERROR: (gcloud.kms.keyrings.create) FAILED_PRECONDITION: Google Cloud KMS API has not been used in this project before, or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudkms.googleapis.com/overview?project=123456789012 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+</code></pre><p>使い終わった鍵は忘れずに破棄しておいてください。使っていなくても費用が発生します。</p>
+<p><a href="https://cloud.google.com/kms/pricing?hl=ja" target="_blank" rel="noopener">https://cloud.google.com/kms/pricing?hl=ja</a></p>
+<p>また、下記のページを参照してサービスアカウントキーを作成してください。</p>
+<p><a href="https://cloud.google.com/docs/authentication/getting-started" target="_blank" rel="noopener">https://cloud.google.com/docs/authentication/getting-started</a></p>
+<p>役割は、<code>Cloud KMS - クラウドKMS暗号鍵の暗号化/復号化</code>を選択します。
+JSON形式でダウンロードした鍵を <code>kms-key.json</code>という名前で保存してください。</p>
+<h3 id="yaml-vault"><a href="#yaml-vault" class="headerlink" title="yaml_vault"></a>yaml_vault</h3><p><a href="https://github.com/joker1007/yaml_vault" target="_blank" rel="noopener">yaml_vault</a>はruby製の暗号化ツールです。
+AWS KMSまたはGCP KMSで暗号鍵を管理することができます。</p>
+<p>gemでインストールできます。GCP KMSを使う場合は、google-api-clientも必要です。</p>
+<pre><code>$ gem install yaml_vault google-api-client
+</code></pre><p>Gemfileに追加しても良いですが、そのままだとDockerイメージのサイズが50MBほど増えるため、少し工夫が必要です。</p>
+<p>下記のコマンドを実行すると、<code>values.yaml</code>を暗号化して<code>encrypted_values.yaml</code>に出力します。
+その際、暗号化するキーを<code>--key</code>オプションで限定している点に注目してください。このオプションを指定しない場合、YAMLの全ての値が暗号化されます。</p>
+<pre><code>$ yaml_vault encrypt values.yaml -o encrypted_values.yaml --cryptor=gcp-kms \
+  --gcp-kms-resource-id=projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key \
+  --gcp-credential-file=kms-key.json \
+  --key &#39;$.env.secret&#39;
+encrypted values.yaml -&gt; encrypted_values.yaml
+</code></pre><p>暗号化されたファイルは次のような内容になります。</p>
+<pre><code># encrypted_values.yaml
+mysql:
+  image:
+    repository: mysql
+    tag: 5.7.21
+  storage:
+    size: 8Gi
+    className: standard
+redis:
+  image:
+    repository: redis
+    tag: 4.0.9
+  storage:
+    size: 8Gi
+    className: standard
+puma:
+  replicas: 2
+sidekiq:
+  replicas: 1
+  timeout: 60
+rails:
+  image:
+    repository: demoapp
+    tag: 0.0.1
+    setupDbTag: 0.0.1
+ingress:
+  tlsSecretName: demoapp-puma-tls
+env:
+  configmap:
+    MYSQL_USER: demoapp
+    MYSQL_DATABASE: demoapp_production
+    RAILS_SERVE_STATIC_FILES: &quot;true&quot;
+    RAILS_LOG_TO_STDOUT: &quot;true&quot;
+  secret:
+    MYSQL_PASSWORD: CiQA/TkaHXJd4HsdRnMTJ9tgso7tYdCbIJxuWbGgj5UJfpkbI+gSOADQcvdxFdICOfR8oiQa1GOM9UX0koe0AC9TM5C+fpV1nRuaajJGAF0IfFRf9KtKKHyz/Qp4ad3E
+    MYSQL_ROOT_PASSWORD: CiQA/TkaHbi65E4QSHRKwpxRQcD43rMwo4rr9aUgAj8ezPjgtGcSOwDQcvdxaMRAJ+yE87zeGDIBCbeZVzyZMXAg83Odxj2y9fbL4NELzViD5bqx8XoxWe0Y7nhWYJomNpmC
+    SECRET_KEY_BASE: &quot;CiQA/TkaHfsk/7i7IrlJVhheCPifd0bCvho9CJgRbiR10lnqc1oSMgDQcvdxijXncXs0gYuMfk9/IdeSiL8fApLEDd6zISmgnmZh3d7KxNioeliHZcWApaai&quot;
+</code></pre><p>復号するときは次のようにします。</p>
+<pre><code>$ yaml_vault decrypt encrypted_values.yaml -o values.yaml --cryptor=gcp-kms \
+  --gcp-kms-resource-id=projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key \
+  --gcp-credential-file=kms-key.json \
+  --key &#39;$.env.secret&#39;
+</code></pre><p>yaml_vaultを使って運用する場合には、<code>values.yaml</code>はコミットせず、暗号文の<code>encrypted_values.yaml</code>をコミットして運用します。</p>
+<p>なお、暗号化を行う際には、元の平文に変更がなかったとしても毎回暗号文の部分は値が変わってしまう点に注意が必要です。</p>
+<h3 id="sops"><a href="#sops" class="headerlink" title="sops"></a>sops</h3><p><a href="https://github.com/mozilla/sops" target="_blank" rel="noopener">sops</a>はmozilla製の暗号化ツールです。</p>
+<p>使用するためには、まずGCPの鍵を環境変数で指定する必要があります。</p>
+<pre><code>$ export GOOGLE_APPLICATION_CREDENTIALS=kms-key.json
+</code></pre><p>暗号化は下記のように行います。</p>
+<pre><code>$ sops --encrypt --gcp-kms projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key values.yaml &gt; encrypted_values.yaml
+</code></pre><p>ファイル全体が下記のように暗号化されます。</p>
+<pre><code>mysql:
+    image:
+        repository: ENC[AES256_GCM,data:eD0o4pw=,iv:3DbUfobOeqAL0kowEKVqbMjtEC88J9/nMysGdMf4nqk=,tag:wEwatUbf9v1/LVPLYkunPA==,type:str]
+        tag: ENC[AES256_GCM,data:PgWECj+7,iv:UlUPjWbxO+lW6bAm/2F5JTfAbbWa3/wCjyOIyGmEG7I=,tag:vPmfEGQkKKxE7nsJsZfYZA==,type:str]
+    storage:
+        size: ENC[AES256_GCM,data:Zn9a,iv:OaFk2rRTiNB3doRZBo5SvL/7j5G1PLKA0H7mBXpa/Ew=,tag:04A9OIJgYlXWOwk35kPHqg==,type:str]
+        className: ENC[AES256_GCM,data:k4J42uu3fiE=,iv:YrXlk57NgadQg9VQaTbTjo8E5nT5XWZXz6UvNXiSO6E=,tag:hCOuXuQBY3rSxzsY4sx+0A==,type:str]
+redis:
+    image:
+        repository: ENC[AES256_GCM,data:wjqwX64=,iv:hqxguyQImpZFgGz83CyQhfi/tGZbIefTHbpXMiMuL3w=,tag:Y5kdJOxdH4R2HMrYeFv5xA==,type:str]
+        tag: ENC[AES256_GCM,data:tCM+YHQ=,iv:owoFufImNd81KqP5XVvEdA+3ZHpZMYp1Q56pHm7lW/o=,tag:VuiJh+zPegQvjfMMySRWTA==,type:str]
+    storage:
+        size: ENC[AES256_GCM,data:g5n2,iv:AVbPlOkfrBFq9UzuILE6fgt6Xww6311KbyFhXHnpiAk=,tag:S+xMDWCQ3XlT7PCQlB4kiw==,type:str]
+        className: ENC[AES256_GCM,data:yrqW0RSihnc=,iv:O9wpDqHd3zYNdoS8VJI1y2giLnSByaGAvGrDMrF8ba8=,tag:hmE475vdibBfUc8R21AMzg==,type:str]
+puma:
+    replicas: ENC[AES256_GCM,data:oA==,iv:RkUoYXEivf5vzDrWBD7kWaGtyr1k4lApn1T0qWA67K0=,tag:Z4fPAiGEtfuxxaqQM2nXQw==,type:int]
+sidekiq:
+    replicas: ENC[AES256_GCM,data:QQ==,iv:NWZPcXVz7tcuXIRftmacJ2SegYfDgh/iwS82ovlYeNA=,tag:J2WSY3vjOkJcNvIJrLFy7w==,type:int]
+    timeout: ENC[AES256_GCM,data:G5s=,iv:t/866qY7jTnGSRUQAhgXWEw9lcdtHll8fYIQsyARo4A=,tag:yZ2cIFXdJO2xis4B9mzWSA==,type:int]
+rails:
+    image:
+        repository: ENC[AES256_GCM,data:x4dh5BigFg==,iv:C7jm5zl6rr7PeLwgX2i73Yo1yKWp+lv3eA0zCJipuk4=,tag:2FhxjAmnnIYVTsN6WkFoBQ==,type:str]
+        tag: ENC[AES256_GCM,data:WaWw06E=,iv:S8Tx8rQPfzfk00of3HiNJVJYM3qeNQKNxxyHYyvTAFM=,tag:74upYPpg3fMoEya9YFTVog==,type:str]
+        setupDbTag: ENC[AES256_GCM,data:zFo1gJ0=,iv:+P0F1hH5TagxLLe7yqCMAfoLtEsu+s5lLV7WKDJFp7s=,tag:T/Bix+hd1DZBIhA634mVrQ==,type:str]
+ingress:
+    tlsSecretName: ENC[AES256_GCM,data:sJcZXlktHsdfsYm6BbkGQg==,iv:J+bmgm2qC0wIMSDzXec9xsujOl3kjfFVUv+qmk3FWhs=,tag:qyecdT2dDvsPI+rAGe9+oA==,type:str]
+    #ENC[AES256_GCM,data:H0TCFT5qkWAfK6E+j9sSjudYmCVAKckB7CQxgwbH,iv:kl625mCSUA/NNV35CU+xez9GOFggKnDm5nXYJ9waVMU=,tag:AKdSsCJNcfdC+I3nvXhStw==,type:comment]
+    #ENC[AES256_GCM,data:cGNTwdT+KF0CoUCmNVwLxyvUqNozAZvz0xDWzoEB/qElfEMVRSqdPXMjMjsjEy1Apm0WOBfp5HFgZUFW16Q+vucAhgeFAn0mM7WhADNjKZGZUw==,iv:sMn+N9nHPbWB0Raps0559jxHKDMeo98CfnUIjIvTFjU=,tag:bR8mdcFEf2ZaJ2IdKHp9xg==,type:comment]
+    #ENC[AES256_GCM,data:cl97jwOSlNZmfBAK+GjtzUZgqyABB9bXUN0J+xeFQpc5I3V3Ez2Olrc=,iv:jcrqo86rp+SVSB+lKLee/YdEz+8IfnULzYA+A0vj+SA=,tag:tqSfgPe//SlU0GJSog0PcQ==,type:comment]
+env:
+    configmap:
+        MYSQL_USER: ENC[AES256_GCM,data:ckkEsrePZg==,iv:ssnCPFBqnihIe5c9T79EJlA2vGWsihOI53RL1SwdklA=,tag:ewyXNB6S6Kd25FIcSGtF4w==,type:str]
+        MYSQL_DATABASE: ENC[AES256_GCM,data:LmgD+B0MF2jaHXiLAbL57UdT,iv:0eivT7Dkkso4zcvbekb0Li5CBGEn4TcaAFzcC7QtvTs=,tag:/k2xCsM+BKkPF540QZNRqA==,type:str]
+        RAILS_SERVE_STATIC_FILES: ENC[AES256_GCM,data:B7YMSg==,iv:XM6zzCChuIPUUYmOog/XvbaC88j+AZtNcfps2/e/2h0=,tag:AK9aHDYW2WaBTITLQuBA6Q==,type:str]
+        RAILS_LOG_TO_STDOUT: ENC[AES256_GCM,data:HV9B/Q==,iv:mSKjUGQSmCXKcCutSmjnenb3lVzVHWEKrTa+N+nBexY=,tag:4bYviLxwkVCZgjjNZ3cvFQ==,type:str]
+    secret:
+        MYSQL_PASSWORD: ENC[AES256_GCM,data:aRQsAyGK,iv:tjhn1oDqbp83vNartgIL4S8SgveNLUL91gjUzSCBuNo=,tag:1PtcSk8gt0XBuboZzE93pQ==,type:str]
+        MYSQL_ROOT_PASSWORD: ENC[AES256_GCM,data:QgUKdkPZ3URM,iv:iQl52u3fruHtoBh6uLCJ0ArzvLHbw7XbNVQcKuBbaVs=,tag:u/V3k0D15Ne0TQLfRcTF/g==,type:str]
+        SECRET_KEY_BASE: ENC[AES256_GCM,data:0Bsu,iv:1MfHBuEa2fF84H+IJXHeufBWH+dJWGEE4zJqts3EJrw=,tag:VAgJgAS+xlgAKnPeff1eHA==,type:str]
+sops:
+    kms: []
+    gcp_kms:
+    -   resource_id: projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key
+        created_at: &#39;2018-05-28T14:55:44Z&#39;
+        enc: CiQA/TkaHVv9JRDpzqLYXfGD8QDW92/4xSZhMcuao5VlStYzBAwSSQDQcvdxZjXWoG1h8nEbj9o1TNWvdSlz5rxY/l9WEd/WieUiORJLVxI+MCsZ764vUksSk9jrmPxnLqlrfKy/Klz/6yKGi3pyx/g=
+    lastmodified: &#39;2018-05-28T14:55:45Z&#39;
+    mac: ENC[AES256_GCM,data:zoHHamGXApQLsCJSxYuuVkYFo8xAROv+ier9wZYEpn2jDu9vwDZObwEb52Ewx4UTEJphq4KWi/DKodcUZHfyhWIEjqpwwUxqlIXlWmq1AO5XERa/XS0egi6gK3VnKYHsxbRSKF/hY/DOS6bO5A6Fnh0lBfENUZ8qStt5gKtwPOE=,iv:FK4V/TOHJ6cY3mPk4rlrgrSWm8s+HFazY+62d8Cck58=,tag:HkgWUGc4O4rcHZ1jDY+viQ==,type:str]
+    pgp: []
+    unencrypted_suffix: _unencrypted
+    version: 3.0.5
+</code></pre><p>このファイルを編集するときは、下記のように直接<code>sops</code>コマンドで指定します。</p>
+<pre><code>$ sops encrypted_values.yaml
+</code></pre><p>するとファイルの内容が復号され、環境変数EDITORで指定したエディタ上で編集可能になります。
+保存してエディタを閉じると再び暗号化された状態で保存されます。</p>
+<pre><code>$ sops --decrypt --gcp-kms projects/rails-k8s-demoapp/locations/global/keyRings/demoapp/cryptoKeys/values-key encrypted_values.yaml &gt; values.yaml
+</code></pre><p>sopsもyaml_vaultのようにファイルの一部分だけを暗号化することもできますが、
+「YAMLデータのキーにサフィックスをつけて指定した部分だけを平文にする」という仕組みであり、
+<code>values.yaml</code>の構造に直接影響を与える方法なので使いにくいです。</p>
+<p><a href="https://github.com/mozilla/sops#encrypting-only-parts-of-a-file" target="_blank" rel="noopener">Encrypting only part of a file</a></p>
+<p>sopsを使う場合、<code>values.yaml</code>には秘密情報を以外の値だけを書くようにし、
+<code>secret-values.yaml</code>に秘密情報を全て取り出して、常に<code>-f</code>オプションで<code>secret-values.yaml</code>も指定するという方法が良いと思います。</p>
+<h2 id="Subchart"><a href="#Subchart" class="headerlink" title="Subchart"></a>Subchart</h2><p>Helm Chartでは、他のChartをSubchartとして使用することができます。</p>
+<p><a href="https://docs.helm.sh/chart_template_guide/#subcharts-and-global-values" target="_blank" rel="noopener">Subcharts and Global Values</a></p>
+<p>例えば<code>stable/sentry</code>パッケージは<code>stable/postgres</code>と<code>stable/redis</code>をSubchartとして使用しており、
+PostgreSQLとRedisのセットアップはこれらのChartに依存しています。</p>
+<p>今回、<code>rails-k8s-demoapp</code>のChartではあえて<code>stable/mysql</code>と<code>stable/redis</code>を使わずに自前でテンプレートを用意しました。
+この理由は公式のChartと言えどまだ枯れているとは言えないと判断したためです。</p>
+<p>例えば<code>stable/redis</code>ではパスワードを示すパラメータの名前が途中で変わっており、
+<code>stable/sentry</code>の現時点での最新版(0.1.14)は古いバージョンの<code>stable/redis</code>(0.10.1)に依存しています。
+そのため最新の<code>stable/redis</code>のドキュメントを見て設定してしまうと動きません。
+(バージョンを指定してドキュメントを見られるようなサービスもありません)</p>
+<p>また、当然<code>Values</code>で変更できる部分以外の動作は変更できなくなるため、Chart側で十分な柔軟性が確保されていない場合には、
+自分のアプリケーションの要件を満たせないあるいは途中で満たせなくなる可能性があります。</p>
+<p>このあたりは<code>Chef</code>の(特に初期の)コミュニティクックブックに状況が似ていると思います。</p>
+<p>公式のChartとして公開することを目指すのであればできるだけ他のChartを利用するべきだと思いますが、
+そうでない場合には無理に依存を増やす必要はありません。
+公式のChartは汎用性を高めるために多機能なものが多く、全貌を把握すること自体がコストになるケースもあります。
+簡単なものなら自作した方がトータルでは楽なことも多いです。</p>
+<p>また、Subchartまで完全に自分でコントロール可能な場合はChartの分割を検討しても良いと思いますが、
+多くのChartに依存されたChartは更新が難しくなるので、そこはトレードオフになります。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>この節では、プライベートなアプリのHelm Chartの作り方に関して、
+k8sのプレーンなマニフェストをどのようにテンプレート化するかについて、<code>puma-deploy.yaml</code>を例に説明しました。</p>
+<p>その他のオブジェクトのマニフェストについてもだいたい同じような手順でテンプレート化できるため、
+それらについての詳細な説明は割愛します。コードを見てみてください。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/chart/" target="_blank" rel="noopener">k8s/chart/</a></p>
+<h1 id="自作のChartによるワークフロー"><a href="#自作のChartによるワークフロー" class="headerlink" title="自作のChartによるワークフロー"></a>自作のChartによるワークフロー</h1><p>以下についてはすでに説明しました。</p>
+<ul>
+<li><a href="#helm-create-%E6%96%B0%E3%81%97%E3%81%84Chart%E3%81%AE%E4%BD%9C%E6%88%90">helm create: 新しいChartの作成</a></li>
+<li><a href="#helm-template-%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%83%B3%E3%83%80%E3%83%AA%E3%83%B3%E3%82%B0">helm template: テンプレートのレンダリング</a></li>
+<li><a href="#helm-upgrade-%E2%80%93install-%E4%BD%9C%E3%81%A3%E3%81%9FChart%E3%81%AE%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4">helm upgrade –install: 作ったChartのデプロイ</a></li>
+</ul>
+<p>この節では、アプリケーションを運用する上でさらに必要になるであろういくつかのオペレーションを説明します。</p>
+<h2 id="helm-upgrade-Chartの更新を反映"><a href="#helm-upgrade-Chartの更新を反映" class="headerlink" title="helm upgrade: Chartの更新を反映"></a>helm upgrade: Chartの更新を反映</h2><p>コマンド自体は初回デプロイと同じ<code>helm upgrade</code>を使いますが、
+アプリケーションを更新する場合には次のいずれかの方法で<code>Deployment</code>のイメージを変更する必要があります。</p>
+<ol>
+<li><code>--set</code>オプションで<code>rails.image.tag</code>を変更する。</li>
+</ol>
+<p>この場合、次のように新しいタグを指定して実行します。</p>
+<pre><code>$ helm upgrade staging . --install --wait \
+  --set ingress.host=demoapp-puma.$(minikube ip).nip.io \
+  --set rails.image.tag=0.0.2
+</code></pre><ol start="2">
+<li><code>values.yaml</code>ファイルの<code>.rails.image.tag</code>と<code>Chart.yaml</code>のバージョン情報を書き換えて<code>helm upgrade</code>を実行する。</li>
+</ol>
+<p>差分は典型的には下記のようになります。</p>
+<pre class="line-numbers language-diff"><code class="language-diff">diff --git a/k8s/chart/Chart.yaml b/k8s/chart/Chart.yaml
+index 43907c6..a6283b0 100644
+<span class="token coord">--- a/k8s/chart/Chart.yaml</span>
+<span class="token coord">+++ b/k8s/chart/Chart.yaml</span>
+<span class="token coord">@@ -1,5 +1,5 @@</span>
+ apiVersion: v1
+<span class="token deleted">-appVersion: "0.0.1"</span>
+<span class="token inserted">+appVersion: "0.0.2"</span>
+ description: A Helm chart for Kubernetes
+ name: demoapp
+<span class="token deleted">-version: 0.0.1</span>
+<span class="token inserted">+version: 0.0.2</span>
+diff --git a/k8s/chart/values.yaml b/k8s/chart/values.yaml
+index 3f6eea1..96610f8 100644
+<span class="token coord">--- a/k8s/chart/values.yaml</span>
+<span class="token coord">+++ b/k8s/chart/values.yaml</span>
+@@ -24,7 +24,7 @@ sidekiq:
+ rails:
+   image:
+     repository: demoapp
+<span class="token deleted">-    tag: 0.0.1</span>
+<span class="token inserted">+    tag: 0.0.2</span>
+     setupDbTag: 0.0.1
+
+ ingress:
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>ファイルを書き換えたら、初回デプロイと全く同じコマンドを実行します。</p>
+<pre><code>$ helm upgrade staging . --install --wait \
+  --set ingress.host=demoapp-puma.$(minikube ip).nip.io
+</code></pre><p>簡単なのは1の方法ですが、現在デプロイされているイメージの情報がgit側に残らないというデメリットがあります。</p>
+<p>長期的には2の方法がおすすめです。<code>Chart.yaml</code>の<code>version</code>も更新しておくと、
+後に紹介する<code>helm history</code>とgitのログでインフラ構成の履歴を追うのが楽になります。</p>
+<p><a href="https://docs.helm.sh/helm/#helm-upgrade" target="_blank" rel="noopener">helm upgrade</a></p>
+<h2 id="helm-history-Releaseの履歴を表示"><a href="#helm-history-Releaseの履歴を表示" class="headerlink" title="helm history: Releaseの履歴を表示"></a>helm history: Releaseの履歴を表示</h2><p>指定した<code>Release</code>の更新履歴を表示します。</p>
+<pre><code>$ helm history staging
+REVISION        UPDATED                         STATUS          CHART           DESCRIPTION
+1               Mon May 28 00:01:37 2018        SUPERSEDED      demoapp-0.0.1   Install complete
+2               Mon May 28 00:07:00 2018        DEPLOYED        demoapp-0.0.2   Upgrade complete
+</code></pre><p><code>REVISION</code>は、その<code>Release</code>の現在のバージョンを示す数値で、1から始まり<code>helm upgrade</code>するたびに1ずつ増えていきます。</p>
+<p><a href="https://docs.helm.sh/helm/#helm-history" target="_blank" rel="noopener">helm history</a></p>
+<h2 id="helm-rollback-Releaseを前のリビジョンに戻す"><a href="#helm-rollback-Releaseを前のリビジョンに戻す" class="headerlink" title="helm rollback: Releaseを前のリビジョンに戻す"></a>helm rollback: Releaseを前のリビジョンに戻す</h2><p>Releaseの状態を指定したリビジョンに戻します。</p>
+<pre><code>$ helm rollback staging 1
+Rollback was a success! Happy Helming!
+
+$ helm history staging
+REVISION        UPDATED                         STATUS          CHART           DESCRIPTION
+1               Mon May 28 00:01:37 2018        SUPERSEDED      demoapp-0.0.1   Install complete
+2               Mon May 28 00:07:00 2018        SUPERSEDED      demoapp-0.0.2   Upgrade complete
+3               Mon May 28 00:10:31 2018        DEPLOYED        demoapp-0.0.1   Rollback to 1
+</code></pre><p><a href="https://docs.helm.sh/helm/#helm-rollback" target="_blank" rel="noopener">helm rollback</a></p>
+<h2 id="helm-get-Releaseの詳細を表示"><a href="#helm-get-Releaseの詳細を表示" class="headerlink" title="helm get: Releaseの詳細を表示"></a>helm get: Releaseの詳細を表示</h2><p>指定した<code>Release</code>に関する下記の情報を表示することができます。</p>
+<ul>
+<li>Chartの名称やデプロイ日時などの基本情報</li>
+<li><code>values.yaml</code>と<code>--set</code>や<code>-f</code>オプションなどの値をマージした最終的な<code>Values</code>オブジェクト</li>
+<li>全テンプレートのレンダリング済みマニフェスト</li>
+</ul>
+<pre><code>$ helm get staging
+REVISION: 1
+RELEASED: Mon May 28 00:01:37 2018
+CHART: demoapp-0.0.1
+USER-SUPPLIED VALUES:
+ingress:
+  host: demoapp-puma.192.168.64.29.nip.io
+
+COMPUTED VALUES:
+env:
+  configmap:
+    MYSQL_DATABASE: demoapp_production
+    MYSQL_USER: demoapp
+    RAILS_LOG_TO_STDOUT: &quot;true&quot;
+    RAILS_SERVE_STATIC_FILES: &quot;true&quot;
+(省略)
+
+HOOKS:
+MANIFEST:
+
+---
+# Source: demoapp/templates/mysql-env-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: staging-demoapp-mysql-env
+data:
+  MYSQL_PASSWORD: c2VjcmV0
+  MYSQL_ROOT_PASSWORD: dG9wc2VjcmV0
+(省略)
+</code></pre><p><a href="https://docs.helm.sh/helm/#helm-get" target="_blank" rel="noopener">helm get</a></p>
+<h2 id="helm-diff-Chartの差分を表示"><a href="#helm-diff-Chartの差分を表示" class="headerlink" title="helm diff: Chartの差分を表示"></a>helm diff: Chartの差分を表示</h2><p><code>helm</code>コマンドはプラグイン機構により拡張することが可能です。</p>
+<p>利用可能なプラグインは下記のページに掲載されています。</p>
+<p><a href="https://docs.helm.sh/related/#helm-plugins" target="_blank" rel="noopener">HELM PLUGINS</a></p>
+<p>ここではプラグインの一つ<a href="https://github.com/databus23/helm-diff" target="_blank" rel="noopener">Helm Diff</a>を紹介します。</p>
+<p><code>helm plugin</code>コマンドでインストールできます。</p>
+<pre><code>$ helm plugin install https://github.com/databus23/helm-diff
+</code></pre><p><code>helm diff</code>コマンドを使うと、<code>helm upgrade</code>により発生する差分を<code>diff</code>形式で表示することができます。</p>
+<pre><code>% helm diff upgrade staging . --set ingress.host=demoapp-puma.$(minikube ip).nip.io --set rails.image.tag=0.0.2
+staging-demoapp-sidekiq, Deployment (apps/v1) has changed:
+  # Source: demoapp/templates/sidekiq-deploy.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+(省略)
+-           image: demoapp:0.0.1
++           image: demoapp:0.0.2
+(省略)
+staging-demoapp-puma, Deployment (apps/v1) has changed:
+  # Source: demoapp/templates/puma-deploy.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+(省略)
+-           image: demoapp:0.0.1
++           image: demoapp:0.0.2
+(省略)
+</code></pre><p>また、<code>helm rollback</code>で発生する差分や、過去のリビジョン同士の差分を表示することもできます。
+詳細は<a href="https://github.com/databus23/helm-diff" target="_blank" rel="noopener">Helm Diff</a>のドキュメントを参照してください。</p>
+<pre><code>$ helm diff -h
+</code></pre><h1 id="おわりに"><a href="#おわりに" class="headerlink" title="おわりに"></a>おわりに</h1><p>Railsアプリ開発のためのDocker/Kubernetes入門を主題として、
+Docker/Kubernetesの基本と、小さなRailsアプリケーションをHelmでk8sクラスタにデプロイする方法について書きました。</p>
+<p>Docker/Kubernetesを本番サービスへ投入するのであれば、さらに下記について学ぶと良いと思います。</p>
+<ul>
+<li>GCPやAWSのようなパブリッククラウドでk8sを使う方法(GKEやkops)</li>
+<li>ロールベースのアクセス制御(<a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/" target="_blank" rel="noopener">Using RBAC Authorization</a>)</li>
+<li>k8sクラスタ自体やその上で稼働するアプリケーションのリソース監視(Prometheusとの統合など)</li>
+<li>Dockerイメージのさらなるスリム化の手法</li>
+<li><code>Pod</code>をどのノードに配置するかを制御する方法(<a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/" target="_blank" rel="noopener">Assigning Pods to Nodes</a>、<a href="https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/" target="_blank" rel="noopener">Taints and Tolerations</a>)</li>
+<li><code>Pod</code>に割り当てるCPUやメモリなどの計算資源を制御する方法(<a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/" target="_blank" rel="noopener">Managing Compute Resources for Containers</a>)</li>
+<li>負荷に応じて動的に<code>Pod</code>の数を増減させる方法(<a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">Horizontal Pod Autoscaler</a>)</li>
+</ul>
+<p>クラウドを使うならGKEが簡単でおすすめですが、GKEでHelmを使おうとするとRBACが最初のハードルになると思います。
+次回はその辺りについて書きたいと思います。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-id="cjhtbua33005hkzrcu2bdo9g2" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/helm/">helm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2018/05/30/practical-kubernetes-with-rails/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

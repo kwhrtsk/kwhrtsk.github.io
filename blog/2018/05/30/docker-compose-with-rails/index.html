@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第二回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta name="keywords" content="docker,kubernetes,k8s,rails">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門2 Docker Compose&#x2F;Dockerfile編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第二回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta property="og:locale" content="ja">
+<meta property="og:image" content="https://chopschips.net/images/post_20180502_docker_compose_with_rails/rails-k8s-demoapp.gif">
+<meta property="og:updated_time" content="2018-05-30T15:39:54.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門2 Docker Compose&#x2F;Dockerfile編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第二回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta name="twitter:image" content="https://chopschips.net/images/post_20180502_docker_compose_with_rails/rails-k8s-demoapp.gif">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-docker-compose-with-rails" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/docker-compose-with-rails/" class="article-date">
+  <time datetime="2018-05-30T13:10:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#サンプルアプリケーション"><span class="toc-number">1.</span> <span class="toc-text">サンプルアプリケーション</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#最小限のDocker-Compose入門"><span class="toc-number">2.</span> <span class="toc-text">最小限のDocker Compose入門</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Composeとは"><span class="toc-number">2.1.</span> <span class="toc-text">Docker Composeとは</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Composeを使った各種ミドルウェアのインストールと実行管理"><span class="toc-number">2.2.</span> <span class="toc-text">Docker Composeを使った各種ミドルウェアのインストールと実行管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Composeファイル-docker-compose-yml-のサンプル"><span class="toc-number">2.3.</span> <span class="toc-text">Composeファイル(docker-compose.yml)のサンプル</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-compose-up-各種ミドルウェアのインストールと起動"><span class="toc-number">2.4.</span> <span class="toc-text">docker-compose up: 各種ミドルウェアのインストールと起動</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-compose-ps-コンテナの一覧を取得する"><span class="toc-number">2.5.</span> <span class="toc-text">docker-compose ps: コンテナの一覧を取得する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-compose-down-コンテナの削除"><span class="toc-number">2.6.</span> <span class="toc-text">docker-compose down: コンテナの削除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#最小限のDockerfile入門"><span class="toc-number">3.</span> <span class="toc-text">最小限のDockerfile入門</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FROM"><span class="toc-number">3.1.</span> <span class="toc-text">FROM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ENV-ARG"><span class="toc-number">3.2.</span> <span class="toc-text">ENV, ARG</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WORKDIR"><span class="toc-number">3.3.</span> <span class="toc-text">WORKDIR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RUN-COPY"><span class="toc-number">3.4.</span> <span class="toc-text">RUN, COPY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#レイヤについて"><span class="toc-number">3.5.</span> <span class="toc-text">レイヤについて</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#docker-composeコマンドによるローカルプレビュー環境"><span class="toc-number">4.</span> <span class="toc-text">docker-composeコマンドによるローカルプレビュー環境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#コンテナ間の通信について"><span class="toc-number">4.1.</span> <span class="toc-text">コンテナ間の通信について</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ローカル開発環境のRailsアプリをDocker化するかどうか"><span class="toc-number">5.</span> <span class="toc-text">ローカル開発環境のRailsアプリをDocker化するかどうか</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考情報"><span class="toc-number">6.</span> <span class="toc-text">参考情報</span></a></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。
+この記事はシリーズ連載記事の第二回です。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a></li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a></li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a></li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a></li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a></li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a></li>
+</ul>
+<p>今回は下記について書きます。</p>
+<ul>
+<li>最小限のDocker Compose入門</li>
+<li>Docker Composeを使った各種ミドルウェアのインストールと管理</li>
+<li>RailsアプリケーションのDockerイメージの作り方</li>
+<li>Docker Composeによるローカルプレビュー環境の構築</li>
+</ul>
+<h1 id="サンプルアプリケーション"><a href="#サンプルアプリケーション" class="headerlink" title="サンプルアプリケーション"></a>サンプルアプリケーション</h1><p>簡単なRailsアプリを例に、Docker Composeの使い方やDockerfileの書き方を説明します。
+このサンプルアプリ<code>rails-k8s-demoapp</code>のコードは下記のリポジトリに置いています。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<p><code>rails-k8s-demoapp</code>は「フォームでメッセージを送信すると画面上のリストに追加して表示する」だけの小さなアプリです。</p>
+<p>仕様は極小ですが、できるだけ一般的なRailsアプリの構成に近くなるように下記の要件を満たすものにしています。</p>
+<ul>
+<li>ミドルウェアとしてMySQLとRedis(SidekiqとActionCableのため)を使用</li>
+<li>ActiveJobを使用: <strong>Pumaの他にSidekiqプロセスの起動が必要なケースを想定</strong><ul>
+<li>新しいメッセージが追加されると、3秒後に逆順の文字列をさらにメッセージとして追加するようなジョブをSidekiqで実行します。</li>
+</ul>
+</li>
+<li>ActionCableを使用: <strong>websocketが必要なケースを想定</strong><ul>
+<li>新しいメッセージが追加された時にActionCableでブラウザに通知を行いページリロードさせます。</li>
+</ul>
+</li>
+<li>Webpackerを使用: <strong>アセットのビルドにnodeとyarnが必要なケースを想定</strong><ul>
+<li>フロントエンドのコードはTypeScriptで書いています。</li>
+<li>webpackでBootstrap v4を組み込んでいます。</li>
+</ul>
+</li>
+</ul>
+<img src="/images/post_20180502_docker_compose_with_rails/rails-k8s-demoapp.gif">
+<p>下記のコマンドで動作を確認することができます。RubyやRailsの開発環境は必要ありません。
+gitとDockerがインストールされていれば動きます。</p>
+<pre><code>$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+$ docker-compose -f docker-compose-preview.yml up -d
+$ open http://localhost:3000/
+</code></pre><p><code>docker-compose</code>コマンドの使い方やサンプルアプリケーションで使っている<code>docker-compose.yml</code>と<code>Dockerfile</code>については順に説明します。</p>
+<a id="more"></a>
+<h1 id="最小限のDocker-Compose入門"><a href="#最小限のDocker-Compose入門" class="headerlink" title="最小限のDocker Compose入門"></a>最小限のDocker Compose入門</h1><h2 id="Docker-Composeとは"><a href="#Docker-Composeとは" class="headerlink" title="Docker Composeとは"></a>Docker Composeとは</h2><p>複数のコンテナをYAML形式の構成ファイルで一括管理するツールです。</p>
+<ul>
+<li>この構成ファイルを <strong>Composeファイル</strong> と呼びます。</li>
+<li>通常、ファイル名は<code>docker-compose.yml</code>です。</li>
+</ul>
+<p>Railsアプリ開発において、Docker Composeには大きく二つの用途があります。</p>
+<ol>
+<li>開発環境におけるMySQLやRedisなどのミドルウェアのインストールと実行管理</li>
+<li>完成したRailsアプリを(特に開発者以外が)簡単に手元で実行するための仕組み</li>
+</ol>
+<p>以降、それぞれの詳細について説明します。</p>
+<h2 id="Docker-Composeを使った各種ミドルウェアのインストールと実行管理"><a href="#Docker-Composeを使った各種ミドルウェアのインストールと実行管理" class="headerlink" title="Docker Composeを使った各種ミドルウェアのインストールと実行管理"></a>Docker Composeを使った各種ミドルウェアのインストールと実行管理</h2><p>一般的なRailsアプリケーションでは、PostgreSQLやMySQLなどのRDBMSに加えて、
+しばしばRedisやElasticsearchなどのミドルウェアを使用します。
+従来、macOS上でRailsアプリの開発を行う場合にはこれらのミドルウェアのmacOS版をインストールし、
+サービスとして起動しておく必要があったため、READMEには長々とセットアップの手順を書いたりしていました。</p>
+<p>一方、先に挙げたようなメジャーなプロダクトはいずれも公式のDockerイメージが存在するため、
+適切に書かれた <code>docker-compose.yml</code> ファイルさえあれば、
+<code>docker-compose up</code> コマンドを一つ実行するだけで必要なミドルウェアのイメージの取得からコンテナの起動まですべて自動で行うことができます。</p>
+<p>また、コンテナとしてミドルウェアを起動する際には個別にバージョンやデータの保存場所を指定できるため、
+導入の手順が簡単になるだけでなく下記のようなメリットもあります。</p>
+<ul>
+<li>複数の開発プロジェクトを並行して進める際に、ミドルウェアの細かいバージョンや内部データを完全に独立して管理できる。</li>
+<li>古いバージョンのミドルウェアを要求するようなプロジェクトの開発環境を維持しやすい。</li>
+</ul>
+<h2 id="Composeファイル-docker-compose-yml-のサンプル"><a href="#Composeファイル-docker-compose-yml-のサンプル" class="headerlink" title="Composeファイル(docker-compose.yml)のサンプル"></a>Composeファイル(docker-compose.yml)のサンプル</h2><p>前述のサンプルアプリケーションではMySQLとRedisを使います。
+この2つを起動するための<code>docker-compose.yml</code>は下記のような内容です。
+通常、このファイルはプロジェクトのルートディレクトリに置きます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">mysql</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 3306<span class="token punctuation">:</span><span class="token number">3306</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ./tmp/mysql<span class="token punctuation">:</span>/var/lib/mysql
+  <span class="token key atrule">redis</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> redis<span class="token punctuation">:</span>4.0.9
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 6379<span class="token punctuation">:</span><span class="token number">6379</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ./tmp/redis<span class="token punctuation">:</span>/data
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> redis<span class="token punctuation">-</span>server <span class="token punctuation">-</span><span class="token punctuation">-</span>appendonly yes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>services</code>の下にコンテナ(Docker Comoposeの文脈ではサービス)の定義を書いていきます。</p>
+<p><code>mysql</code>については、前回<a href="/blog/2018/05/30/docker-with-rails/#docker-container-run-docker-run-%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%92%E8%B5%B7%E5%8B%95%E3%81%99%E3%82%8B-mysqld%E7%B7%A8">Docker編のdocker container run(mysql編)</a> に出てきた <code>docker container run</code>コマンドとやっていることはほぼ同じです。</p>
+<ul>
+<li><code>environment</code>: 環境変数を追加してコンテナを起動します。<ul>
+<li><code>.envrc</code>に書かれている環境変数 <code>MYSQL_PASSWORD</code>をrootユーザのパスワードとして設定するため、<code>MYSQL_ROOT_PASSWORD</code>の値として設定しています。</li>
+<li>ローカルの開発環境で作業を行う際には、<a href="https://github.com/direnv/direnv" target="_blank" rel="noopener">direnv</a>などのツールで<code>.envrc</code>の内容をシェルに設定するという想定です。</li>
+<li><code>MYSQL_ALLOW_EMPTY_PASSWORD</code>に<code>yes</code>を設定すると<code>root</code>のパスワードを空にすることもできます。</li>
+</ul>
+</li>
+<li><code>ports</code>: コンテナのポート(右側)をホスト側のポート(左側)にマッピングします。</li>
+<li><code>volumes</code>: ホスト側のパス(左側)をコンテナ上のパス(右側)にマッピングします。<code>docker container run</code>の<code>-v</code>オプションとは異なり、ホスト側の相対パスで指定できます。</li>
+</ul>
+<p><code>redis</code>の<code>command</code>には、データをストレージに永続化するためのオプションを指定しています。</p>
+<p>Composeファイルには多数の機能があります。詳細については下記のリファレンスを参照してください。</p>
+<ul>
+<li><a href="https://docs.docker.com/compose/compose-file/" target="_blank" rel="noopener">Compose file version 3 reference | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/compose-file.html" target="_blank" rel="noopener">Compose ファイル・リファレンス | 日本語版 ドキュメント </a></li>
+</ul>
+<p><code>mysql</code>と<code>redis</code>のイメージに指定できる環境変数やコマンドのオプションについては、公式リポジトリのドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">library/mysql - Docker Hub</a></li>
+<li><a href="https://hub.docker.com/_/redis/" target="_blank" rel="noopener">library/redis - Docker Hub</a></li>
+</ul>
+<h2 id="docker-compose-up-各種ミドルウェアのインストールと起動"><a href="#docker-compose-up-各種ミドルウェアのインストールと起動" class="headerlink" title="docker-compose up: 各種ミドルウェアのインストールと起動"></a>docker-compose up: 各種ミドルウェアのインストールと起動</h2><p>まず、<code>.envrc</code>に書かれた環境変数を設定してください。</p>
+<pre><code>$ source .envrc
+
+# direnvを使っている場合は下記でも可
+$ direnv allow
+</code></pre><p>下記のコマンドを実行すると、Docker Hubから<code>mysql</code>と<code>redis</code>のイメージを取得してコンテナが起動します。
+(<code>-d</code>はバックグラウンドで起動するという意味です)</p>
+<p><code>-f</code>で任意のComposeファイルを指定できますが、省略するとカレントディレクトリの<code>docker-compose.yml</code>が参照されます。</p>
+<pre><code>$ docker-compose up -d
+Creating network &quot;railsk8sdemoapp_default&quot; with the default driver
+Pulling mysql (mysql:5.7.21)...
+5.7.21: Pulling from library/mysql
+2a72cbf407d6: Pull complete
+38680a9b47a8: Pull complete
+4c732aa0eb1b: Pull complete
+c5317a34eddd: Pull complete
+f92be680366c: Pull complete
+e8ecd8bec5ab: Pull complete
+2a650284a6a8: Pull complete
+5b5108d08c6d: Pull complete
+beaff1261757: Pull complete
+c1a55c6375b5: Pull complete
+8181cde51c65: Pull complete
+Digest: sha256:691c55aabb3c4e3b89b953dd2f022f7ea845e5443954767d321d5f5fa394e28c
+Status: Downloaded newer image for mysql:5.7.21
+Pulling redis (redis:4.0.9)...
+4.0.9: Pulling from library/redis
+b0568b191983: Pull complete
+6637dc5b29fe: Pull complete
+7b4314315f15: Pull complete
+2fd86759b5ff: Pull complete
+0f04862b5a3b: Pull complete
+2db0056aa977: Pull complete
+Digest: sha256:6b9f935e89af002225c0dcdadf1fd74245b4cc1e3e91222f7e4769c236cf80d4
+Status: Downloaded newer image for redis:4.0.9
+Creating railsk8sdemoapp_redis_1 ... done
+Creating railsk8sdemoapp_mysql_1 ... done
+</code></pre><p>2回目以降は取得済みのイメージを使用するため、起動は少し早くなります。</p>
+<ul>
+<li><a href="https://docs.docker.com/compose/reference/up/" target="_blank" rel="noopener">docker-compose up | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/reference/up.html" target="_blank" rel="noopener">docker-compose up | 日本語版 ドキュメント</a></li>
+</ul>
+<p>MySQLとRedisが起動した後であれば、下記のように開発環境用の各種プロセスを起動できます。</p>
+<pre><code>$ gem install foreman
+$ bundle install --path=vendor/bundle
+$ yarn install
+$ ./bin/rails db:setup
+$ foreman start -f Procfile
+</code></pre><p><a href="https://github.com/ddollar/foreman" target="_blank" rel="noopener">foreman</a>では、<code>puma</code>、<code>sidekiq</code>、<code>webpack-dev-server</code>の三つを起動します。(ruby, node, yarnが必要です)</p>
+<pre class="line-numbers language-Procfile"><code class="language-Procfile"># Procfile
+web: ./bin/rails s -p 3000
+worker: ./bin/sidekiq
+client: ./bin/webpack-dev-server
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<!-- more -->
+<h2 id="docker-compose-ps-コンテナの一覧を取得する"><a href="#docker-compose-ps-コンテナの一覧を取得する" class="headerlink" title="docker-compose ps: コンテナの一覧を取得する"></a>docker-compose ps: コンテナの一覧を取得する</h2><p><code>docker-compose.yml</code>に定義されたサービスのコンテナ一覧を表示します。</p>
+<pre><code>$ docker-compose ps
+Name                        Command               State           Ports
+-----------------------------------------------------------------------------------------
+railsk8sdemoapp_mysql_1   docker-entrypoint.sh mysqld      Up      0.0.0.0:3306-&gt;3306/tcp
+railsk8sdemoapp_redis_1   docker-entrypoint.sh redis ...   Up      0.0.0.0:6379-&gt;6379/tcp
+</code></pre><p>コンテナの名前は、<code>${プレフィクス}_${サービス名}_${連番}</code>になります。
+プレフィクスはカレントディレクトリから<code>-</code>や<code>_</code>を除いた文字列になります。
+連番がついているのは一つのサービスに複数のコンテナが起動し得るためです。
+(今回は紹介しませんが、<code>docker-compose scale</code>コマンドでサービスごとのコンテナの数を増減させることができます)</p>
+<ul>
+<li><a href="https://docs.docker.com/compose/reference/ps/" target="_blank" rel="noopener">docker-compose ps | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/reference/ps.html" target="_blank" rel="noopener">docker-compose ps | 日本語版 ドキュメント</a></li>
+</ul>
+<h2 id="docker-compose-down-コンテナの削除"><a href="#docker-compose-down-コンテナの削除" class="headerlink" title="docker-compose down: コンテナの削除"></a>docker-compose down: コンテナの削除</h2><p>下記のコマンドを実行すると、<code>docker-compose.yml</code>に書かれたすべてのサービスのコンテナを停止した後、削除します。
+<code>-v</code>オプションは関連するデータボリュームも削除するという意味です。(ホスト側のボリュームをマウントしている場合は残ります)</p>
+<pre><code>$ docker-compose down -v
+Stopping railsk8sdemoapp_mysql_1 ... done
+Stopping railsk8sdemoapp_redis_1 ... done
+Removing railsk8sdemoapp_mysql_1 ... done
+Removing railsk8sdemoapp_redis_1 ... done
+Removing network railsk8sdemoapp_default
+</code></pre><ul>
+<li><a href="https://docs.docker.com/compose/reference/down/" target="_blank" rel="noopener">docker-compose down | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/reference/down.html" target="_blank" rel="noopener">docker-compose down | 日本語版 ドキュメント</a></li>
+</ul>
+<h1 id="最小限のDockerfile入門"><a href="#最小限のDockerfile入門" class="headerlink" title="最小限のDockerfile入門"></a>最小限のDockerfile入門</h1><p>RailsアプリのDockerイメージを作る方法を説明します。</p>
+<p>Dockerイメージを作るには、まず<code>Dockerfile</code>にイメージの作り方を記述します。</p>
+<p>サンプルアプリ <a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">rails-k8s-demoapp</a> に同梱している下記のような<code>Dockerfile</code>を例に説明します。</p>
+<pre class="line-numbers language-docker"><code class="language-docker"><span class="token comment" spellcheck="true">### image for build</span>
+<span class="token keyword">FROM</span> ruby<span class="token punctuation">:</span>2.5.1<span class="token punctuation">-</span>alpine AS build<span class="token punctuation">-</span>env
+
+ARG RAILS_ROOT=/app
+ARG BUILD_PACKAGES=<span class="token string">"build-base curl-dev git"</span>
+ARG DEV_PACKAGES=<span class="token string">"libxml2-dev libxslt-dev mysql-dev yaml-dev zlib-dev nodejs yarn"</span>
+ARG RUBY_PACKAGES=<span class="token string">"tzdata yaml"</span>
+
+<span class="token keyword">ENV</span> BUNDLE_APP_CONFIG=<span class="token string">"$RAILS_ROOT/.bundle"</span>
+
+<span class="token keyword">WORKDIR</span> $RAILS_ROOT
+
+<span class="token comment" spellcheck="true"># install packages</span>
+<span class="token keyword">RUN</span> apk update \
+ &amp;&amp; apk upgrade \
+ &amp;&amp; apk add <span class="token punctuation">-</span><span class="token punctuation">-</span>update <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>cache $BUILD_PACKAGES $DEV_PACKAGES $RUBY_PACKAGES
+
+<span class="token comment" spellcheck="true"># install rubygem</span>
+<span class="token keyword">COPY</span> Gemfile Gemfile.lock $RAILS_ROOT/
+<span class="token keyword">RUN</span> bundle install <span class="token punctuation">-</span>j4 <span class="token punctuation">-</span><span class="token punctuation">-</span>path=vendor/bundle
+
+<span class="token comment" spellcheck="true"># install npm</span>
+<span class="token keyword">COPY</span> package.json yarn.lock $RAILS_ROOT/
+<span class="token keyword">RUN</span> yarn install
+
+<span class="token comment" spellcheck="true"># build assets</span>
+<span class="token keyword">COPY</span> . $RAILS_ROOT
+<span class="token keyword">RUN</span> bundle exec rake webpacker<span class="token punctuation">:</span>compile
+<span class="token keyword">RUN</span> bundle exec rake assets<span class="token punctuation">:</span>precompile
+
+<span class="token comment" spellcheck="true">### image for execution</span>
+<span class="token keyword">FROM</span> ruby<span class="token punctuation">:</span>2.5.1<span class="token punctuation">-</span>alpine
+<span class="token keyword">LABEL</span> <span class="token keyword">maintainer</span> <span class="token string">'Kawahara Taisuke &lt;kwhrtsk@gmail.com>'</span>
+
+ARG RAILS_ROOT=/app
+ARG PACKAGES=<span class="token string">"tzdata yaml mariadb-client-libs bash"</span>
+
+<span class="token keyword">ENV</span> RAILS_ENV=production
+<span class="token keyword">ENV</span> BUNDLE_APP_CONFIG=<span class="token string">"$RAILS_ROOT/.bundle"</span>
+
+<span class="token keyword">WORKDIR</span> $RAILS_ROOT
+
+<span class="token comment" spellcheck="true"># install packages</span>
+<span class="token keyword">RUN</span> apk update \
+ &amp;&amp; apk upgrade \
+ &amp;&amp; apk add <span class="token punctuation">-</span><span class="token punctuation">-</span>update <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>cache $PACKAGES
+
+<span class="token keyword">COPY</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>from=build<span class="token punctuation">-</span>env $RAILS_ROOT $RAILS_ROOT
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>Dockerfile</code>では、上記の例のように<code>FROM</code>や<code>RUN</code>などのコマンドを一行に一つ書きます。各コマンドの詳細は下記のリファレンスを参照してください。
+<code>docker image build</code> コマンドでイメージの作成を行うと、<code>Dockerfile</code> に書かれたコマンドが上から順に実行されます。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="noopener">Dockerfile reference | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html" target="_blank" rel="noopener">Dockerfile リファレンス | 日本語版 ドキュメント</a></li>
+</ul>
+<p>この<code>Dockerfile</code>で<code>rails-k8s-demoapp</code>のイメージをビルドするには下記のようにします。</p>
+<pre><code>$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+$ docker image build . -t demoapp:latest
+</code></pre><p><code>.</code>はビルドコンテキストです。通常、<code>Dockerfile</code>が置いてあるパスを指定します。
+<code>-t</code>はイメージの名前です。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/image_build/" target="_blank" rel="noopener">docker image build | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker build</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/build/" target="_blank" rel="noopener">docker build | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/build.html" target="_blank" rel="noopener">docker build | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<p>これでRailsアプリのイメージができました。下記のコマンドでコンテナを起動できます。</p>
+<pre><code>$ docker container run -it --rm demoapp:latest ls
+Gemfile                     lib
+Gemfile.lock                log
+Procfile                    node_modules
+README.md                   package.json
+Rakefile                    public
+app                         spec
+bin                         storage
+config                      test
+config.ru                   tmp
+db                          tsconfig.json
+docker-compose-preview.yml  vendor
+docker-compose.yml          yarn.lock
+k8s
+</code></pre><p>この例では<code>ls</code>コマンドを実行してコンテナのファイルを表示しています。
+上記のようにアプリケーションルートディレクトリの中身が表示されるはずです。</p>
+<p>次に<code>Dockerfile</code>の中身を順に解説していきます。</p>
+<h2 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h2><p><code>FROM</code>コマンドではベースイメージを指定します。サンプルの<code>Dockerfile</code>では2回出てきますが、このケースでは2つイメージを作っています。</p>
+<pre class="line-numbers language-docker"><code class="language-docker"><span class="token keyword">FROM</span> ruby<span class="token punctuation">:</span>2.5.1<span class="token punctuation">-</span>alpine AS build<span class="token punctuation">-</span>env
+<span class="token comment" spellcheck="true"># ...</span>
+<span class="token keyword">FROM</span> ruby<span class="token punctuation">:</span>2.5.1<span class="token punctuation">-</span>alpine
+<span class="token comment" spellcheck="true"># ...</span>
+<span class="token keyword">COPY</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>from=build<span class="token punctuation">-</span>env $RAILS_ROOT $RAILS_ROOT
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>前半がgemやnpmのC拡張やjsやcssなどのアセットの <strong>ビルド用イメージ</strong> で、後半がアプリケーションとして運用する <strong>実行用イメージ</strong> です。
+後半では前半のビルドの結果を単にコピーしています。このように2段階に分けてイメージを作成している理由は、イメージのサイズを小さくするためです。
+詳細は <a href="#レイヤについて">レイヤについて</a> で説明します。</p>
+<p>最終的なイメージの成果物は後者の <strong>実行用イメージ</strong> です。
+前者は削除しても構いませんが、残しておくと2回目以降のビルドが差分で実行されるため速くなります(これについても後述)。</p>
+<p>次にベースイメージの<code>ruby:2.5.1-alpine</code>について説明します。
+<a href="https://hub.docker.com/_/ruby/" target="_blank" rel="noopener">Docker Hubのrubyリポジトリ</a>には大まかに3系統のタグがあります。</p>
+<ul>
+<li><code>ruby:&lt;version&gt;</code>: Debian stretchベース</li>
+<li><code>ruby:slim</code>: Debian stretchベースだがインストールされたパッケージが少ない</li>
+<li><code>ruby:alpine</code>: Alpine Linuxベース</li>
+</ul>
+<p>今回はイメージサイズが最も小さい<code>ruby:2.5.1-alpine</code>を使います。</p>
+<pre><code>% docker images
+ruby                2.5.1-alpine        b620ae34414c        9 days ago           55.5MB
+ruby                2.5.1-slim          85b814a932e6        9 days ago           172MB
+ruby                2.5.1               1624ebb80e3e        9 days ago           863MB
+</code></pre><p>また、Alpine Linuxのパッケージマネージャである<code>apk</code>はDebianの<code>apt</code>と比べてNode.jsやYARNのインストールやキャッシュの制御がより簡単というメリットもあります。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/#from" target="_blank" rel="noopener">FROM | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#from" target="_blank" rel="noopener">FROM | 日本語版 ドキュメント</a></li>
+</ul>
+<h2 id="ENV-ARG"><a href="#ENV-ARG" class="headerlink" title="ENV, ARG"></a>ENV, ARG</h2><p><code>ENV</code>と<code>ARG</code>はどちらもコンテナに環境変数を設定するコマンドですが、
+<code>ARG</code>で指定した環境変数はイメージのビルド時にだけ設定され、
+作成済みのイメージをコンテナ化した際には残っていないという特徴があります。
+また、<code>docker image build</code>コマンドの<code>--build-arg</code>や<code>docker-compose.yml</code>の<code>args</code>オプションで上書きすることができます。
+例えば、プロキシ環境下でイメージをビルドする際に<code>HTTP_PROXY</code>のような環境変数を指定する際には、<code>ENV</code>ではなく<code>ARG</code>を使うのが望ましいです。</p>
+<p>このサンプルではインストールするパッケージの名前などを<code>ARG</code>で設定しています。
+また、<code>ENV</code>では環境変数 <code>RAILS_ENV</code> を <code>production</code> に設定しています。</p>
+<pre class="line-numbers language-docker"><code class="language-docker"><span class="token comment" spellcheck="true">### image for build</span>
+<span class="token comment" spellcheck="true"># ...</span>
+<span class="token comment" spellcheck="true"># アプリケーションのインストール先</span>
+ARG RAILS_ROOT=/app
+<span class="token comment" spellcheck="true"># gemやnpmのC拡張やjs, cssなどのアセットのビルドに必要なパッケージ</span>
+ARG BUILD_PACKAGES=<span class="token string">"build-base curl-dev git"</span>
+ARG DEV_PACKAGES=<span class="token string">"libxml2-dev libxslt-dev mysql-dev yaml-dev zlib-dev nodejs yarn"</span>
+ARG RUBY_PACKAGES=<span class="token string">"tzdata yaml"</span>
+
+<span class="token keyword">ENV</span> BUNDLE_APP_CONFIG=<span class="token string">"$RAILS_ROOT/.bundle"</span>
+
+<span class="token comment" spellcheck="true">### image for execution</span>
+<span class="token comment" spellcheck="true"># ...</span>
+<span class="token comment" spellcheck="true"># Railsアプリの実行に必要なパッケージ</span>
+ARG PACKAGES=<span class="token string">"tzdata yaml mariadb-client-libs bash"</span>
+
+<span class="token keyword">ENV</span> RAILS_ENV=production
+<span class="token keyword">ENV</span> BUNDLE_APP_CONFIG=<span class="token string">"$RAILS_ROOT/.bundle"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>BUNDLE_APP_CONFIG</code>は<a href="https://hub.docker.com/_/ruby/" target="_blank" rel="noopener">rubyイメージ</a>がもともと持っている環境変数です。
+この<code>Dockerfile</code>では、ビルド済みのbundleディレクトリを丸ごと実行イメージにコピーしたいので、
+gemのインストール先を<code>${RAILS_ROOT}/vendor/bundle</code>に指定しています。
+このようにインストール先を変更した場合には <code>BUNDLE_APP_CONFIG</code> を上記のように上書きしないと<code>bundle exec</code>が正常に動作しません。</p>
+<p>ただし、この挙動は紛らわしいという指摘もあるため、将来の更新で修正されるかもしれません。</p>
+<p><a href="https://github.com/docker-library/ruby/issues/129" target="_blank" rel="noopener">introduction of BUNDLE_APP_CONFIG leads to unexpected behavior for ‘statically’ bundled apps Issue #129 · docker-library/ruby</a></p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/#env" target="_blank" rel="noopener">ENV | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#env" target="_blank" rel="noopener">ENV | 日本語版 ドキュメント</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/#arg" target="_blank" rel="noopener">ARG | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#arg" target="_blank" rel="noopener">ARG | 日本語版 ドキュメント</a></li>
+</ul>
+<h2 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h2><p><code>WORKDIR</code>はこのイメージから作成したコンテナ上でコマンドを実行するときのカレントディレクトリです。
+この例では <code>/app</code> をRailsアプリのルートディレクトリとして指定しているので、<code>WORKDIR</code>も同じパスにしています。</p>
+<pre class="line-numbers language-docker"><code class="language-docker">ARG RAILS_ROOT=/app
+<span class="token keyword">WORKDIR</span> $RAILS_ROOT
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>また、<code>RUN</code>や<code>COPY</code>などの<code>Dockerfile</code>のコマンドも<code>WORKDIR</code>で指定したパスで実行されます。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/#workdir" target="_blank" rel="noopener">WORKDIR | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#workdir" target="_blank" rel="noopener">WORKDIR | 日本語版 ドキュメント</a></li>
+</ul>
+<h2 id="RUN-COPY"><a href="#RUN-COPY" class="headerlink" title="RUN, COPY"></a>RUN, COPY</h2><p><code>RUN</code>はコマンドを実行します。主にパッケージのインストールやアプリケーションのビルドなどを行います。</p>
+<p><code>COPY</code>はホスト側のファイルをコンテナ側に複製します。
+この時、<code>.dockerignore</code>ファイルで指定されたファイルは複製されません。
+パスワードやクレデンシャルのような秘匿値を書いたファイルは忘れずに<code>.dockerignore</code>に追加してください。
+また、<code>.dockerignore</code>に一致したファイルはイメージのビルド時に<code>dockerd</code>へ転送されなくなるため、
+<code>.git</code>や<code>node_modules</code>などビルド時に不要でかつサイズやファイル数が大きいディレクトリも指定するのがセオリーです。</p>
+<p>今回ベースイメージにしているのは<code>ruby:2.5.1-alpine</code>というイメージですが、これはAlpine Linuxというディストリビューションをベースにしています。
+Alpine Linuxでは<code>apk</code>というパッケージマネージャを使います。使用可能なパッケージを下記のサイトで検索できます。
+<a href="https://pkgs.alpinelinux.org/packages" target="_blank" rel="noopener">Alpine Linux packages</a></p>
+<pre class="line-numbers language-docker"><code class="language-docker"><span class="token keyword">RUN</span> apk update \
+ &amp;&amp; apk upgrade \
+ &amp;&amp; apk add <span class="token punctuation">-</span><span class="token punctuation">-</span>update <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>cache $BUILD_PACKAGES $DEV_PACKAGES $RUBY_PACKAGES
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/#run" target="_blank" rel="noopener">RUN | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#run" target="_blank" rel="noopener">RUN | 日本語版 ドキュメント</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/#copy" target="_blank" rel="noopener">COPY | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#copy" target="_blank" rel="noopener">COPY | 日本語版 ドキュメント</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/#dockerignore-file" target="_blank" rel="noopener">.dockerignore | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html#dockerignore-file" target="_blank" rel="noopener">.dockerignore | 日本語版 ドキュメント</a></li>
+</ul>
+<h2 id="レイヤについて"><a href="#レイヤについて" class="headerlink" title="レイヤについて"></a>レイヤについて</h2><p>Dockerイメージのデータはレイヤと呼ばれる単位で記録されており、
+<code>Dockerfile</code>の<code>RUN</code>や<code>COPY</code>などのコマンドは実行するたびに新しいレイヤに結果が記録されます。
+またイメージのビルドや送受信はレイヤ単位でキャッシュされて差分実行されるため、
+適切な単位でレイヤを分割しなければビルドやデプロイに無駄な時間がかかるようになります。
+特に、一度追加したファイルは別のレイヤで削除したとしても以前のレイヤに残り続けるため、
+イメージ全体のファイルサイズは減らない点に注意が必要です。</p>
+<p>一般的に、<code>Dockerfile</code>ではイメージのファイルサイズを減らしたりビルドやデプロイの速度を上げるために次のような工夫をします。</p>
+<ul>
+<li><code>Gemfile</code>、<code>Gemfile.lock</code>のコピーと<code>bundle install</code>の実行はアプリケーションコードの<code>COPY</code>より前で個別に行う。</li>
+</ul>
+<p>gemの追加は比較的頻度の少ない作業なので、こうしておくと<code>bundle install</code>の頻度を減らしてビルドを高速化できます。
+<code>package.json</code>と<code>yarn.lock</code>のコピー、<code>yarn</code>の実行についても同様です。</p>
+<ul>
+<li>ビルド用のイメージと実行用のイメージを分けて、実行時に必要なファイルだけをビルド用のイメージから実行用のイメージにコピーする。</li>
+</ul>
+<p>このようにすることでビルドに必要なパッケージが含まれるレイヤを丸ごと削除できます。</p>
+<p>「1つの<code>RUN</code>コマンドでパッケージのインストール、ビルド、パッケージやキャッシュの削除を行う」ことでも同じことを実現できますが、
+パッケージのインストールとビルドのレイヤが同じになるので、アプリのコードを更新しただけでもビルド時にはパッケージのインストールからやり直しになり、余分に時間がかかるようになります。
+<code>COPY</code>コマンドの<code>--from</code>オプションは比較的最近追加された機能なので、
+古いドキュメントにはよくこのようなやり方が書いてあります
+(古いランタイムに配慮して止むを得ずこのような実装になっているケースもあるかもしれません)。</p>
+<h1 id="docker-composeコマンドによるローカルプレビュー環境"><a href="#docker-composeコマンドによるローカルプレビュー環境" class="headerlink" title="docker-composeコマンドによるローカルプレビュー環境"></a>docker-composeコマンドによるローカルプレビュー環境</h1><p>RailsアプリのDockerイメージを作れるようになったので、
+次は「Ruby/Railsの開発環境がなくても、DockerさえあればRailsアプリのイメージを作成して起動できるようにする」ための
+Composeファイルを用意します。</p>
+<p>ローカルでの開発用に <code>docker-compose.yml</code> がすでにあるので、<code>docker-compose-preview.yml</code> というファイル名で用意します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">puma</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">build</span><span class="token punctuation">:</span>
+      <span class="token key atrule">context</span><span class="token punctuation">:</span> .
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/rails
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 3000<span class="token punctuation">:</span><span class="token number">3000</span>
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> mysql
+      <span class="token punctuation">-</span> redis
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> ./bin/setup<span class="token punctuation">-</span>db<span class="token punctuation">-</span>and<span class="token punctuation">-</span>start<span class="token punctuation">-</span>puma
+
+  <span class="token key atrule">sidekiq</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/rails
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> puma
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> ./bin/start<span class="token punctuation">-</span>sidekiq
+
+  <span class="token key atrule">mysql</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/mysql
+
+  <span class="token key atrule">redis</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> redis<span class="token punctuation">:</span>4.0.9
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> redis<span class="token punctuation">-</span>server <span class="token punctuation">-</span><span class="token punctuation">-</span>appendonly yes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>コードをチェックアウトした後、下記のコマンドを実行するだけでRailsアプリが <a href="http://localhost:3000/" target="_blank" rel="noopener">http://localhost:3000/</a> に起動するようになります。</p>
+<pre><code>$ docker-compose -f docker-compose-preview.yml up -d
+</code></pre><p>ログを見たい場合は<code>-d</code>オプションを外すか、下記のようにしてください。</p>
+<pre><code>$ docker-compose -f docker-compose-preview.yml logs -f
+</code></pre><p>後始末は下記のようにします。<code>-v</code>を外すとデータボリュームが残ってしまうので注意してください。</p>
+<pre><code>$ docker-compose -f docker-compose-preview.yml down -v
+</code></pre><p>このYAMLファイルのポイントは下記の通り。</p>
+<ul>
+<li><code>mysql</code>と<code>redis</code>には<code>puma</code>と<code>sidekiq</code>のコンテナから接続できれば良いので、<code>ports</code>(ホスト側へのポートマッピング)エントリを書きません。<ul>
+<li>コンテナ同士は特に設定をしなくても互いのポートにアクセスできます。</li>
+</ul>
+</li>
+<li><code>puma</code>には<code>build</code>エントリを追加して、<code>docker-compose up</code>実行時にイメージをビルドするようにしています。<ul>
+<li>2回目以降、イメージを強制的にビルドする際には <code>--build</code> オプションをつける必要があります。</li>
+</ul>
+</li>
+<li><code>puma</code>は<code>depends_on</code>で<code>mysql</code>を指定して、<code>mysql</code>コンテナの起動後に<code>rake db:setup</code>が実行されるようにしています。<ul>
+<li>ただしこれだけだと不十分なので<code>nc</code>で<code>mysql</code>の3306番ポートを確認して起動するまでループします。後述。</li>
+</ul>
+</li>
+<li><code>puma</code>、<code>sidekiq</code>、<code>mysql</code>には<code>env_file</code>を指定し、共通の環境変数をファイルで一括指定します。後述。</li>
+</ul>
+<p>pumaとsidekiqの<code>command</code>では、<code>./bin/setup-db-start-puma</code>, <code>./bin/start-sidekiq</code>というコマンドをそれぞれ指定しています。
+これは下記のような内容です。</p>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ./bin/setup-db-and-start-puma</span>
+
+<span class="token function">cd</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> $0<span class="token variable">)</span></span>/<span class="token punctuation">..</span>
+
+<span class="token function">trap</span> <span class="token string">"pkill -P $$"</span> EXIT
+
+./bin/wait-for <span class="token variable">$MYSQL_HOST</span> 3306
+./bin/wait-for <span class="token variable">$REDIS_HOST</span> 6379
+./bin/rails db:setup_if_not_yet
+./bin/pumactl start
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ./bin/start-sidekiq</span>
+
+<span class="token function">cd</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> $0<span class="token variable">)</span></span>/<span class="token punctuation">..</span>
+
+<span class="token function">trap</span> <span class="token string">"pkill -P $$"</span> EXIT
+
+./bin/wait-for <span class="token variable">$MYSQL_HOST</span> 3306
+./bin/wait-for <span class="token variable">$REDIS_HOST</span> 6379
+./bin/sidekiq -t <span class="token variable">${SIDEKIQ_TIMEOUT:-8}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>pumaやsidekiqの起動をシェルスクリプトでラップする場合、ラッパ側のシェルがTERMやINTなどのシグナルで停止すると
+子プロセスのpumaやsidekiqが起動したまま残ってしまいます。
+上記の<code>trap</code>はそれを防ぐための記述で、スクリプトの停止時に子プロセスへTERMシグナルを送るように指定しています。</p>
+<p>sidekiqの<code>-t</code>オプションは実行中のジョブを強制的に停止するまでのタイムアウト値で、オプションを指定しない場合のデフォルト値は8秒です。
+このスクリプトでは環境変数<code>SIDEKIQ_TIMEOUT</code>でこの値を変更できるようにしています。
+環境変数が存在しない場合はデフォルト値と同じ8秒が指定されます。</p>
+<p><code>./bin/wait-for</code> は下記のような内容で、
+パラメータで指定したホストのポートを<code>nc</code>コマンドでチェックして接続可能になるまで待機するだけのスクリプトです。</p>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># ./bin/wait-for</span>
+
+HOST<span class="token operator">=</span><span class="token variable">$1</span>
+PORT<span class="token operator">=</span><span class="token variable">$2</span>
+
+<span class="token keyword">while</span> <span class="token keyword">:</span>
+<span class="token keyword">do</span>
+  nc -w 1 -z <span class="token variable">$HOST</span> <span class="token variable">$PORT</span>
+  <span class="token keyword">if</span> <span class="token punctuation">[</span><span class="token punctuation">[</span> <span class="token variable">$?</span> <span class="token operator">=</span> 0 <span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+    <span class="token keyword">break</span><span class="token punctuation">;</span>
+  <span class="token keyword">fi</span>
+  <span class="token function">sleep</span> 1
+<span class="token keyword">done</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>db:setup_if_not_yet</code>は下記のようなRakeタスクで、まだ<code>rake db:setup</code>を実行したことがなさそうな時だけ実行します。</p>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># lib/tasks/db.rake</span>
+namespace <span class="token symbol">:db</span> <span class="token keyword">do</span>
+  task setup_if_not_yet<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token symbol">:environment</span><span class="token punctuation">]</span> <span class="token keyword">do</span>
+    <span class="token keyword">begin</span>
+      <span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:Base</span><span class="token punctuation">.</span>connection
+    <span class="token keyword">rescue</span> <span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:NoDatabaseError</span>
+      <span class="token comment" spellcheck="true"># database not exists</span>
+      <span class="token constant">Rake</span><span class="token punctuation">:</span><span class="token symbol">:Task</span><span class="token punctuation">[</span><span class="token string">"db:setup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>invoke
+      exit <span class="token number">0</span>
+    <span class="token keyword">else</span>
+      <span class="token keyword">if</span> <span class="token operator">!</span><span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:SchemaMigration</span><span class="token punctuation">.</span>table_exists<span class="token operator">?</span>
+        <span class="token comment" spellcheck="true"># database exists but tables not exists</span>
+        <span class="token constant">Rake</span><span class="token punctuation">:</span><span class="token symbol">:Task</span><span class="token punctuation">[</span><span class="token string">"db:setup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>invoke
+        exit <span class="token number">0</span>
+      <span class="token keyword">end</span>
+    <span class="token keyword">end</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.dockerenv/rails</code>は<code>puma</code>と<code>sidekiq</code>に共通の環境変数の設定ファイルです。</p>
+<pre><code>RAILS_SERVE_STATIC_FILES=true
+RAILS_LOG_TO_STDOUT=true
+SIDEKIQ_TIMEOUT=60
+SECRET_KEY_BASE=123
+MYSQL_HOST=mysql
+MYSQL_USER=demoapp
+MYSQL_PASSWORD=secret
+MYSQL_DATABASE=demoapp_production
+REDIS_HOST=redis
+REDIS_URL=redis://redis:6379/1
+</code></pre><p><code>.dockerenv/mysql</code>は<code>mysql</code>用の環境変数の設定ファイルです。デーベース名、ユーザ名、パスワードを書いています。</p>
+<pre><code>MYSQL_USER=demoapp
+MYSQL_PASSWORD=secret
+MYSQL_DATABASE=demoapp_production
+MYSQL_ROOT_PASSWORD=topsecret
+</code></pre><p><a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">公式のmysqlイメージ</a>では、rootユーザのパスワードの他、
+コンテナの起動時に作成するデータベースとそのデータベースに
+アクセスできるユーザとパスワードも環境変数で指定できます。
+<code>.dockerenv/mysql</code>で設定している4つの環境変数はそのためのものです。</p>
+<p>また、Railsアプリ側ではMySQLやRedisの接続先など実行環境に依存するようなパラメータを全て環境変数で
+受け取れるようにしておく必要があります。</p>
+<p>まずデータベースの設定ファイルでは、<code>MYSQL_HOST</code>, <code>MYSQL_DATABASE</code>, <code>MYSQL_USER</code>, <code>MYSQL_PASSWORD</code>で
+それぞれDBのホスト名、データベース名、ユーザ名、パスワードを受け取れるようにしておきます。
+(話を簡単にするため、<code>mysql</code>コンテナと環境変数の名前を合わせています)</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># config/database.yml</span>
+<span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token important">&amp;default</span>
+  <span class="token key atrule">adapter</span><span class="token punctuation">:</span> mysql2
+  <span class="token key atrule">encoding</span><span class="token punctuation">:</span> utf8
+  <span class="token key atrule">pool</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("RAILS_MAX_THREADS") <span class="token punctuation">{</span> <span class="token number">5 </span><span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">username</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_USER") <span class="token punctuation">{</span> <span class="token string">"root"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">password</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_PASSWORD") <span class="token punctuation">{</span> <span class="token string">""</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">host</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_HOST") <span class="token punctuation">{</span> <span class="token string">"0.0.0.0"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+
+<span class="token key atrule">development</span><span class="token punctuation">:</span>
+  <span class="token key atrule">&lt;&lt;</span><span class="token punctuation">:</span> <span class="token important">*default</span>
+  <span class="token key atrule">database</span><span class="token punctuation">:</span> demoapp_development
+
+<span class="token key atrule">test</span><span class="token punctuation">:</span>
+  <span class="token key atrule">&lt;&lt;</span><span class="token punctuation">:</span> <span class="token important">*default</span>
+  <span class="token key atrule">database</span><span class="token punctuation">:</span> demoapp_test
+
+<span class="token key atrule">production</span><span class="token punctuation">:</span>
+  <span class="token key atrule">&lt;&lt;</span><span class="token punctuation">:</span> <span class="token important">*default</span>
+  <span class="token key atrule">database</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_DATABASE") <span class="token punctuation">{</span> <span class="token string">"demoapp_production"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>また、ActionCableの設定ファイルでは環境変数 <code>REDIS_URL</code> でRedisの接続先を指定できるようにしておきます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># config/cable.yml</span>
+<span class="token key atrule">development</span><span class="token punctuation">:</span>
+  <span class="token key atrule">adapter</span><span class="token punctuation">:</span> redis
+  <span class="token key atrule">url</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("REDIS_URL") <span class="token punctuation">{</span> <span class="token string">"redis://localhost:6379/1"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+
+<span class="token key atrule">test</span><span class="token punctuation">:</span>
+  <span class="token key atrule">adapter</span><span class="token punctuation">:</span> async
+
+<span class="token key atrule">production</span><span class="token punctuation">:</span>
+  <span class="token key atrule">adapter</span><span class="token punctuation">:</span> redis
+  <span class="token key atrule">url</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("REDIS_URL") <span class="token punctuation">{</span> <span class="token string">"redis://localhost:6379/1"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">channel_prefix</span><span class="token punctuation">:</span> demoapp_production
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Sidekiqについてはもともと環境変数 <code>REDIS_URL</code> で接続先を切り替えられる仕様なので特に何もしなくて良いです。
+別の方法で接続先を指定したい場合は <code>config/initializers/sidekiq.rb</code> というファイルを作って設定を追加します。
+詳細は下記のドキュメントを参照してください。</p>
+<p><a href="https://github.com/mperham/sidekiq/wiki/Using-Redis" target="_blank" rel="noopener">Using Redis mperham/sidekiq Wiki</a></p>
+<p><code>REDIS_HOST</code>は前述の<code>bin/wait-for</code>に渡すパラメータとして使っています。</p>
+<p><code>SECRET_KEY_BASE</code>はCookieに改ざん検知のためのHMACダイジェストをつけるときの秘密鍵を指定するための環境変数ですが、
+Rails 5.2.0のデフォルトの動作では<a href="https://github.com/rails/rails/pull/30067" target="_blank" rel="noopener">Credentials</a>で暗号化されたファイル <code>config/credentials.yml.enc</code> に
+書かれた値を鍵として使うようになっています。下記のコマンドでこのファイルの中身を確認できます。</p>
+<pre><code>% ./bin/rails credentials:show
+# aws:
+#   access_key_id: 123
+#   secret_access_key: 345
+
+# Used as the base secret for all MessageVerifiers in Rails, including the one protecting cookies.
+secret_key_base: f758dcb894cf0fee1b68f7989ebd65f5fd0dbb3c366e61789c112836789dfda22def856b6419ae96447352bbdd8873b90ae0096cd61d9532775caca8c04e0783
+</code></pre><p>ただ、この値は本番環境でも使う値になるので、今回のような不特定多数に配布するのが前提のプレビュー環境には使えません。
+HMAC用の鍵はCredentials の値よりも環境変数<code>SECRET_KEY_BASE</code>の値が優先される実装になっているので、今回は環境変数を設定します。
+また、Credentialsの秘密鍵(環境変数<code>RAILS_MASTER_KEY</code>または<code>config/master.key</code>)は設定しません。(デフォルトでは設定しなくてもエラーにはなりません。)</p>
+<p><code>RAILS_SERVE_STATIC_FILES</code>は、jsやcssなどのファイルをpumaが応答するかどうかを指定するための設定値です。
+これはRails標準の仕組みで、実装は <code>config/environments/production.rb</code> を参照してください。
+本番環境ではこのような静的なアセットファイルはnginxやCDNで配信するのが望ましいのですが、
+今回は構成を簡単にするためにtrueにしておきます。</p>
+<p><code>RAILS_LOG_TO_STDOUT</code>は、<code>production</code>環境でRailsのログ出力先を標準入力に切り替えるための環境変数です。
+これもRails標準の仕組みで、実装は <code>config/environments/production.rb</code> を参照してください。</p>
+<p>こういった環境変数設定用のファイルに本番環境の値を書く場合には、
+GitリポジトリやDockerイメージに含めないように注意してください。
+<code>.gitignore</code> と <code>.dockerignore</code> にそれらのファイル名を書いておくと意図せず混入させることを防ぐことができます。</p>
+<p>本稿では、<code>docker-compose-preview.yml</code>で構築するのはあくまでプレビュー用の環境であり、
+本番環境はKubernetesで構築するという前提です。
+Kubernetes上のアプリに環境変数を設定する際には全く別の方法を用いるため、
+Composeファイルなどに書いた設定値は全て本番環境とは異なる値という想定なので、リポジトリにコミットしています。</p>
+<p>また、<code>env_file</code>で指定するファイルは、<code>direnv</code>で使う<code>.envrc</code>などシェルに環境変数を設定するスクリプトとは
+根本的に異なるものなので下記の点に注意してください。</p>
+<ul>
+<li><code>export</code>はつけない。</li>
+<li>コマンドは実行できない。</li>
+<li>値をクオートしてはいけない。(環境変数に<code>&#39;</code>や<code>&quot;</code>を含む形で設定されてしまいます)</li>
+</ul>
+<h2 id="コンテナ間の通信について"><a href="#コンテナ間の通信について" class="headerlink" title="コンテナ間の通信について"></a>コンテナ間の通信について</h2><p>コンテナにはそれぞれ固有のIPアドレスが割り当てられます。
+<code>docker container run</code>コマンドで起動したコンテナ同士が互いのIPアドレスを知るためにはオプション指定が必要ですが、
+<code>docker-compose</code>で起動したコンテナ同士は、互いのサービス名をホスト名として通信できるように自動的に設定されます。
+また、ホスト側からコンテナに接続する際には<code>ports</code>エントリでポートマッピングの設定を書く必要がありましたが、
+<code>docker-compose</code>で起動したコンテナ同士はこういった設定なしで互いの全てのポートにアクセスできます。</p>
+<p>MySQLの接続設定をもう一度掲載します。下記のように<code>MYSQL_HOST</code>環境変数でホスト名を指定するようになっています。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># config/database.yml</span>
+<span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token important">&amp;default</span>
+  <span class="token key atrule">adapter</span><span class="token punctuation">:</span> mysql2
+  <span class="token key atrule">encoding</span><span class="token punctuation">:</span> utf8
+  <span class="token key atrule">pool</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("RAILS_MAX_THREADS") <span class="token punctuation">{</span> <span class="token number">5 </span><span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">username</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_USER") <span class="token punctuation">{</span> <span class="token string">"root"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">password</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_PASSWORD") <span class="token punctuation">{</span> <span class="token string">""</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+  <span class="token key atrule">host</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_HOST") <span class="token punctuation">{</span> <span class="token string">"0.0.0.0"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+
+<span class="token comment" spellcheck="true"># 省略</span>
+
+<span class="token key atrule">production</span><span class="token punctuation">:</span>
+  <span class="token key atrule">&lt;&lt;</span><span class="token punctuation">:</span> <span class="token important">*default</span>
+  <span class="token key atrule">database</span><span class="token punctuation">:</span> &lt;%= ENV.fetch("MYSQL_DATABASE") <span class="token punctuation">{</span> <span class="token string">"demoapp_production"</span> <span class="token punctuation">}</span> %<span class="token punctuation">></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.dockerenv/rails</code>では下記のように<code>mysql</code>という文字列を<code>MYSQL_HOST</code>環境変数に設定していました。</p>
+<pre><code>MYSQL_HOST=mysql
+</code></pre><p>この<code>mysql</code>というのは、<code>docker-compose-preview.yml</code>のサービス名を指しています。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token comment" spellcheck="true"># 省略</span>
+  <span class="token key atrule">mysql</span><span class="token punctuation">:</span> <span class="token comment" spellcheck="true"># &lt;- これがサービス名</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+  <span class="token comment" spellcheck="true"># 省略</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>docker container run</code>コマンドに<code>--link</code>オプションをつけると
+<code>docker-compose</code>が自動的に準備してくれていたようなことを手動で行うこともできますが、
+Railsアプリ開発という主題においては必要になる場面はほぼ無いと思いますので、詳細は割愛します。</p>
+<h1 id="ローカル開発環境のRailsアプリをDocker化するかどうか"><a href="#ローカル開発環境のRailsアプリをDocker化するかどうか" class="headerlink" title="ローカル開発環境のRailsアプリをDocker化するかどうか"></a>ローカル開発環境のRailsアプリをDocker化するかどうか</h1><p>少なくともホストOSがmacOSなのであれば、
+ローカルの開発環境においてはRailsアプリまでDockerコンテナの上で動かす必要はないと筆者は考えています。</p>
+<ul>
+<li>RailsアプリがmacOSで動いてLinux(コンテナ)だと動かないケースは多くない。</li>
+<li>多くの場合、macOS上でRailsアプリの開発環境を用意するのはそれほど面倒ではない。</li>
+<li><code>./bin/rails g</code>や<code>./bin/rails c</code>などちょっとしたコマンドが全て<code>docker</code>コマンド経由になるのは煩雑すぎる。</li>
+<li>springの対応が面倒</li>
+</ul>
+<p>以上の理由で、私の主観ではメリットをデメリットが上回っていると感じるので、開発環境においては下記のような構成をとっています。</p>
+<ul>
+<li>Railsプロセス自体はホスト側(macOS/Linux)で直接起動する。</li>
+<li>Railsプロセスが接続するMySQLやRedisなどのミドルウェアは<code>docker-compsoe</code>で起動する。</li>
+</ul>
+<h1 id="参考情報"><a href="#参考情報" class="headerlink" title="参考情報"></a>参考情報</h1><p>Docker Composeのより詳細な使い方は下記のドキュメントを参照してください。</p>
+<ul>
+<li><code>docker-compose</code>コマンドについて<ul>
+<li><a href="https://docs.docker.com/compose/reference/overview/" target="_blank" rel="noopener">Overview of docker-compose CLI | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/reference/index.html#" target="_blank" rel="noopener">Compose CLI リファレンス | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+<li>Composeファイル(<code>docker-compose.yml</code>)について<ul>
+<li><a href="https://docs.docker.com/compose/compose-file/" target="_blank" rel="noopener">Compose file version 3 reference | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/compose/compose-file.html" target="_blank" rel="noopener">Compose ファイル・リファレンス | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<p>Dockerfileのより詳細な仕様については下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="noopener">Dockerfile reference | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/builder.html" target="_blank" rel="noopener">Dockerfile リファレンス | 日本語版 ドキュメント</a></li>
+</ul>
+<p>おすすめの書籍は「プログラマのためのDocker教科書」です。2018/4/11に第2版が出ました。</p>
+<div style="display: flex;">
+<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="https://rcm-fe.amazon-adsystem.com/e/cm?ref=tf_til&t=chopschips03-22&m=amazon&o=9&p=8&l=as1&IS1=1&detail=1&asins=4798153222&linkId=db46cec2f20263827bcad4a1cd4c7b7f&bc1=000000&lt1=_blank&fc1=333333&lc1=0066c0&bg1=ffffff&f=ifr"></iframe>
+</div>
+
+<p>前回の<a href="/blog/2018/05/30/docker-with-rails/">Docker編</a>で扱った範囲も含めて、
+本ドキュメントでは紹介しなかったコマンドやDockerfile/Composeファイルの機能が一通り紹介されています。
+また、コンテナ技術の概要や使いどころ、プライベートレジストリやイメージの公開方法などDocker周辺を広く浅く解説してあり、
+入門には良い書籍だと思います。後半ではKubernetesにも軽く触れてあります。</p>
+<p>次回は <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a> です。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" data-id="cjhtbua05001ukzrc5wuz1gpb" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/05/30/kubernetes-tutorial/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/05/30/docker-with-rails/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門1 Docker編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

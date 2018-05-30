@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第五回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  前回のKubernetes基礎">
+<meta name="keywords" content="docker,kubernetes,k8s,rails">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門5 Kubernetes応用編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第五回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  前回のKubernetes基礎">
+<meta property="og:locale" content="ja">
+<meta property="og:updated_time" content="2018-05-30T16:13:58.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門5 Kubernetes応用編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第五回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  前回のKubernetes基礎">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-practical-kubernetes-with-rails" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/practical-kubernetes-with-rails/" class="article-date">
+  <time datetime="2018-05-30T13:40:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#準備"><span class="toc-number">2.</span> <span class="toc-text">準備</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step2-Job"><span class="toc-number">3.</span> <span class="toc-text">Step2: Job</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#アプリイメージの更新とローリングリスタートの動作確認"><span class="toc-number">3.1.</span> <span class="toc-text">アプリイメージの更新とローリングリスタートの動作確認</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#graceful-stop"><span class="toc-number">3.2.</span> <span class="toc-text">graceful stop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Makefileのサンプル"><span class="toc-number">3.3.</span> <span class="toc-text">Makefileのサンプル</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step3-PersistentVolumeClaim-PVC"><span class="toc-number">4.</span> <span class="toc-text">Step3: PersistentVolumeClaim(PVC)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#StorageClassについて"><span class="toc-number">4.1.</span> <span class="toc-text">StorageClassについて</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StatefulSetについて"><span class="toc-number">4.2.</span> <span class="toc-text">StatefulSetについて</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ステートフルなサービスの運用について"><span class="toc-number">4.3.</span> <span class="toc-text">ステートフルなサービスの運用について</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step4-Ingress"><span class="toc-number">5.</span> <span class="toc-text">Step4: Ingress</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Ingress-コントローラのインストール"><span class="toc-number">5.1.</span> <span class="toc-text">Ingress コントローラのインストール</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#動作確認の手順"><span class="toc-number">5.2.</span> <span class="toc-text">動作確認の手順</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ダミーのサーバ証明書の作成"><span class="toc-number">5.3.</span> <span class="toc-text">ダミーのサーバ証明書の作成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#証明書用のSecretオブジェクトの作成"><span class="toc-number">5.4.</span> <span class="toc-text">証明書用のSecretオブジェクトの作成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ingressオブジェクト"><span class="toc-number">5.5.</span> <span class="toc-text">Ingressオブジェクト</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ワイルドカードDNS"><span class="toc-number">5.6.</span> <span class="toc-text">ワイルドカードDNS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#envsubst"><span class="toc-number">5.7.</span> <span class="toc-text">envsubst</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#まとめ"><span class="toc-number">6.</span> <span class="toc-text">まとめ</span></a></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。
+この記事はシリーズ連載記事の第五回です。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a></li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a></li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a></li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a></li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a></li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a></li>
+</ul>
+<p>前回の<a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a>では、
+Step1として第2回<a href="/blog/2018/05/30/docker-compose-with-rails/#docker-composeコマンドによるローカルプレビュー環境">Docker Compose/Dockerfile編</a>
+の<code>docker-compose-preview.yml</code>に相当する構成を<code>Deployment</code>, <code>Service</code>, <code>ConfigMap</code>, <code>Secret</code>の4種のAPIオブジェクトで記述しました。
+マニフェストファイル一式はサンプルコードの <a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step1/" target="_blank" rel="noopener">k8s/manifests-step1/</a> ディレクトリにあります。</p>
+<p>この構成には下記に挙げる三つの制約があります。</p>
+<ul>
+<li>pumaコンテナを複数起動すると<code>rails db:setup</code>が並列実行されてエラーになる。</li>
+<li>MySQLやRedisのデータが永続化されていないため、コンテナを停止するとデータも消える。</li>
+<li>pumaに外部からアクセスするためのエンドポイントを本番環境で運用するのが難しい。</li>
+</ul>
+<p>今回はこれらの制約をStep2からStep4で解消していきます。</p>
+<p>サンプルコードは全て下記のリポジトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>macOSでの作業を前提としています。</li>
+<li>使用したツールのバージョンなどは <a href="/blog/2018/05/30/docker-with-rails/#前提">初回</a> の記事を参照してください。</li>
+<li>ツールのインストール手順は <a href="/blog/2018/05/30/kubernetes-tutorial/#開発環境の構築">第三回</a> の記事を参照してください。</li>
+</ul>
+<h1 id="準備"><a href="#準備" class="headerlink" title="準備"></a>準備</h1><p>まずサンプルアプリのコードをチェックアウトしてminikubeを起動してください。
+(前回と同じなのですでにやっている人は読み飛ばしてください)</p>
+<pre><code># サンプルアプリのコードをチェックアウト
+$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+
+# minikubeを起動
+$ minikube start --cpus=3 --memory=2048 --vm-driver=hyperkit --disk-size=12g
+
+# kubernetesのダッシュボードをオープン
+$ minikube dashboard
+</code></pre><h1 id="Step2-Job"><a href="#Step2-Job" class="headerlink" title="Step2: Job"></a>Step2: Job</h1><p>サンプルコードは全て下記のディレクトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step2/" target="_blank" rel="noopener">k8s/manifests-step2/</a></p>
+<p>Step1の構成ではpumaのレプリカの数を1に指定していましたが、
+一定以上の性能を出そうとするとレプリカの数は2以上に設定する必要があります。
+ところが、このままの構成でpumaコンテナを複数起動すると、<code>rails db:setup</code>が並列実行されてエラーが発生します。</p>
+<p>次のような手順でこれを確認できます。</p>
+<a id="more"></a>
+<p>まず<code>puma-deploy.yaml</code>を書き換えてreplicasを2にします。</p>
+<pre class="line-numbers language-diff"><code class="language-diff">diff --git a/k8s/manifests-step1/puma-deploy.yaml b/k8s/manifests-step1/puma-deploy.yaml
+index 003f484..c17f9bb 100644
+<span class="token coord">--- a/k8s/manifests-step1/puma-deploy.yaml</span>
+<span class="token coord">+++ b/k8s/manifests-step1/puma-deploy.yaml</span>
+@@ -7,7 +7,7 @@ metadata:
+     app: demoapp
+     component: puma
+ spec:
+<span class="token deleted">-  replicas: 1</span>
+<span class="token inserted">+  replicas: 2</span>
+   selector:
+     matchLabels:
+       app: demoapp
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>次に<code>stern</code>でログを監視しつつ、別の端末で<code>kubectl apply</code>を実行し、APIオブジェクトを作成します。</p>
+<pre><code>$ cd k8s/manifests-step1
+
+# デプロイ済みのオブジェクトがある場合は削除
+$ cat *.yaml | kubectl delete -f -
+
+# ログを監視
+$ stern &quot;demoapp.*&quot;
+
+# 別の端末で実行
+$ cat *.yaml | kubectl apply -f -
+</code></pre><p>タイミング依存なのでエラーが発生しない場合もありますが、それなりの確率で下記のようなエラーがsternの端末上に表示されるはずです。</p>
+<pre><code>demoapp-puma-749c456c87-2wk5c puma + ./bin/wait-for demoapp-redis 6379
+demoapp-puma-749c456c87-2wk5c puma + ./bin/rails db:setup_if_not_yet
+demoapp-puma-749c456c87-lwwb7 puma + ./bin/wait-for demoapp-redis 6379
+demoapp-puma-749c456c87-lwwb7 puma + ./bin/rails db:setup_if_not_yet
+demoapp-puma-749c456c87-lwwb7 puma Database &#39;demoapp_production&#39; already exists
+demoapp-puma-749c456c87-2wk5c puma Database &#39;demoapp_production&#39; already exists
+demoapp-puma-749c456c87-lwwb7 puma -- create_table(&quot;messages&quot;, {:options=&gt;&quot;ENGINE=InnoDB DEFAULT CHARSET=utf8&quot;, :force=&gt;:cascade})
+demoapp-puma-749c456c87-2wk5c puma -- create_table(&quot;messages&quot;, {:options=&gt;&quot;ENGINE=InnoDB DEFAULT CHARSET=utf8&quot;, :force=&gt;:cascade})
+demoapp-puma-749c456c87-lwwb7 puma    -&gt; 0.0505s
+demoapp-puma-749c456c87-2wk5c puma    -&gt; 0.0925s
+demoapp-puma-749c456c87-2wk5c puma rails aborted!
+demoapp-puma-749c456c87-2wk5c puma ActiveRecord::RecordNotUnique: Mysql2::Error: Duplicate entry &#39;20180411125010&#39; for key &#39;PRIMARY&#39;: INSERT INTO `schema_migrations` (version) VALUES (20180411125010)
+</code></pre><p>2つのpuma用のPodがほぼ同じタイミングで<code>./bin/rails db:setup_if_not_yet</code>を実行していることがわかります。
+このRakeタスクは第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a>で説明しましたが、
+下記のような内容です。</p>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># lib/tasks/db.rake</span>
+namespace <span class="token symbol">:db</span> <span class="token keyword">do</span>
+  desc <span class="token string">"Invoke db:setup task only if the task has never been invoked yet."</span>
+  task setup_if_not_yet<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token symbol">:environment</span><span class="token punctuation">]</span> <span class="token keyword">do</span>
+    <span class="token keyword">begin</span>
+      <span class="token keyword">if</span> <span class="token operator">!</span><span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:SchemaMigration</span><span class="token punctuation">.</span>table_exists<span class="token operator">?</span>
+        <span class="token comment" spellcheck="true"># データベースは存在するが、必ずあるはずのテーブルがない</span>
+        <span class="token constant">Rake</span><span class="token punctuation">:</span><span class="token symbol">:Task</span><span class="token punctuation">[</span><span class="token string">"db:setup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>invoke
+        exit <span class="token number">0</span>
+      <span class="token keyword">end</span>
+    <span class="token keyword">rescue</span> <span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:NoDatabaseError</span>
+      <span class="token comment" spellcheck="true"># データベースが存在しない</span>
+      <span class="token constant">Rake</span><span class="token punctuation">:</span><span class="token symbol">:Task</span><span class="token punctuation">[</span><span class="token string">"db:setup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>invoke
+      exit <span class="token number">0</span>
+    <span class="token keyword">end</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>rails db:setup</code>の初回実行時に作成されるテーブルの有無を確認して、テーブルが存在しない場合のみ<code>rails db:setup</code>を実行していますが、
+テーブルの確認とタスクの実行の間がクリティカルセクションになっているため、何らかの方法で排他制御しなければ<code>rails db:setup</code>が2重に実行される可能性があります。
+前述のエラーはまさにこれが原因です。</p>
+<p>MySQLやRedisを使ってロックを取るなどこれを排他制御することは技術的には可能なのですが、
+<code>rails db:setup</code>のように一度きりしか実行しないような処理を記述するには <code>Job</code> というAPIオブジェクトが適任ですので、これを例に使い方を説明します。</p>
+<p>ところで、典型的なRailsのワークフローには、DBの初期化を行う<code>rails db:setup</code>に加えて、スキーマの変更などを行うマイグレーション用のタスク<code>rails db:migrate</code>があります。
+一見するとこれも<code>Job</code>で管理するのが良さそうなのですが、<code>Job</code>は一度APIオブジェクトを作成すると<code>Deployment</code>のようにイメージを変更できないという制約があります。
+そのため、新しいマイグレーションを作成するたびに<code>Job</code>オブジェクトも新規に作成する必要があり、運用が煩雑になります。
+また、<code>rails db:setup</code>とは異なり、<code>rails db:migrate</code>には(少なくともDBがMySQLかPostgreSQLの場合には)
+RDBMSのロック機構を使ってマイグレーションが多重実行されないように排他制御する仕組みが組み込まれているため、
+<code>puma</code>の起動前に毎回実行しても実質的な問題が発生しません。</p>
+<p>そこで Step2 では全体の構成を下記のように変更します。</p>
+<ul>
+<li><code>rails db:setup</code>は<code>Job</code>として定義し、アプリを最初にk8sにデプロイした時に一度だけ実行する。</li>
+<li><code>rails db:migrate</code>は<code>puma</code>の起動前に毎回実行する。(複数の<code>puma</code>コンテナにより同時に起動される可能性があるが問題ない)</li>
+</ul>
+<p>まずは <code>rails db:setup</code> を実行するための <code>Job</code> のマニフェストを書きます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step2/setup-db-job.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> batch/v1 <span class="token comment" spellcheck="true"># Deploymentのapps/v1とは異なる点に注意</span>
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Job
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>setup<span class="token punctuation">-</span>db
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">backoffLimit</span><span class="token punctuation">:</span> <span class="token number">4 </span><span class="token comment" spellcheck="true"># ジョブを失敗したと見なすまでの再試行回数</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> setup<span class="token punctuation">-</span>db
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Never <span class="token comment" spellcheck="true"># OnFailureにするとbackoffLimitが効かない場合があるのでNeverにする</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> setup<span class="token punctuation">-</span>db
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">:</span>0.0.1
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ./bin/setup<span class="token punctuation">-</span>db
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>内容は<code>puma</code>や<code>sidekiq</code>の<code>Deployment</code>と似ています。
+まず同じように<code>demoapp</code>イメージを指定します。
+また、<code>.spec.template</code>以下の内容もほぼ同じですが、<code>livenessProbe</code>などの項目が無い分<code>Deployment</code>よりもシンプルな内容になります。</p>
+<p><code>Job</code>固有の設定値について簡単に補足します。</p>
+<ul>
+<li><code>backoffLimit</code>のデフォルト値は6です。4を指定しているのは単にサンプルとして例示するためで深い意味はありません。</li>
+<li><code>restartPolicy</code>は<code>OnFailure</code>か<code>Never</code>を指定できます。
+<code>OnFailure</code>の場合はジョブが失敗したときに<code>Pod</code>はそのままで内部のコンテナだけ作り直します。
+<code>Never</code>の場合は<code>Pod</code>ごと作り直します。
+今回の場合どちらでも良いのですが、<a href="https://github.com/kubernetes/kubernetes/issues/54870" target="_blank" rel="noopener">既知の問題</a>により<code>Never</code>だと
+<code>backoffLimit</code>が無視されるケースがあると公式ドキュメントにも書いてあるので<code>Never</code>を指定しています。</li>
+</ul>
+<p>詳細は下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/" target="_blank" rel="noopener">Jobs - Run to Completion | Kubernetes</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#job-v1-batch" target="_blank" rel="noopener">Kubernetes API Reference Docs</a></li>
+</ul>
+<p><code>command</code>に指定している <code>./bin/setup-db</code> は下記のような内容で、
+単に<code>mysql</code>の起動を待ち受けてから(Step1では<code>puma</code>で実行していた)<code>rails db:setup_if_not_yet</code>を実行します。</p>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span> -xu
+
+<span class="token function">cd</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> $0<span class="token variable">)</span></span>/<span class="token punctuation">..</span>
+
+./bin/wait-for <span class="token variable">$MYSQL_HOST</span> 3306
+./bin/rails db:setup_if_not_yet
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>また、<code>puma-deploy.yaml</code>も次のように修正します。</p>
+<pre class="line-numbers language-diff"><code class="language-diff"><span class="token coord">--- k8s/manifests-step1/puma-deploy.yaml        2018-05-11 23:30:49.000000000 +0900</span>
+<span class="token coord">+++ k8s/manifests-step2/puma-deploy.yaml        2018-05-11 23:57:17.000000000 +0900</span>
+<span class="token coord">@@ -7,7 +7,7 @@</span>
+     app: demoapp
+     component: puma
+ spec:
+<span class="token deleted">-  replicas: 1</span>
+<span class="token inserted">+  replicas: 2</span>
+   selector:
+     matchLabels:
+       app: demoapp
+<span class="token coord">@@ -24,7 +24,7 @@</span>
+           image: demoapp:0.0.1
+           imagePullPolicy: IfNotPresent
+           command:
+<span class="token deleted">-            - ./bin/setup-db-and-start-puma</span>
+<span class="token inserted">+            - ./bin/start-puma</span>
+           livenessProbe:
+             httpGet:
+               path: /health_check/full
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>replicas</code>を2に増やし、<code>command</code>を<code>./bin/start-puma</code>に変更しています。
+<code>./bin/start-puma</code>は下記のような内容です。</p>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span> -x
+
+<span class="token function">cd</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> $0<span class="token variable">)</span></span>/<span class="token punctuation">..</span>
+
+<span class="token function">trap</span> <span class="token string">"pkill -P $$"</span> EXIT
+
+./bin/wait-for <span class="token variable">$MYSQL_HOST</span> 3306
+./bin/wait-for <span class="token variable">$REDIS_HOST</span> 6379
+./bin/rails db:try_migrate
+./bin/pumactl start
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Step1では<code>pumactl</code>コマンドの実行前に<code>./bin/rails db:setup_if_not_yet</code>を実行していましたが、
+代わりに<code>rails db:try_migrate</code>を実行します。このRakeタスクは下記のような定義です。</p>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># lib/tasks/db.rake</span>
+
+namespace <span class="token symbol">:db</span> <span class="token keyword">do</span>
+  desc <span class="token string">"Wait for db:setup task to complete."</span>
+  task wait_for_setup_completion<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token symbol">:environment</span><span class="token punctuation">]</span> <span class="token keyword">do</span>
+    loop <span class="token keyword">do</span>
+      <span class="token keyword">begin</span>
+        <span class="token keyword">if</span> <span class="token operator">!</span><span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:InternalMetadata</span><span class="token punctuation">.</span>table_exists<span class="token operator">?</span>
+          <span class="token comment" spellcheck="true"># データベースは存在するが、必ずあるはずのテーブルがない</span>
+          sleep <span class="token number">1</span>
+        <span class="token keyword">elsif</span> <span class="token operator">!</span><span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:InternalMetadata</span><span class="token punctuation">.</span><span class="token function">where</span><span class="token punctuation">(</span>key<span class="token punctuation">:</span> <span class="token symbol">:environment</span><span class="token punctuation">)</span><span class="token punctuation">.</span>exists<span class="token operator">?</span>
+          <span class="token comment" spellcheck="true"># テーブルはあるがレコードが存在しない</span>
+          sleep <span class="token number">1</span>
+        <span class="token keyword">else</span>
+          <span class="token keyword">break</span>
+        <span class="token keyword">end</span>
+      <span class="token keyword">rescue</span> <span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:NoDatabaseError</span>
+        <span class="token comment" spellcheck="true"># データベースが存在しない</span>
+        sleep <span class="token number">1</span>
+      <span class="token keyword">end</span>
+    <span class="token keyword">end</span>
+  <span class="token keyword">end</span>
+
+  desc <span class="token string">"Invoke db:migrate task and ignore errors caused by parallel execution."</span>
+  task try_migrate<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token symbol">:wait_for_setup_completion</span><span class="token punctuation">]</span> <span class="token keyword">do</span>
+    <span class="token keyword">begin</span>
+      <span class="token constant">Rake</span><span class="token punctuation">:</span><span class="token symbol">:Task</span><span class="token punctuation">[</span><span class="token string">"db:migrate"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>invoke
+    <span class="token keyword">rescue</span> <span class="token constant">ActiveRecord</span><span class="token punctuation">:</span><span class="token symbol">:ConcurrentMigrationError</span> <span class="token operator">=</span><span class="token operator">></span> e
+      <span class="token constant">Rails</span><span class="token punctuation">.</span>logger<span class="token punctuation">.</span>info <span class="token string">"Skip migrations because another migration process is currently running."</span>
+    <span class="token keyword">end</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>行数は多いですがやっていることは<code>rails db:setup</code>の完了を待ってから<code>rails db:migrate</code>を実行しているだけです。</p>
+<p>ただし、<code>db:migrate</code>タスクで<code>ActiveRecord::ConcurrentMigrationError</code>という例外が発生した場合は、
+エラー終了しないように捕捉してINFOレベルでログに書き出すようにしています。</p>
+<p>この例外は、マイグレーションが多重起動された際に、ロックを取れなかったプロセス側が発生させる例外で、実害はありません。
+単にそのプロセスではマイグレーションがスキップされたということを示しています。</p>
+<h2 id="アプリイメージの更新とローリングリスタートの動作確認"><a href="#アプリイメージの更新とローリングリスタートの動作確認" class="headerlink" title="アプリイメージの更新とローリングリスタートの動作確認"></a>アプリイメージの更新とローリングリスタートの動作確認</h2><p>Step2での修正は<code>Job</code>の追加と<code>puma</code>用の<code>Deployment</code>の定義の変更の2点だけですが、
+これを機に<code>demoapp</code>のイメージを更新して<code>puma</code>用の<code>Deployment</code>に反映し、<code>Pod</code>がローリングリスタートされる様子を確認してみましょう。
+<code>demoapp</code>の更新は新規マイグレーションを含む内容にしてみます。</p>
+<p>まずStep2のマニフェストで<code>demoapp</code>をminikubeにデプロイします。</p>
+<pre><code># Railsアプリのイメージをビルド
+$ (eval $(minikube docker-env) &amp;&amp; docker build . -t demoapp:0.0.1)
+
+$ cd k8s/manifests-step2
+
+# APIオブジェクトを作成
+$ cat *.yaml | kubectl apply -f -
+
+# puma deploymentの起動が完了するまで待機
+$ kubectl rollout status deploy demoapp-puma
+
+# puma serviceのエンドポイントをブラウザでオープン
+$ minikube service demoapp-puma
+</code></pre><p>次に、<code>messages</code>テーブルに<code>likes</code>というカラムを追加するだけの内容で新しいマイグレーションを作ります。</p>
+<pre><code># RAILS_ROOTに移動してローカル環境にMySQLとRedisを起動しDBを初期化
+$ cd ../../
+$ rm -r tmp/mysql tmp/redis
+$ docker-compose up -d
+# しばらく待ってから
+$ ./bin/rails db:setup
+
+# 新しいマイグレーションを作成して、ローカル環境にマイグレーション実行
+$ ./bin/rails g migration AddLiksToMessage likes:integer
+$ ./bin/rails db:migrate
+</code></pre><p>新しい<code>demoapp</code>のイメージを作りデプロイします。</p>
+<pre><code># タグを0.0.2に変えてRailsアプリのイメージをビルド
+$ (eval $(minikube docker-env) &amp;&amp; docker build . -t demoapp:0.0.2)
+
+# 新しいイメージをデプロイして更新が完了するのを待つ
+$ kubectl set image deploy/demoapp-puma puma=demoapp:0.0.2
+$ kubectl set image deploy/demoapp-sidekiq sidekiq=demoapp:0.0.2
+$ kubectl rollout status deploy demoapp-puma
+$ kubectl rollout status deploy demoapp-sidekiq
+</code></pre><p>事前に別の端末で下記のコマンドをそれぞれ実行しておくとローリングリスタートに伴う<code>Pod</code>の入れ替わりの様子を確認しやすいと思います。</p>
+<pre><code># puma用のPodのログを表示
+$ stern &quot;demoapp-puma-.*&quot;
+
+# APIオブジェクトの変化を監視して表示
+$ kubectl get deployments --watch
+$ kubectl get replicasets --watch
+$ kubectl get pods --watch
+</code></pre><p>watchコマンドを用いる方法もおすすめです。watchコマンドは <code>brew install watch</code> でインストールできます。</p>
+<pre><code># 更新頻度を1秒に指定
+$ watch -n 1 kubectl get deployments,replicasets,pods
+</code></pre><p><code>kubectl set image deploy/demoapp-puma puma=demoapp:0.0.2</code>を実行すると<code>puma</code>の<code>Deployment</code>が更新され、
+ローリングアップデートが開始します
+(<code>puma=demoapp:0.0.2</code>の<code>puma</code>は、<code>puma-deploy.yaml</code>で定義したコンテナの<code>name</code>です)。</p>
+<p>この際、<code>puma-deploy.yaml</code>の<code>replicas</code>が2だと下記のような動作になり、<code>rails db:migrate</code>の競合は起きません。</p>
+<ol>
+<li>新しい<code>Pod</code>を一つ起動開始</li>
+<li>1の<code>Pod</code>が起動完了し、古い<code>Pod</code>のうち一つが停止し、さらに新しい<code>Pod</code>を一つ起動開始</li>
+<li>2の<code>Pod</code>が起動完了し、残りの古い<code>Pod</code>が停止</li>
+</ol>
+<p><code>replicas</code>が4だと下記のような動作になり、高い確率で<code>rails db:migrate</code>が競合します。(<code>puma-deploy.yaml</code>を編集して試してみてください)</p>
+<ol>
+<li>古い<code>Pod</code>を一つ停止すると同時に新しい<code>Pod</code>を二つ起動開始</li>
+<li>1の<code>Pod</code>二つがほぼ同時に起動完了し、古い<code>Pod</code>がさらに停止され、新しい<code>Pod</code>がさらに二つ起動開始</li>
+<li>2の<code>Pod</code>二つがほぼ同時に起動完了し、最後の<code>Pod</code>が停止</li>
+</ol>
+<p><code>rails db:migrate</code>がほぼ同時に起動された場合には、遅い方の<code>Pod</code>のログに下記のようなメッセージが残るはずです。</p>
+<pre><code>INFO -- : Skip migrations because another migration process is currently running.
+</code></pre><p>なお、<code>Deployment</code>の更新の際の<code>Pod</code>の入れ替えはこのように徐々に新しいものに入れ替えるような動作になっていますが、
+これはマニフェストの<code>.spec.strategy</code>で変更することができます。
+<code>puma-deploy.yaml</code>の例では特に指定していないのでデフォルトの<code>RollingUpdate</code>になっていますが、
+<code>Recreate</code>を指定すると古い<code>Pod</code>を全て削除してから新しい<code>Pod</code>を立ち上げるようになります。これについてはStep3で取り上げます。</p>
+<p>また、<code>replicas</code>が4のケースだと、一時的に起動中の<code>Pod</code>の数が5つに、READYな状態の<code>Pod</code>は3つになっている点に注意してください。
+急激なサービスのスループット低下とインフラ負荷の増加を防ぐため、レプリカの数が多い場合はデフォルトでこのような動作をするようになっています。
+ローリングアップデート中におけるREADYな状態の<code>Pod</code>の割合と起動中(準備中含む)の<code>Pod</code>の割合は、
+それぞれ<code>.spec.strategy.rollingUpdate.maxUnavailable</code>と<code>.spec.strategy.rollingUpdate.maxSurge</code>で指定できます。
+デフォルト値はいずれも25%です。
+これについては本ドキュメントではこれ以上説明しないので、詳細は下記の資料を参照してください。</p>
+<p><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#writing-a-deployment-spec" target="_blank" rel="noopener">Writing a Deployment Spec</a></p>
+<h2 id="graceful-stop"><a href="#graceful-stop" class="headerlink" title="graceful stop"></a>graceful stop</h2><p>k8sのようにBlue-Greenデプロイメントでアプリケーションの更新を行う場合、
+新しいインスタンスを立ち上げつつ古い方のインスタンスは順次停止します。
+この際、実行中の処理はできるだけ強制終了せずに、
+完了するまで待ってからアプリケーションプロセスを停止することが望ましいです。</p>
+<p>pumaとsidekiqの場合は次のようなことを意味します。</p>
+<ul>
+<li>puma: 処理中のリクエストのレスポンスを返し終わってから停止する。</li>
+<li>sidekiq: 処理中のジョブが全て完了してから停止する。</li>
+</ul>
+<p>一般的にこのような停止処理のことをgraceful stopと呼びます。</p>
+<p>前節で述べたローリングリスタートの際には、k8sは停止する<code>Pod</code>の全てのコンテナに<code>SIGTERM</code>シグナルを送信し、
+コンテナのメインプロセスが停止するのを待ちます。
+そのため、コンテナで起動するプロセスは<code>SIGTERM</code>を受け取った時にgraceful stopするように実装しておく必要があります。</p>
+<p>pumaとsidekiqはいずれも<code>SIGTERM</code>を受け取った際にgraceful stopする仕様なので、このままでも問題ない場合もあるのですが、
+下記の点に気をつける必要があります。</p>
+<ul>
+<li>シェルスクリプトでラップしている場合は、<code>trap</code>コマンドなどでシグナルを捕捉して子プロセスにも<code>SIGTERM</code>を送ること。
+サンプルは<a href="/blog/2018/05/30/docker-compose-with-rails/#docker-compose%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%81%AB%E3%82%88%E3%82%8B%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%83%97%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E7%92%B0%E5%A2%83">第2回</a>を参照してください。</li>
+<li>sidekiqは<code>SIGTERM</code>を受け取ってからジョブの強制終了まで8秒しか待たない。
+これが短すぎる場合は起動時の<code>-t</code>オプションで変更しておくこと。
+サンプルは<a href="/blog/2018/05/30/kubernetes-with-rails/#sidekiq-deploy-yaml-sidekiq-の-Deployment">第4回</a>の記事を参照してください。</li>
+<li>k8sがコンテナを強制停止するまでの猶予期間が30秒で足りない場合は、
+<code>Deployment</code>の<code>spec.template.spec.terminationGracePeriodSeconds</code>で変更しておくこと。
+(<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#pod-v1-core" target="_blank" rel="noopener">参考</a>)</li>
+</ul>
+<p>pumaとsidekiqのシグナルの扱いについては下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://github.com/puma/puma/blob/master/docs/signals.md" target="_blank" rel="noopener">puma/signals.md</a></li>
+<li><a href="https://github.com/mperham/sidekiq/wiki/Signals" target="_blank" rel="noopener">Signals mperham/sidekiq Wiki</a></li>
+</ul>
+<h2 id="Makefileのサンプル"><a href="#Makefileのサンプル" class="headerlink" title="Makefileのサンプル"></a>Makefileのサンプル</h2><p>Step2のディレクトリにもMakefileを置いてあります。
+本節に出てきた各種操作は(マイグレーションの作成以外は)対応するタスクを定義してあるので、
+ローリングアップデートの動作を確認する際には<code>make</code>コマンドを使うと簡単にオペレーションを実行することができます。</p>
+<pre><code>$ cd k8s/manifests-step2
+
+# タグを指定してイメージをビルドし、APIオブジェクト一式を作成(TAGは省略可)
+$ make TAG=0.0.1
+
+# タグを指定してイメージをビルドし、puma用Deploymentに反映
+$ make TAG=0.0.2 update
+
+# APIオブジェクトの削除
+$ make clean
+</code></pre><p>MakefileはStep1のものをベースにいくつか修正を加えた内容です。
+<code>miniube-docker-build</code>は、指定されたタグが存在する場合はビルドをスキップするようにしています。</p>
+<pre class="line-numbers language-makefile"><code class="language-makefile"><span class="token comment" spellcheck="true"># k8s/manifests-step2/Makefile</span>
+
+SHELL <span class="token operator">=</span> /bin/bash
+
+<span class="token keyword">ifeq</span> <span class="token punctuation">(</span><span class="token variable">$</span><span class="token punctuation">(</span>TAG<span class="token punctuation">)</span>,<span class="token punctuation">)</span>
+    tag <span class="token operator">:=</span> 0.0.1
+<span class="token keyword">else</span>
+    tag <span class="token operator">:=</span> <span class="token variable">$</span><span class="token punctuation">(</span>TAG<span class="token punctuation">)</span>
+<span class="token keyword">endif</span>
+
+<span class="token symbol">all</span><span class="token punctuation">:</span>
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> minikube-docker-build
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> kubectl-apply
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> kubectl-rollout-status
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> minikube-service
+
+<span class="token symbol">clean</span><span class="token punctuation">:</span> kubectl-delete
+
+<span class="token symbol">update</span><span class="token punctuation">:</span> 
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> TAG<span class="token operator">=</span><span class="token variable">$</span><span class="token punctuation">(</span>tag<span class="token punctuation">)</span> minikube-docker-build
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> TAG<span class="token operator">=</span><span class="token variable">$</span><span class="token punctuation">(</span>tag<span class="token punctuation">)</span> deploy
+
+<span class="token symbol">minikube-docker-build</span><span class="token punctuation">:</span>
+    eval <span class="token variable">$$</span><span class="token punctuation">(</span>minikube docker-env<span class="token punctuation">)</span> &amp;&amp; \
+        if [ <span class="token string">"$$(docker image ls -q demoapp:$(tag))"</span> <span class="token operator">=</span><span class="token operator">=</span> <span class="token string">""</span> ]<span class="token punctuation">;</span> then \
+<span class="token symbol">            docker build ../../ -t demoapp</span><span class="token punctuation">:</span><span class="token variable">$</span><span class="token punctuation">(</span>tag<span class="token punctuation">)</span><span class="token punctuation">;</span> \
+        fi
+
+<span class="token symbol">kubectl-apply</span><span class="token punctuation">:</span>
+    cat *.yaml <span class="token operator">|</span> kubectl apply -f -
+
+<span class="token symbol">kubectl-rollout-status</span><span class="token punctuation">:</span>
+    kubectl rollout status deploy demoapp-puma
+    kubectl rollout status deploy demoapp-sidekiq
+
+<span class="token symbol">minikube-service</span><span class="token punctuation">:</span>
+    minikube service demoapp-puma
+
+<span class="token symbol">kubectl-delete</span><span class="token punctuation">:</span>
+    cat *.yaml <span class="token operator">|</span> kubectl delete -f -
+
+<span class="token symbol">deploy</span><span class="token punctuation">:</span>
+    kubectl set image deploy/demoapp-puma puma<span class="token operator">=</span>demoapp<span class="token punctuation">:</span><span class="token variable">$</span><span class="token punctuation">(</span>tag<span class="token punctuation">)</span>
+    kubectl set image deploy/demoapp-sidekiq sidekiq<span class="token operator">=</span>demoapp<span class="token punctuation">:</span><span class="token variable">$</span><span class="token punctuation">(</span>tag<span class="token punctuation">)</span>
+    kubectl rollout status deploy demoapp-puma
+    kubectl rollout status deploy demoapp-sidekiq
+
+<span class="token symbol">stern</span><span class="token punctuation">:</span>
+    stern demoapp.*
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="Step3-PersistentVolumeClaim-PVC"><a href="#Step3-PersistentVolumeClaim-PVC" class="headerlink" title="Step3: PersistentVolumeClaim(PVC)"></a>Step3: PersistentVolumeClaim(PVC)</h1><p>サンプルコードは全て下記のディレクトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step3/" target="_blank" rel="noopener">k8s/manifests-step3/</a></p>
+<p>Step2の時点ではMySQLとRedisのデータ領域が永続化されていないため、
+何らかの障害で<code>Pod</code>が停止するとDBの内容が全て消えるという制約があります。</p>
+<p>Step2のマニフェストでAPIオブジェクト一式を作成した後、<code>mysql</code>の<code>Pod</code>を<code>kubectl delete</code>コマンドで削除すると、
+<code>puma</code>のヘルスチェックが失敗するようになるのを確認できます。</p>
+<pre><code>$ cd k8s/manifests-step2
+
+# APIオブジェクトを作成
+$ cat *.yaml | kubectl apply -f -
+
+# puma deploymentの起動が完了するまで待機
+$ kubectl rollout status deploy demoapp-puma
+
+# MySQL用のPodを削除
+$ kubectl delete pod -l &quot;app=demoapp,component=mysql&quot;
+
+# pumaのログを確認
+$ stern &quot;demoapp-puma-.*&quot;
+(省略)
+demoapp-puma-5cdbdbfc76-d6ftm puma I, [2018-05-13T12:11:56.303988 #33]  INFO -- : [026a124c-fedb-4423-8587-40bec3481cde] health_check failed:
+demoapp-puma-5cdbdbfc76-d6ftm puma
+demoapp-puma-5cdbdbfc76-d6ftm puma Migrations are pending. To resolve this issue, run:
+demoapp-puma-5cdbdbfc76-d6ftm puma
+demoapp-puma-5cdbdbfc76-d6ftm puma         bin/rails db:migrate RAILS_ENV=production
+</code></pre><p>そこでStep3では、MySQLとRedisに<code>PersistentVolume</code>(以後、<code>PV</code>)というAPIオブジェクトを割り当ててデータボリュームとして使用し、
+DBの内容が<code>Pod</code>の生死に関わらず維持されるようにします。</p>
+<p><code>PV</code>は永続ストレージを抽象化したAPIオブジェクトです。
+<code>PV</code>の実体はNFSやGlusterFSのようなネットワークストレージでも良いし、
+GCP上であればGCEのPersistentDisk、AWSであればEBSを使うこともできます。
+これをボリュームタイプと呼びます。</p>
+<p><code>PV</code>のボリュームタイプはプラグインとして実装されていて、すでに主要なネットワークストレージとパブリッククラウドのストレージサービスに対応しています。</p>
+<p><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" target="_blank" rel="noopener">Types of Persistent Volumes</a></p>
+<p>MySQLのようなデータベースをk8sで運用するためには、障害で<code>Pod</code>やk8sノードがクラッシュした場合に、
+新しい<code>Pod</code>にデータ領域を引き継ぐ必要があります。
+k8sでは先に挙げたようなドライバ経由でk8sクラスタの外にデータを保存することによってこれを実現しています。</p>
+<p><code>PV</code>オブジェクトは直接マニフェストを書いて作ることもできますが、
+<code>PersistentVolumeClaim</code>(以後、<code>PVC</code>)というAPIオブジェクトの<a href="https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/" target="_blank" rel="noopener">Dynamic Provisioning</a>という機能を経由して作る方が簡単なので、
+本ドキュメントではその方法で説明します。</p>
+<p>まずMySQL用の<code>PVC</code>オブジェクトのマニフェスト <code>mysql-pvc.yaml</code> を作成します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step3/mysql-pvc.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> PersistentVolumeClaim
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">accessModes</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> ReadWriteOnce          <span class="token comment" spellcheck="true"># 同時に一つのプロセスからしか読み書きしないモードを指定</span>
+  <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+    <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+      <span class="token key atrule">storage</span><span class="token punctuation">:</span> 8Gi           <span class="token comment" spellcheck="true"># 確保する永続ストレージのサイズを指定</span>
+  <span class="token key atrule">storageClassName</span><span class="token punctuation">:</span> standard <span class="token comment" spellcheck="true"># 後述</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.spec.storageClassName</code>には<code>StorageClass</code>というAPIオブジェクトの名前を指定します。
+<code>StorageClass</code>の詳細については後述します。</p>
+<p>次に <code>mysql-deploy.yaml</code> へこの<code>PVC</code>を結びつけます。
+コメントをつけている行は、Step2での定義に追加した部分です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step3/mysql-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+  <span class="token key atrule">strategy</span><span class="token punctuation">:</span>            <span class="token comment" spellcheck="true"># 更新時の動作を指定</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> Recreate     <span class="token comment" spellcheck="true"># 古いPodを停止してから新しいPodを起動</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">volumes</span><span class="token punctuation">:</span>                          <span class="token comment" spellcheck="true"># </span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> data                    <span class="token comment" spellcheck="true"># .volumeMountsの.nameで指定</span>
+          <span class="token key atrule">persistentVolumeClaim</span><span class="token punctuation">:</span>        <span class="token comment" spellcheck="true">#</span>
+            <span class="token key atrule">claimName</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql    <span class="token comment" spellcheck="true"># PVCオブジェクトの.metadata.nameを指定</span>
+      <span class="token key atrule">initContainers</span><span class="token punctuation">:</span>                   <span class="token comment" spellcheck="true"># 前処理用のコンテナ</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token string">"remove-lost-found"</span>     <span class="token comment" spellcheck="true"># データディレクトリの"lost+found"ディレクトリを削除</span>
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> <span class="token string">"busybox:1.25.0"</span>
+          <span class="token key atrule">command</span><span class="token punctuation">:</span> 
+            <span class="token punctuation">-</span> rm
+            <span class="token punctuation">-</span> <span class="token punctuation">-</span>fr
+            <span class="token punctuation">-</span> /var/lib/mysql/lost+found
+          <span class="token key atrule">volumeMounts</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> data
+              <span class="token key atrule">mountPath</span><span class="token punctuation">:</span> /var/lib/mysql
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306</span>
+          <span class="token key atrule">volumeMounts</span><span class="token punctuation">:</span>                 <span class="token comment" spellcheck="true">#</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> data                <span class="token comment" spellcheck="true"># .volumesの.nameを指定</span>
+              <span class="token key atrule">mountPath</span><span class="token punctuation">:</span> /var/lib/mysql <span class="token comment" spellcheck="true"># MySQLのデータディレクトリを指定</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>このように<code>PVC</code>オブジェクトを指定すると、<code>Deployment</code>の作成時に<code>StorageClass</code>に応じた<code>PV</code>が自動的に作成され、
+指定したパスにマウントされます。
+この例では <code>mysql-pvc.yaml</code>で定義した<code>PVC</code>によって作られた<code>PV</code>を
+MySQLのデータディレクトリである<code>/var/lib/mysql</code>にマウントしています。</p>
+<p><code>.spec.template.spec.initContainers</code>は前処理用のコンテナの定義です。
+メインのコンテナを起動する前に自動的に実行されます。
+この例ではMySQLのデータディレクトリである<code>/var/lib/mysql</code>ディレクトリに
+<code>lost+found</code>というディレクトリがあれば削除するという処理を入れています。
+<code>PVC</code>で確保したボリュームの中身は後述する<code>StorageClass</code>によって異なる場合があるのですが、
+<code>mysql</code>イメージは<code>/var/lib/mysql</code>ディレクトリが空でない場合、DBの初期化処理がエラーで失敗します。
+minikubeの場合は空なのですが、GKEのように<code>lost+found</code>ディレクトリが最初から存在する場合もあるので、
+ある程度どこでも動くように<code>initContainers</code>でこれを取り除いています。</p>
+<p>また、<code>.spec.strategy.type</code>に<code>Recreate</code>を指定している点に注意してください。
+Step2でも説明しましたが、これは更新時の<code>Pod</code>の入れ替えの挙動を指定するパラメータです。
+デフォルトは<code>RollingUpdate</code>になっており、古い<code>Pod</code>を停止する前に新しい<code>Pod</code>を起動します。
+MySQLは同一のデータディレクトリを複数のサーバが参照するとエラーになるため、
+<code>Recreate</code>を指定して二つ以上の<code>Pod</code>が同時に起動しないようにしています。</p>
+<p>Redisについてもほぼ同様に、<code>redis-pvc.yaml</code>を追加して<code>redis-deploy.yaml</code>を更新しています。
+特筆すべき点はないので説明は割愛します。詳細はサンプルコードを参照してください。</p>
+<ul>
+<li><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step3/redis-pvc.yaml" target="_blank" rel="noopener">k8s/manifests-step3/redis-pvc.yaml</a></li>
+<li><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step3/redis-deploy.yaml" target="_blank" rel="noopener">k8s/manifests-step3/redis-deploy.yaml</a></li>
+</ul>
+<h2 id="StorageClassについて"><a href="#StorageClassについて" class="headerlink" title="StorageClassについて"></a>StorageClassについて</h2><p><code>StorageClass</code>は、永続ストレージの設定をまとめたオブジェクトです。
+設定とはボリュームタイプや<code>PV</code>の削除時にデータオブジェクトを残すかどうかといった項目です。
+minikubeの場合、クラスタの作成時に自動的に<code>standard</code>という名前の<code>StorageClass</code>が作られるのでそれを指定しています。
+このオブジェクトの定義は、<code>minikube dashboard</code>上または下記のコマンドで確認できます。</p>
+<pre><code>$ kubectl get storageclass standard -o yaml
+</code></pre><p>重要な部分を抜粋すると下記のような内容です。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> storage.k8s.io/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> StorageClass
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">annotations</span><span class="token punctuation">:</span>
+    <span class="token key atrule">storageclass.beta.kubernetes.io/is-default-class</span><span class="token punctuation">:</span> <span class="token string">"true"</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> standard
+<span class="token key atrule">provisioner</span><span class="token punctuation">:</span> k8s.io/minikube<span class="token punctuation">-</span>hostpath
+<span class="token key atrule">reclaimPolicy</span><span class="token punctuation">:</span> Delete
+<span class="token key atrule">volumeBindingMode</span><span class="token punctuation">:</span> Immediate
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.provisioner</code>がボリュームプラグインの種類を示しています。
+<code>minikube-hostpath</code>はシングルノードでの検証用のもので、minikube VM上のローカルストレージをデータの保存先として使用します。</p>
+<p>GCPのGKEでk8sクラスタを作った場合も、自動的に<code>standard</code>という名前の<code>StorageClass</code>が作られますが、
+下記の通り<code>.provisioner</code>はGCEのPersistentDiskが指定されているため、
+マルチノードクラスタでの運用に耐えるものとなっています。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> storage.k8s.io/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> StorageClass
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">annotations</span><span class="token punctuation">:</span>
+    <span class="token key atrule">storageclass.beta.kubernetes.io/is-default-class</span><span class="token punctuation">:</span> <span class="token string">"true"</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> standard
+<span class="token key atrule">provisioner</span><span class="token punctuation">:</span> kubernetes.io/gce<span class="token punctuation">-</span>pd
+<span class="token key atrule">parameters</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> pd<span class="token punctuation">-</span>standard
+<span class="token key atrule">reclaimPolicy</span><span class="token punctuation">:</span> Delete
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>重要なのは、<code>PVC</code>オブジェクトでは単に<code>standard</code>という名前だけを指定しており、
+ボリュームプラグインのようなクラスタ環境に依存するパラメータを一切記述していないという点です。
+これにより、この例のようにminikubeとGKEのような異なるプラットフォームであっても、
+それぞれの環境に応じて適切に設定された<code>StorageClass</code>が同じ名前で用意されていれば、
+このマニフェストはいずれのクラスタにもデプロイ可能になります。</p>
+<h2 id="StatefulSetについて"><a href="#StatefulSetについて" class="headerlink" title="StatefulSetについて"></a>StatefulSetについて</h2><p>k8sには<code>StatefulSet</code>というAPIオブジェクトがあります。
+このオブジェクトはステートフルなアプリケーションを管理するためのものと位置付けられています。</p>
+<p><a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/" target="_blank" rel="noopener">StatefulSets</a></p>
+<p>そのため、一見するとMySQLやRedisのようなサービスを管理する際には<code>Deployment</code>ではなく<code>StatefulSet</code>を使うべきではと思われるのですが、
+<code>StatefulSet</code>が必要になるのは <strong>Set</strong> の名が示す通りMySQLのマスター/スレーブ構成など複数のコンテナでクラスタを組む場合です。</p>
+<p>Step3の例のように単一のコンテナによるステートフルなアプリケーションの場合、
+<code>Deployment</code>を使って<code>.spec.strategy.type</code>を<code>Recreate</code>にするだけで十分です。</p>
+<p>ということが公式のドキュメントにも書いてあるのでリンクを貼っておきます。<br><a href="https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/" target="_blank" rel="noopener">Run a Single-Instance Stateful Application</a></p>
+<h2 id="ステートフルなサービスの運用について"><a href="#ステートフルなサービスの運用について" class="headerlink" title="ステートフルなサービスの運用について"></a>ステートフルなサービスの運用について</h2><p>Railsアプリケーションをクラウド上のk8sクラスタ上で運用する場合には、
+MySQLやRedisのような永続データを持つサービスはコンテナ化せず、
+クラウドベンダのマネージドサービスを使うという方法も考えられます。</p>
+<p>特に可用性などの要件が厳しい場合には、簡単にマルチAZでマスタースレーブ構成を運用できるAmazon RDSのようなサービスは魅力的な選択肢です。</p>
+<p>一方、可用性やデータロスト耐性に対する要求がそこまで厳しくない場合には、Step3で示したような構成も悪くない選択肢です。
+<code>Pod</code>やk8sノードに障害が発生した場合には、新しい<code>Pod</code>が即座に作成されて永続ボリュームの内容を引き継ぎます。
+Amazon EBSやGCE Persistent Diskのようなストレージサービスを永続ボリュームとして使う場合、定期的なスナップショットを取るのは簡単です。</p>
+<p>確かにマルチ構成のAmazon RDSと比較すると障害発生時のダウンタイムは長くなる可能性が高いし、
+永続ボリュームに障害が発生した場合には直前のスナップショットまでデータロストするリスクがありますが、
+それを許容できるような場合にはこの程度の構成で十分とも言えます。</p>
+<h1 id="Step4-Ingress"><a href="#Step4-Ingress" class="headerlink" title="Step4: Ingress"></a>Step4: Ingress</h1><p>サンプルコードは全て下記のディレクトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step4/" target="_blank" rel="noopener">k8s/manifests-step4/</a></p>
+<p>Step3の時点では、Railsアプリ(<code>puma</code>プロセス)の外部向けのインタフェースとして、
+<code>NodePort</code>タイプの<code>Service</code>オブジェクトを使っていました。
+この方法ではk8sクラスタを構成する全てのノードにエンドポイントが用意されます。
+minikubeのようにシングルノード構成の検証用クラスタではこれで十分ですが、
+マルチノード構成の本番環境ではそのまま運用するのは難しいでしょう。
+少なくとも負荷分散や可用性担保のためには前段にロードバランサが必要になります。
+そうするとノードの追加や縮退の際にロードバランサの設定も変更する必要が生じ、管理が煩雑になります。</p>
+<p>そのため、このような用途で<code>Service</code>オブジェクトを使う場合には、通常は<code>LoadBalancer</code>というタイプを指定します。</p>
+<p><code>LoadBalancer</code>を指定した場合にどのような仕組みで接続用のエンドポイントが用意されるかはk8sのデプロイ先の環境によって異なります。
+例えばAWS上であればELBを使うことができます。一方、minikubeは<code>LoadBalancer</code>に完全には対応していません。
+そのため、<code>LoadBalancer</code>タイプで<code>Service</code>を作ると下記のように<code>EXTERNAL-IP</code>がいつまでも<code>pending</code>の状態のまま変わらず、
+ダッシュボードでも準備中のアイコンが表示され続けます。</p>
+<pre><code>% kubectl get svc
+NAME            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+demoapp-mysql   ClusterIP      10.99.99.47      &lt;none&gt;        3306/TCP         1m
+demoapp-puma    LoadBalancer   10.98.211.117    &lt;pending&gt;     3000:32320/TCP   1m
+demoapp-redis   ClusterIP      10.111.218.160   &lt;none&gt;        6379/TCP         1m
+kubernetes      ClusterIP      10.96.0.1        &lt;none&gt;        443/TCP          8m
+</code></pre><p>参考: <a href="https://stackoverflow.com/questions/44110876/kubernetes-service-external-ip-pending" target="_blank" rel="noopener">docker - kubernetes service external ip pending - Stack Overflow</a></p>
+<p>一方、k8sには負荷分散やSSLターミネーション、ホスト名やリクエストパスによるバーチャルホストなど、
+外部向けのエンドポイントを抽象化することにより特化した機能を持つ<code>Ingress</code>というオブジェクトがあります。
+これらの機能の一部は<code>LoadBalancer</code>タイプの<code>Service</code>でも実現できますが、
+AWSのELBなどバックエンドごとに固有の<code>annotation</code>で指定する必要があり、
+<code>Ingress</code>に比べると可搬性の面で劣ります。</p>
+<p>そこでこのStep4では外部向けのエンドポイントに<code>Ingress</code>を使うように構成を変更します。
+<code>LoadBalancer</code>タイプの<code>Service</code>の使い方については説明しません。詳細は下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress | Kubernetes</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer" target="_blank" rel="noopener">Services | Kubernetes</a></li>
+</ul>
+<h2 id="Ingress-コントローラのインストール"><a href="#Ingress-コントローラのインストール" class="headerlink" title="Ingress コントローラのインストール"></a>Ingress コントローラのインストール</h2><p><code>PersistentVolume</code>同様、<code>Ingress</code>もまたその実装がk8sクラスタのデプロイ先に依存する機能です。
+GKEではGCPのネットワーク機能を使って実装されていますが、
+その他の環境では<code>Ingress</code>コントローラを<code>Pod</code>としてk8sクラスタ上に動かしておく必要があります。</p>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-controllers" target="_blank" rel="noopener">Ingress controllers</a></p>
+<p><code>Ingress</code>コントローラの中には<a href="https://github.com/kubernetes/ingress-gce" target="_blank" rel="noopener">GLBC(ingress-gce)</a>のようにクラウドプロバイダ固有の機能を使ったものと、
+<a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">NGINX Ingress Controller(ingress-nginx)</a>のようにどこでも動作するものがあります。</p>
+<p>幸いにしてminikubeでは<code>NGINX Ingress Controller</code>をaddonとして簡単にインストールすることができます。
+本ドキュメントで示すマニフェストを試す場合には、minikubeインスタンスの起動後に下記のコマンドを実行してください。</p>
+<pre><code>$ minikube addons enable ingress
+</code></pre><h2 id="動作確認の手順"><a href="#動作確認の手順" class="headerlink" title="動作確認の手順"></a>動作確認の手順</h2><p>このドキュメントでは、下記のような構成を目指します。</p>
+<ul>
+<li><code>puma</code>サービスへ <code>https://demoapp-puma.$(minikube ip).nip.io/</code> というホスト名で接続できるようにする。</li>
+<li>サーバ証明書には自己署名のダミー証明書を使用する。</li>
+<li><code>Ingress</code>でSSL終端して、<code>Service</code>にはHTTPで接続する。</li>
+</ul>
+<p>Step3以前と比べて少し手順が変わっています。各コマンドの詳細は次節以降で説明します。</p>
+<pre><code># Railsアプリのイメージをビルド
+$ (eval $(minikube docker-env) &amp;&amp; docker build . -t demoapp:0.0.1)
+
+$ cd k8s/manifests-step4
+
+# ダミーのサーバ証明書を作成
+COMMON_NAME=demoapp-puma.$(minikube ip).nip.io
+openssl req -new -x509 -nodes -keyout server.key -days 3650 \
+  -subj &quot;/CN=${COMMON_NAME}&quot; \
+  -extensions v3_req \
+  -config &lt;(cat openssl.conf | sed s/\${COMMON_NAME}/$COMMON_NAME/) &gt; server.pem
+unset COMMON_NAME
+
+# 証明書をSecretオブジェクトとして登録
+kubectl create secret tls demoapp-puma-tls --key server.key --cert server.pem
+
+# APIオブジェクトを作成
+export MINIKUBE_IP=$(minikube ip)
+cat *.yaml | sed s/\${MINIKUBE_IP}/$MINIKUBE_IP/ | kubectl apply -f -
+
+# puma deploymentの起動が完了するまで待機
+$ kubectl rollout status deploy demoapp-puma
+
+# puma Ingressのエンドポイントをブラウザでオープン
+$ open https://demoapp-puma.$(minikube ip).nip.io/
+
+# 作成したAPIオブジェクトを削除
+cat *.yaml | kubectl delete -f -
+kubectl delete secret demoapp-puma-tls
+</code></pre><p>Makefileを置いてあるので下記のコマンドで代替できます。</p>
+<pre><code>$ cd k8s/manifests-step4
+
+# Railsアプリのイメージをビルド
+$ make minikube-docker-build
+
+# ダミーのサーバ証明書を作成しSecretオブジェクトとして登録
+$ make kubectl-create-secret-tls
+
+# APIオブジェクトを作成
+$ make kubectl-apply
+
+# puma deploymentの起動が完了するまで待機
+$ make kubectl-rollout-status
+
+# puma Ingressのエンドポイントをブラウザでオープン
+$ make open
+</code></pre><p>単に<code>make</code>とだけ入力すると順番に全部実行します。</p>
+<pre><code>$ make
+</code></pre><h2 id="ダミーのサーバ証明書の作成"><a href="#ダミーのサーバ証明書の作成" class="headerlink" title="ダミーのサーバ証明書の作成"></a>ダミーのサーバ証明書の作成</h2><p>HTTPSで接続できるようにするためにはサーバ証明書が必要です。
+<a href="https://github.com/jetstack/kube-lego" target="_blank" rel="noopener">kube-lego</a>
+というモジュールを使えば<code>Ingress</code>とLet’s Encryptを連携して動的に証明書を作成するようなこともできるのですが、
+今回はもっとシンプルに<code>openssl</code>コマンドで自己署名証明書(いわゆるオレオレ証明書)を作ります。</p>
+<p>まず下記のような内容でopensslの設定ファイルを用意します。
+Chromeではバージョン58以降、subjectAltName(SAN)が設定されていない証明書はエラー扱いになりました。
+下記の設定はSANを設定するためのものです。</p>
+<pre class="line-numbers language-toml"><code class="language-toml"># k8s/manifests-step4/openssl.conf
+[req]
+distinguished_name=req_distinguished_name
+req_extensions=v3_req
+
+[v3_req]
+basicConstraints=CA:FALSE
+keyUsage=nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName=@alt_names
+
+[req_distinguished_name]
+
+[alt_names]
+DNS.1=${COMMON_NAME}
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>次に下記のようなコマンドで証明書(<code>server.pem</code>)と鍵(<code>server.key</code>)を作成します。</p>
+<pre><code>COMMON_NAME=demoapp-puma.$(minikube ip).nip.io
+openssl req -new -x509 -nodes -keyout server.key -days 3650 \
+  -subj &quot;/CN=${COMMON_NAME}&quot; \
+  -extensions v3_req \
+  -config &lt;(cat openssl.conf | sed s/\${COMMON_NAME}/$COMMON_NAME/) &gt; server.pem
+unset COMMON_NAME
+</code></pre><p>ホスト名は前述の通り<code>demoapp-puma.$(minikube ip).nip.io/</code>とします。
+<code>$(minikube ip)</code>部分はminikubeインスタンスの立ち上げごとに変わる可能性があるため、
+設定ファイルはテンプレートとして扱い、<code>${COMMON_NAME}</code>と記述されている部分を<code>sed</code>コマンドで書き換えています。</p>
+<p>内容は下記のコマンドで確認できます。</p>
+<pre><code>$ openssl x509 -text &lt; server.pem
+
+(一部抜粋)
+
+Certificate:
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=demoapp-puma.192.168.64.25.nip.io
+        Subject: CN=demoapp-puma.192.168.64.25.nip.io
+        X509v3 extensions:
+            X509v3 Subject Alternative Name:
+                DNS:demoapp-puma.192.168.64.25.nip.io
+</code></pre><p>macOSの場合、<code>server.pem</code>をキーチェーンに追加して信頼するようにしておけばブラウザの警告を抑止できます。
+後で忘れずに削除してください。</p>
+<p>なお、Step4にもMakefileを置いているので、証明書の作成は下記のコマンドで代替できます。</p>
+<pre><code>$ cd k8s/manifests-step4
+$ make server.pem
+
+# minikube ipが変わったら必ず作り直すこと
+$ make --always-make server.pem
+</code></pre><h2 id="証明書用のSecretオブジェクトの作成"><a href="#証明書用のSecretオブジェクトの作成" class="headerlink" title="証明書用のSecretオブジェクトの作成"></a>証明書用の<code>Secret</code>オブジェクトの作成</h2><p><code>Ingress</code>で先ほど作成した証明書と鍵を使うためには、<code>Secret</code>オブジェクトに登録する必要があります。
+これまでに紹介した<code>Secret</code>オブジェクトのようにYAML形式のマニフェストファイルを書いても良いのですが、
+TLS用の証明書と鍵をファイルから登録することについては<code>kubectl</code>コマンドがサポートしているため、
+下記のように登録します。</p>
+<pre><code>kubectl create secret tls demoapp-puma-tls --key server.key --cert server.pem
+
+# または
+make kubectl-create-secret-tls
+</code></pre><h2 id="Ingressオブジェクト"><a href="#Ingressオブジェクト" class="headerlink" title="Ingressオブジェクト"></a><code>Ingress</code>オブジェクト</h2><pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step4/puma-ing.yml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> extensions/v1beta1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Ingress
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+  <span class="token key atrule">annotations</span><span class="token punctuation">:</span>
+    <span class="token key atrule">kubernetes.io/ingress.allow-http</span><span class="token punctuation">:</span> <span class="token string">"false"</span> <span class="token comment" spellcheck="true"># HTTPでのアクセスを禁止</span>
+    <span class="token comment" spellcheck="true"># GKEで確保済みの静的IPアドレスを指定する場合は下記のようにする</span>
+    <span class="token comment" spellcheck="true"># kubernetes.io/ingress.global-static-ip-name: rails-k8s-demoapp</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> demoapp<span class="token punctuation">-</span>puma.$<span class="token punctuation">{</span>MINIKUBE_IP<span class="token punctuation">}</span>.nip.io     <span class="token comment" spellcheck="true"># このTLS証明書で受けるホスト名のリスト</span>
+    <span class="token key atrule">secretName</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma<span class="token punctuation">-</span>tls             <span class="token comment" spellcheck="true"># 証明書と鍵のSecretオブジェクトの名前</span>
+  <span class="token key atrule">rules</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">host</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma.$<span class="token punctuation">{</span>MINIKUBE_IP<span class="token punctuation">}</span>.nip.io <span class="token comment" spellcheck="true"># ホスト名</span>
+    <span class="token key atrule">http</span><span class="token punctuation">:</span>
+      <span class="token key atrule">paths</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">backend</span><span class="token punctuation">:</span>
+          <span class="token key atrule">serviceName</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma          <span class="token comment" spellcheck="true"># バックエンドのServiceの名前とポート</span>
+          <span class="token key atrule">servicePort</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>${MINIKUBE_IP}</code>となっている部分は、<code>kubectl</code>コマンドに渡す前に<code>sed</code>コマンドで置換します。</p>
+<pre><code>$ export MINIKUBE_IP=$(minikube ip)
+$ cat *.yaml | sed s/\${MINIKUBE_IP}/$MINIKUBE_IP/ | kubectl apply -f -
+</code></pre><p>より実践的な課題として、GKEにデプロイした場合の設定方法については下記のドキュメントを参照してください。</p>
+<p><a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer?hl=ja#step_5_optional_configuring_a_static_ip_address" target="_blank" rel="noopener">Ingress での HTTP 負荷分散の設定 | Kubernetes Engine のドキュメント</a></p>
+<h2 id="ワイルドカードDNS"><a href="#ワイルドカードDNS" class="headerlink" title="ワイルドカードDNS"></a>ワイルドカードDNS</h2><p><code>nip.io</code>というのはワイルドカードDNSと呼ばれるサービスのドメインの一つです。
+Exentrique Solutionsという企業によって運営されています。</p>
+<p><a href="http://nip.io/" target="_blank" rel="noopener">http://nip.io/</a></p>
+<p>下記のようにサブドメインに相当するIPアドレスを動的に返してくれるため、
+プライベートアドレスを使ったテストに便利です。</p>
+<pre><code>$ dig +short 192.168.64.25.nip.io
+192.168.64.25
+
+$ dig +short www.192.168.64.25.nip.io
+192.168.64.25
+</code></pre><p>先ごろ発表された <a href="https://jenkins-x.io/" target="_blank" rel="noopener">Jenkins X</a> でも使われていました。</p>
+<p><code>nip.io</code>はPowerDNSとカスタムスクリプトの組みわせで実装されているとのことです。
+<code>nip.io</code>自体はOSSではないのですが、Dockerで動作する<code>nip.io</code>クローンが存在します。</p>
+<p><a href="https://github.com/resmo/nip.io" target="_blank" rel="noopener">https://github.com/resmo/nip.io</a></p>
+<p>今回のようにTLSの上で通信する場合にはセキュリティリスクは限定的だと思いますが、
+DNSを外部に依存したくない場合には自前で<code>nip.io</code>クローンを運用するかdnsmasqなどの利用を検討してください。</p>
+<h2 id="envsubst"><a href="#envsubst" class="headerlink" title="envsubst"></a>envsubst</h2><p><code>openssl.conf</code>や<code>puma-ing.yaml</code>では、<code>$(minikube ip)</code>に相当する部分を<code>sed</code>コマンドで環境変数に置換していました。
+このようにテキストファイルの一部を環境変数で置換する場合には <code>envsubst</code> というコマンドを使うとさらに簡単です。</p>
+<p>macOSの場合はHomebrewでgettextパッケージでインストールできますが、
+パスを通すためには<code>brew link</code>に<code>--force</code>オプションをつけて実行する必要があります。</p>
+<pre><code>$ brew install gettext
+$ brew link gettext --force
+</code></pre><p>今回の場合は置換の対象が一つと少なく<code>sed</code>での代替が容易だったので、
+手順全体の依存を減らすためにあえて採用しませんでしたが、
+マニフェストを全体をテンプレート化して多数のパラメータを注入できるようにしたいのであれば、
+採用を検討しても良いかもしれません。</p>
+<p>ただし、そのような目的のためには次回紹介する<a href="https://helm.sh/" target="_blank" rel="noopener">Helm</a>を使う方がおすすめです。
+例えば<code>Secret</code>のデータエントリはBase64でエンコードする必要がありますが、
+<code>envsubst</code>でそれを実現しようとすると煩雑な手順になりますが、Helmであれば簡単です。</p>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>下記のオブジェクトについての最低限の説明と、
+これらを使って<code>puma</code>、<code>sidekiq</code>、<code>mysql</code>、<code>redis</code>のコンテナをk8s上で管理するための実例を示しました。</p>
+<ul>
+<li><code>Deployment</code></li>
+<li><code>Service</code></li>
+<li><code>ConfigMap</code></li>
+<li><code>Secret</code></li>
+<li><code>Job</code></li>
+<li><code>PersistentVolumeClaim</code></li>
+<li><code>Ingress</code></li>
+</ul>
+<p>k8sに関しては、次のステップとして下記について調べるのが良いと思います。</p>
+<ul>
+<li><code>ConfigMap</code>や<code>Secret</code>の内容をボリュームとして<code>Pod</code>にマウントする方法(MySQLやRedisの設定ファイルの管理など)</li>
+<li><code>CronJob</code>オブジェクトによる定期実行ジョブの定義方法(DBのバックアップなど)</li>
+<li>CPUやメモリの上限の設定方法</li>
+</ul>
+<p>なお、今回はYAMLファイルとしてマニフェストを管理する方法を示しましたが、
+この構成においては下記の課題があります。</p>
+<ul>
+<li>ステージング環境やQA環境など、一部だけ設定を変更した環境を作るのが難しい</li>
+<li><code>Secret</code>の定義ファイルにBase64エンコードした値を読み書きするのが面倒</li>
+</ul>
+<p>これらの課題に対するアプローチとして、<a href="/blog/2018/05/30/helm-with-rails/">次回</a>は <a href="https://helm.sh/" target="_blank" rel="noopener">Helm</a> を使う方法を紹介します。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" data-id="cjhtbua0d0025kzrcvqjvg8xi" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/05/30/helm-with-rails/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/05/30/kubernetes-with-rails/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

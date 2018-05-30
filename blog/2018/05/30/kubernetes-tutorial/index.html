@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第三回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta name="keywords" content="docker,kubernetes,k8s,rails">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門3 Kubernetes入門編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第三回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta property="og:locale" content="ja">
+<meta property="og:image" content="https://chopschips.net/images/post_20180502_kubernetes_with_rails/minikube-dashboard.png">
+<meta property="og:updated_time" content="2018-05-30T15:56:29.835Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門3 Kubernetes入門編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第三回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は下記について書きます。">
+<meta name="twitter:image" content="https://chopschips.net/images/post_20180502_kubernetes_with_rails/minikube-dashboard.png">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-kubernetes-tutorial" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/kubernetes-tutorial/" class="article-date">
+  <time datetime="2018-05-30T13:20:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#はじめに"><span class="toc-number">2.</span> <span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#開発環境の構築"><span class="toc-number">3.</span> <span class="toc-text">開発環境の構築</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#最小限のKubernetes-k8s-入門"><span class="toc-number">4.</span> <span class="toc-text">最小限のKubernetes(k8s)入門</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kubernetesとは"><span class="toc-number">4.1.</span> <span class="toc-text">Kubernetesとは</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#minikubeとは"><span class="toc-number">4.2.</span> <span class="toc-text">minikubeとは</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#minikube-start-k8sクラスタ用VMの作成と起動"><span class="toc-number">4.2.1.</span> <span class="toc-text">minikube start: k8sクラスタ用VMの作成と起動</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minikube-dashboard-k8sダッシュボード"><span class="toc-number">4.2.2.</span> <span class="toc-text">minikube dashboard: k8sダッシュボード</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minikube-docker-env-VM上のdockerdに接続するための環境変数の表示"><span class="toc-number">4.2.3.</span> <span class="toc-text">minikube docker-env: VM上のdockerdに接続するための環境変数の表示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minikube-delete-k8sクラスタ用VMの停止と削除"><span class="toc-number">4.2.4.</span> <span class="toc-text">minikube delete: k8sクラスタ用VMの停止と削除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#k8sの基本"><span class="toc-number">4.3.</span> <span class="toc-text">k8sの基本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#準備"><span class="toc-number">4.3.1.</span> <span class="toc-text">準備</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#APIオブジェクトのマニフェストファイルとkubectlのチュートリアル"><span class="toc-number">4.4.</span> <span class="toc-text">APIオブジェクトのマニフェストファイルとkubectlのチュートリアル</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploymentの概要"><span class="toc-number">4.4.1.</span> <span class="toc-text">Deploymentの概要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploymentのマニフェストファイルの例"><span class="toc-number">4.4.2.</span> <span class="toc-text">Deploymentのマニフェストファイルの例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-apply-APIオブジェクトの作成と更新"><span class="toc-number">4.4.3.</span> <span class="toc-text">kubectl apply: APIオブジェクトの作成と更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-get-APIオブジェクトの状態の確認"><span class="toc-number">4.4.4.</span> <span class="toc-text">kubectl get: APIオブジェクトの状態の確認</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-logs-またはstern-コンテナのログの確認"><span class="toc-number">4.4.5.</span> <span class="toc-text">kubectl logs (またはstern): コンテナのログの確認</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-port-forward-コンテナのポートをホスト側にポートフォワード"><span class="toc-number">4.4.6.</span> <span class="toc-text">kubectl port-forward: コンテナのポートをホスト側にポートフォワード</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-delete-APIオブジェクトの削除"><span class="toc-number">4.4.7.</span> <span class="toc-text">kubectl delete: APIオブジェクトの削除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Serviceの概要"><span class="toc-number">4.4.8.</span> <span class="toc-text">Serviceの概要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-run-コマンドによるDeploymentの作成"><span class="toc-number">4.4.9.</span> <span class="toc-text">kubectl run: コマンドによるDeploymentの作成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubectl-explain-ドキュメントの表示"><span class="toc-number">4.4.10.</span> <span class="toc-text">kubectl explain: ドキュメントの表示</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考情報"><span class="toc-number">5.</span> <span class="toc-text">参考情報</span></a></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。
+この記事はシリーズ連載記事の第三回です。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a></li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a></li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a></li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a></li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a></li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a></li>
+</ul>
+<p>今回は下記について書きます。</p>
+<ul>
+<li>最小限のk8s入門</li>
+<li>minikubeの使い方</li>
+<li><code>kubectl</code>コマンドのチュートリアル</li>
+</ul>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>macOSでの作業を前提としています。</li>
+<li>使用したツールのバージョンなどは <a href="/blog/2018/05/30/docker-with-rails/#前提">初回</a> の記事を参照してください。</li>
+</ul>
+<h1 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h1><p>Kubernetesには膨大な機能があるので、最初から汎用的な使い方を学ぼうとすると挫折しがちです。
+このドキュメントでは、紹介する機能や概念を「初心者がRailsアプリを動かすために必要な機能」という観点で限定し、
+かつ段階的に説明していきます。</p>
+<p>まずは <a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>を使ってmacOS上の仮想マシンにスタンドアローンのk8sクラスタを作り、
+そこに前回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a> で使用したサンプルアプリを
+デプロイする具体的な手順を示します。</p>
+<p>紹介するサンプルコードは全て下記のリポジトリにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<h1 id="開発環境の構築"><a href="#開発環境の構築" class="headerlink" title="開発環境の構築"></a>開発環境の構築</h1><p>下記のツールを使います。</p>
+<ul>
+<li><code>minikube</code>
+k8sクラスタをローカルVM上に構築するためのツールです。</li>
+<li><code>hyperkitのドライバ</code>
+minikubeがmacOS上でVMを操作するために必要です。</li>
+<li><code>kubectl</code>
+k8sクラスタを操作するためのCLIツールです。</li>
+<li><code>helm</code>
+k8sのマニフェストをパッケージとして管理するためのツールです。第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a>で使用します。</li>
+<li><code>stern</code>
+k8s上のコンテナのログを見るためのツールです。必須ではありませんがあると便利です。</li>
+<li><code>GNU Make</code>
+XCode付属のものを使います。無くても大丈夫です。</li>
+</ul>
+<p>minikubeとkubectlとsternはHomebrew(cask)でインストールできます。</p>
+<pre><code>$ brew cask install minikube
+$ brew install kubernetes-cli kubernetes-helm
+$ brew install stern
+</code></pre><p>hyperkitのドライバは次の手順でインストールしてください。<a href="https://github.com/kubernetes/minikube/blob/master/docs/drivers.md#hyperkit-driver" target="_blank" rel="noopener">参考</a></p>
+<pre><code>$ curl -LO https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-hyperkit \
+&amp;&amp; chmod +x docker-machine-driver-hyperkit \
+&amp;&amp; sudo mv docker-machine-driver-hyperkit /usr/local/bin/ \
+&amp;&amp; sudo chown root:wheel /usr/local/bin/docker-machine-driver-hyperkit \
+&amp;&amp; sudo chmod u+s /usr/local/bin/docker-machine-driver-hyperkit
+</code></pre><p>macOS版のminikubeでは、hyperkitの代わりにVirtualBoxを使うこともできます。
+全ての手順は両方で動作を確認していますが、hyperkitの方が高速です。
+筆者の環境ではRailsアプリやMySQLなど一式k8sにデプロイするのにかかる時間はVirtualBoxだとおおよそ2分20秒前後、
+hyperkitだと50秒前後でした。</p>
+<h1 id="最小限のKubernetes-k8s-入門"><a href="#最小限のKubernetes-k8s-入門" class="headerlink" title="最小限のKubernetes(k8s)入門"></a>最小限のKubernetes(k8s)入門</h1><h2 id="Kubernetesとは"><a href="#Kubernetesとは" class="headerlink" title="Kubernetesとは"></a>Kubernetesとは</h2><p>k8sはDocker Composeと同じく複数のコンテナを管理するためのツールです。</p>
+<p>Docker Composeでは一つのホスト上に複数のコンテナを起動することができましたが、
+k8sでは複数のDockerサーバで一つのクラスタを構成し、その上に複数のコンテナを分散配置することができます。</p>
+<p>また、Docker Composeは単にコンテナの起動や停止だけでなく、コンテナ間通信やボリュームの管理を行うことができましたが、
+k8sはさらにロードバランサや定期実行ジョブなど実環境で必要になる多様な機能を抽象化し管理することができます。</p>
+<h2 id="minikubeとは"><a href="#minikubeとは" class="headerlink" title="minikubeとは"></a>minikubeとは</h2><p>k8sをセットアップして使えるようにするためには色々な方法があります。代表的なものをいくつか紹介します。</p>
+<ul>
+<li>GKE: GCP上のマネージドサービス</li>
+<li>kops: AWS上にec2インスタンスを複数起動してk8sクラスタとして構成するツール</li>
+<li>AKS: Azure上のマネージドサービス</li>
+<li>kubespray: オンプレミスを含む任意の環境にk8sクラスタをセットアップするツール</li>
+</ul>
+<p>本番環境でk8sを運用するためには上記のようなものを使う必要がありますが、
+k8sを試してみるだけなら手元の環境で動作する<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>を使うのが一番簡単です。</p>
+<p>minikubeは端末上のVMへk8sをインストールして簡単に使えるようにするためのツールです。
+VMドライバとしてはVirtualBox、hyperkit、KVMなどがサポートされています。</p>
+<p><a href="https://github.com/kubernetes/minikube/blob/master/docs/drivers.md" target="_blank" rel="noopener">minikube/drivers.md</a></p>
+<p>macOS上で試すのであれば VirtualBox か hyperkit が簡単です。
+デフォルトでは VirtualBox が選択されるようですが、hyperkitの方が高速なのでこちらを使うのがおすすめです。</p>
+<p><a href="https://github.com/moby/hyperkit" target="_blank" rel="noopener">hyperkit</a>はmacOS組み込みの仮想化フレームワーク
+「Hypervisor Framework」を使うためのツールで、Docker for Macでも使われています。</p>
+<p>次節以降ではminikubeの基本的な使い方を説明します。</p>
+<a id="more"></a>
+<h3 id="minikube-start-k8sクラスタ用VMの作成と起動"><a href="#minikube-start-k8sクラスタ用VMの作成と起動" class="headerlink" title="minikube start: k8sクラスタ用VMの作成と起動"></a><code>minikube start</code>: k8sクラスタ用VMの作成と起動</h3><p>下記のコマンドを実行すると、CPUコア3つ、メモリ2GBを割り当ててminikube専用のVMインスタンスを起動することができます。</p>
+<pre><code># hyperkitを使う場合
+$ minikube start --cpus=3 --memory=2048 --vm-driver=hyperkit --disk-size=12g
+
+# virtualboxを使う場合
+$ minikube start --cpus=3 --memory=2048 --vm-driver=virtualbox
+</code></pre><p>このドキュメントで紹介する手順は全て上記の構成で動作を確認しています。</p>
+<p>hyperkitを使う場合、<code>--disk-size</code>を指定しないと無条件に20GBのファイルが
+<code>~/.minikube/machines/minikube/minikube.rawdisk</code> に作成されます。
+ホスト側のストレージが足りない場合はこれが原因で起動に失敗することがあるので注意してください。
+上記の例では12GB割り当てています。</p>
+<p>VirtualBoxを使う場合、ストレージファイルは必要に応じて拡張されていくのでサイズ指定は省略しています。
+ストレージの消費量は起動直後で2GB程度です。</p>
+<h3 id="minikube-dashboard-k8sダッシュボード"><a href="#minikube-dashboard-k8sダッシュボード" class="headerlink" title="minikube dashboard: k8sダッシュボード"></a><code>minikube dashboard</code>: k8sダッシュボード</h3><p>下記のコマンドを実行すると、ブラウザでk8sのダッシュボードが開かれます。</p>
+<pre><code>$ minikube dashboard
+</code></pre><p>このダッシュボード上では、k8sクラスタ上の各種オブジェクトの状態の確認や編集を行うことができます。</p>
+<img src="/images/post_20180502_kubernetes_with_rails/minikube-dashboard.png">
+<h3 id="minikube-docker-env-VM上のdockerdに接続するための環境変数の表示"><a href="#minikube-docker-env-VM上のdockerdに接続するための環境変数の表示" class="headerlink" title="minikube docker-env: VM上のdockerdに接続するための環境変数の表示"></a><code>minikube docker-env</code>: VM上のdockerdに接続するための環境変数の表示</h3><p>minikubeが動作しているVM上でもDockerプロセスが動作しています。</p>
+<p>普段 <code>docker image ls</code> などのコマンドを実行するとDocker for MacのDockerプロセスに接続していますが、
+下記のように<code>minikube docker-env</code>で出力される環境変数をロードするとminikube VM上のDockerプロセスに接続することができます。</p>
+<pre><code>$ eval $(minikube docker-env)
+$ docker image ls
+REPOSITORY                                   TAG        IMAGE ID        CREATED        SIZE
+k8s.gcr.io/kube-proxy-amd64                  v1.10.0    bfc21aadc7d3    5 weeks ago    97MB
+k8s.gcr.io/kube-apiserver-amd64              v1.10.0    af20925d51a3    5 weeks ago    225MB
+k8s.gcr.io/kube-controller-manager-amd64     v1.10.0    ad86dbed1555    5 weeks ago    148MB
+k8s.gcr.io/kube-scheduler-amd64              v1.10.0    704ba848e69a    5 weeks ago    50.4MB
+(省略)
+</code></pre><p>通常、自分でビルドしたイメージをk8s上でコンテナとして起動するためには、何らかのレジストリサービスにそのイメージを登録する必要があるのですが、
+このドキュメントでは手順を簡単にするためにminikube VM上のDockerプロセスに直接接続してRailsアプリのイメージをビルドする方法を紹介します。
+これについての詳細は次回<a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes応用編</a>で説明します。</p>
+<h3 id="minikube-delete-k8sクラスタ用VMの停止と削除"><a href="#minikube-delete-k8sクラスタ用VMの停止と削除" class="headerlink" title="minikube delete: k8sクラスタ用VMの停止と削除"></a><code>minikube delete</code>: k8sクラスタ用VMの停止と削除</h3><p>下記のコマンドを実行すると、k8s用に作成したVMを丸ごと削除します。
+気軽にk8sクラスタの初期化を行えるのがminikubeの良いところです。</p>
+<pre><code>$ minikube delete
+</code></pre><h2 id="k8sの基本"><a href="#k8sの基本" class="headerlink" title="k8sの基本"></a>k8sの基本</h2><p>k8sではコンテナを直接操作することはありません。
+<code>Deployment</code>や<code>Service</code>など抽象化されたリソースを介してコンテナの起動や停止を行います。
+これらのリソースをk8sでは<code>APIオブジェクト</code>と呼びます(単にオブジェクトと呼ばれることもあります)。</p>
+<p>k8sクラスタにAPIオブジェクトを作成したり更新したりする方法には大まかに3つの方法があります。</p>
+<ol>
+<li>YAML形式のマニフェストファイルを<code>kubectl apply -f</code>で指定して実行する。</li>
+<li><code>kubectl create deployment</code>や<code>kubectl run</code>、<code>kubectl expose</code>などのコマンドを実行する。</li>
+<li>ダッシュボード上のメニューで作成や更新を実行する。</li>
+</ol>
+<p>インフラ構成を管理する上で一番望ましいのは、構成をコード化してバージョン管理できる1の方法です。
+このドキュメントでは、一部の例外をのぞいて全て1の方法で説明します。</p>
+<p>一部の例外というのは以下の二つです。詳細は後述します。</p>
+<ul>
+<li>TLS証明書用の<code>Secret</code>オブジェクトの作成</li>
+<li>テストを目的とした対話的な操作のための一時的なコンテナの作成</li>
+</ul>
+<h3 id="準備"><a href="#準備" class="headerlink" title="準備"></a>準備</h3><p>まずサンプルアプリのコードをチェックアウトしてminikubeを起動してください。</p>
+<pre><code># サンプルアプリのコードをチェックアウト
+$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+
+# minikubeを起動
+$ minikube start --cpus=3 --memory=2048 --vm-driver=hyperkit --disk-size=12g
+
+# kubernetesのダッシュボードをオープン
+$ minikube dashboard
+</code></pre><h2 id="APIオブジェクトのマニフェストファイルとkubectlのチュートリアル"><a href="#APIオブジェクトのマニフェストファイルとkubectlのチュートリアル" class="headerlink" title="APIオブジェクトのマニフェストファイルとkubectlのチュートリアル"></a>APIオブジェクトのマニフェストファイルとkubectlのチュートリアル</h2><p>この節ではAPIオブジェクトの例として<code>Deployment</code>と<code>Service</code>を取り上げ、
+<code>kubectl</code>コマンドを使用してオブジェクトの作成などを行う方法を説明します。</p>
+<h3 id="Deploymentの概要"><a href="#Deploymentの概要" class="headerlink" title="Deploymentの概要"></a><code>Deployment</code>の概要</h3><p>k8sの最も重要なAPIオブジェクトの一つは<code>Deployment</code>です。
+状態を持たないアプリケーションのコンテナは<code>Deployment</code>オブジェクトによって管理します。</p>
+<p><code>Deployment</code>オブジェクトを作成すると、その配下へ自動的に<code>ReplicaSet</code>と<code>Pod</code>というオブジェクトが作成されます。</p>
+<p><code>Pod</code>はk8sにおいてコンテナを管理するための最小単位です。多くの場合、コンテナと一対一に対応しています。
+(一つの<code>Pod</code>に複数のコンテナを入れることもできますが、
+それは<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/#how-pods-manage-multiple-containers" target="_blank" rel="noopener">高度なユースケースである</a>とドキュメントにも書いてありますし、ここでは取り上げません)</p>
+<p><code>ReplicaSet</code>は、同じ設定で作られた<code>Pod</code>が<code>replicas</code>パラメータで指定された個数だけ維持されるように調整します。</p>
+<pre><code>        +--------------+
+        |  Deployment  |
+        +------+-------+
+               |
+        +------+-------+
+        |  ReplicaSet  |   replicas: 2
+        +-+----------+-+
+          |          |
+      +---+---+  +---+---+
+      |  Pod  |  |  Pod  |
+      +-------+  +-------+
+</code></pre><p><code>Deployment</code>は、<code>ReplicaSet</code>を管理します。
+コンテナイメージの更新などを行う際には新しい設定の<code>ReplicaSet</code>を作成して、
+古い<code>ReplicaSet</code>から<code>Pod</code>を削除しながら新しい<code>ReplicaSet</code>に<code>Pod</code>を作成します。</p>
+<pre><code>              +--------------+
+              |  Deployment  |
+              +------------+-+
+                :          |
+   +------------+-+      +-+----------+-+  
+   |  ReplicaSet  |  -&gt;  |  ReplicaSet  |  
+   +-+----------+-+      +-+----------+-+  
+     |          |          |          |    
+ +---+---+  +---+---+  +---+---+  +---+---+
+ |  Pod  |  |  Pod  |  |  Pod  |  |  Pod  |
+ +-------+  +-------+  +-------+  +-------+
+</code></pre><h3 id="Deploymentのマニフェストファイルの例"><a href="#Deploymentのマニフェストファイルの例" class="headerlink" title="Deploymentのマニフェストファイルの例"></a><code>Deployment</code>のマニフェストファイルの例</h3><p>以下のYAMLデータは<code>mysql:5.7.21</code>のコンテナを一つ起動するだけの<code>Deployment</code>のマニフェストファイルです。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step0/mysql-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1   <span class="token comment" spellcheck="true"># このYAMLデータのスキーマバージョン</span>
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment      <span class="token comment" spellcheck="true"># オブジェクトの種類</span>
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql         <span class="token comment" spellcheck="true"># オブジェクトの名前</span>
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>             <span class="token comment" spellcheck="true"># オブジェクトを選択するために使うラベル(後述)</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> mysql        <span class="token comment" spellcheck="true"># 任意のキー・値を設定して良い</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1         </span><span class="token comment" spellcheck="true"># 起動するPodの数</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>           
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>      <span class="token comment" spellcheck="true"># .spec.template.metadata.labelsと一致させる必要がある</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> mysql
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>         <span class="token comment" spellcheck="true"># ReplicaSetとPodに付けられるラベル</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> mysql
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always   <span class="token comment" spellcheck="true"># コンテナが死亡した際の対応</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql         <span class="token comment" spellcheck="true"># コンテナのNAME属性に使用</span>
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21 <span class="token comment" spellcheck="true"># コンテナイメージ</span>
+          <span class="token key atrule">env</span><span class="token punctuation">:</span>                <span class="token comment" spellcheck="true"># 環境変数を指定</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> MYSQL_ALLOW_EMPTY_PASSWORD
+              <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">"yes"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deploymentのドキュメント</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deployment-v1-apps" target="_blank" rel="noopener">DeploymentのAPIリファレンス</a></li>
+</ul>
+<p>簡単な注釈を加えていますが、わかりにくい部分をいくつか補足します。</p>
+<hr>
+<ul>
+<li><code>.apiVersion</code></li>
+</ul>
+<p><code>apps/v1</code>の他に、<code>v1</code>、<code>extensions/v1beta1</code>などの値を取る場合があり、
+<code>kind</code>と<code>apiVersion</code>の組み合わせによってYAMLデータの構造が決まります。</p>
+<p>各オブジェクトの<code>apiVersion</code>の推奨値はk8sのAPIバージョンによって決まっていて、
+例えば2018年5月30日時点で最新のk8sのバージョン1.10では、<code>Deployment</code>の<code>apiVersion</code>の推奨値は<code>apps/v1</code>になります。</p>
+<p>参考: <a href="https://kubernetes.io/docs/reference/workloads-18-19/" target="_blank" rel="noopener">Workloads API changes in versions 1.8 and 1.9 | Kubernetes</a></p>
+<ul>
+<li><code>.metadata.labels</code></li>
+</ul>
+<p>ラベルです。
+他のAPIオブジェクトの設定からこの<code>Deployment</code>を参照する際に使用する場合があります。
+また、<code>kubectl get</code>など一部のCLIツールでオブジェクトをフィルタリングする際にも使用できます。</p>
+<ul>
+<li><code>.spec.selector.matchLabels</code></li>
+</ul>
+<p>以前のバージョンでは省略できたのですが、<code>apiVersion</code>が<code>apps/v1</code>になって必須パラメータになりました。
+必ず <code>.spec.template.metadata.labels</code> にマッチしている必要があります。
+書き方によっては、別の<code>Deployment</code>で定義したオブジェクトを参照してしまう場合があるので注意が必要です。</p>
+<ul>
+<li><code>.spec.template.spec.restartPolicy</code></li>
+</ul>
+<p>コンテナが停止した時に再起動するかどうかを
+Always, OnFailure, Neverのいずれかで指定します。<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy" target="_blank" rel="noopener">参考</a></p>
+<hr>
+<p>このファイルはサンプルコードの<a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step0/mysql-deploy.yaml" target="_blank" rel="noopener">k8s/manifests-step0/mysql-deploy.yaml</a>に置いてあります。</p>
+<p>以降、このマニフェストファイルを使って<code>kubectl</code>コマンドの基本的な使い方を説明します。</p>
+<h3 id="kubectl-apply-APIオブジェクトの作成と更新"><a href="#kubectl-apply-APIオブジェクトの作成と更新" class="headerlink" title="kubectl apply: APIオブジェクトの作成と更新"></a><code>kubectl apply</code>: APIオブジェクトの作成と更新</h3><p>前述のYAMLファイルを使ってk8sクラスタに<code>Deployment</code>オブジェクトを作るには下記のようにします。</p>
+<pre><code>$ kubectl apply -f k8s/manifests-step0/mysql-deploy.yaml
+deployment.apps &quot;mysql&quot; created
+</code></pre><p>複数のYAMLファイルを指定する場合は下記のように標準入力で指定します。</p>
+<pre><code>$ cat k8s/manifests-step0/*.yaml | kubectl apply -f -
+</code></pre><p>この際、各オブジェクトの定義が <code>---</code> で区切られている必要がある点に注意してください。
+上記のように<code>cat</code>で結合しやすいように、あらかじめ各YAMLファイルの先頭に <code>---</code> を入れておくのが良いと思います。</p>
+<p>作成したオブジェクトの設定を更新したい場合は、マニフェストファイルを編集してもう一度同じコマンドを実行します。</p>
+<p>以前のバージョンでは、作成は<code>kubectl create -f</code>、更新は<code>kubectl apply -f</code>と使い分けていましたが、現在は両方とも<code>kubectl apply -f</code>を使います。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply" target="_blank" rel="noopener">kubectl apply | Kubectl Reference Docs</a></li>
+</ul>
+<h3 id="kubectl-get-APIオブジェクトの状態の確認"><a href="#kubectl-get-APIオブジェクトの状態の確認" class="headerlink" title="kubectl get: APIオブジェクトの状態の確認"></a><code>kubectl get</code>: APIオブジェクトの状態の確認</h3><p><code>Deployment</code>、<code>ReplicaSet</code>、<code>Pod</code>オブジェクトの状態を確認するには、下記のようにします。</p>
+<pre><code>$ kubectl get deployments,replicaset,pods
+NAME                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/mysql   1         1         1            1           1s
+
+NAME                                     DESIRED   CURRENT   READY     AGE
+replicaset.extensions/mysql-55fb9dc7db   1         1         1         1s
+
+NAME                         READY     STATUS    RESTARTS   AGE
+pod/mysql-55fb9dc7db-5mh8v   1/1       Running   0          1s
+</code></pre><p><code>kubectl get</code>のパラメータにはAPIオブジェクトの種類を示す文字列を指定しますが、略称がある場合はそれを使えます。</p>
+<pre><code># kubectl get deploymentsと同じ
+$ kubectl get deploy
+</code></pre><p>このドキュメントで扱う主要なAPIオブジェクトの略称は下記の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>略称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deployments</td>
+<td>deploy</td>
+</tr>
+<tr>
+<td>configmaps</td>
+<td>cm</td>
+</tr>
+<tr>
+<td>deployments</td>
+<td>deploy</td>
+</tr>
+<tr>
+<td>ingresses</td>
+<td>ing</td>
+</tr>
+<tr>
+<td>jobs</td>
+<td>無し</td>
+</tr>
+<tr>
+<td>namespaces</td>
+<td>ns</td>
+</tr>
+<tr>
+<td>persistentvolumeclaims</td>
+<td>pvc</td>
+</tr>
+<tr>
+<td>persistentvolumes</td>
+<td>pv</td>
+</tr>
+<tr>
+<td>pods</td>
+<td>po</td>
+</tr>
+<tr>
+<td>replicasets</td>
+<td>rs</td>
+</tr>
+<tr>
+<td>secrets</td>
+<td>無し</td>
+</tr>
+<tr>
+<td>services</td>
+<td>svc</td>
+</tr>
+<tr>
+<td>storageclasses</td>
+<td>sc</td>
+</tr>
+</tbody>
+</table>
+<p>完全なリストはパラメータ無しで <code>kubectl get</code> を実行すると表示されます。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get" target="_blank" rel="noopener">kubectl get | Kubectl Reference Docs</a></li>
+</ul>
+<h3 id="kubectl-logs-またはstern-コンテナのログの確認"><a href="#kubectl-logs-またはstern-コンテナのログの確認" class="headerlink" title="kubectl logs (またはstern): コンテナのログの確認"></a><code>kubectl logs</code> (またはstern): コンテナのログの確認</h3><p>コンテナのログを確認するには、オブジェクトの種類とNAMEを指定して下記のようにします。
+NAMEは前述の<code>kubectl get</code>で確認できます。</p>
+<pre><code># Deploymentを指定する場合
+$ kubectl logs deployments/mysql
+
+# ReplicaSetを指定する場合
+$ kubectl logs replicasets/mysql-55fb9dc7db
+
+# Podを指定する場合
+$ kubectl logs pods/mysql-55fb9dc7db-5mh8v
+</code></pre><p>これは<code>docker container logs</code>相当の機能です。コンテナの標準出力と標準エラー出力の履歴を確認できます。</p>
+<p><code>Pod</code>を指定する場合、マニフェストファイルで設定したラベル(<code>.spec.template.metadata.labels</code>)の値を使って、下記のように指定できます。</p>
+<pre><code>$ kubectl logs --selector &quot;app=mysql&quot;
+
+# ラベルが複数ある場合はカンマ区切りでAND指定
+$ kubectl logs --selector &quot;app=demoapp,component=mysql&quot;
+</code></pre><p>ログの閲覧は <a href="https://github.com/wercker/stern" target="_blank" rel="noopener">stern</a> を使うともっと簡単です。
+<code>Pod</code>の名前に対して正規表現でマッチさせることができ、複数の<code>Pod</code>のログを一度にtailすることができます。</p>
+<pre><code>$ stern &quot;mysql.*&quot;
+</code></pre><ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#logs" target="_blank" rel="noopener">kubectl logs | Kubectl Reference Docs</a></li>
+</ul>
+<h3 id="kubectl-port-forward-コンテナのポートをホスト側にポートフォワード"><a href="#kubectl-port-forward-コンテナのポートをホスト側にポートフォワード" class="headerlink" title="kubectl port-forward: コンテナのポートをホスト側にポートフォワード"></a><code>kubectl port-forward</code>: コンテナのポートをホスト側にポートフォワード</h3><p>Docker Composeでは<code>ports</code>エントリをYAMLファイルに書いておくだけでコンテナのポートをホスト側にマッピングすることができましたが、
+k8sではクラスタの外側からコンテナに接続するためには<code>Service</code>や<code>Ingress</code>など別のAPIオブジェクトを設定する必要があります。</p>
+<p>ただし、<code>kubectl port-forward</code>コマンドを使うと、
+k8sクラスタのノードにsshで接続して特定のコンテナのポートをホストOSにポートフォワードすることができます。
+このコマンドでは<code>Deployment</code>または<code>Pod</code>の名前をパラメータに指定する必要があります。</p>
+<pre><code># Deploymentを指定する場合
+$ kubectl port-forward deployment/mysql 3306:3306
+
+# TYPEを省略するとPodを指定したことになる
+$ kubectl port-forward mysql-55fb9dc7db-5mh8v 3306:3306
+</code></pre><p>ポート番号は左側がホスト側のポートです。コンテナとホストのポートが同じ場合は<code>3306</code>のように番号を一つだけ指定することもできます。</p>
+<p>別のターミナルで下記のコマンドを実行すると、k8s上のmysqlコンテナに接続することができます。
+オブジェクトの起動直後はエラーになる場合があるので、数秒待ってから試してみてください。</p>
+<pre><code>$ mysql -u root --host 0.0.0.0 --port 3306
+</code></pre><p><code>Pod</code>の名前を指定する場合は、下記のようにするとラベルでオブジェクトを選択することができます。</p>
+<pre><code>$ kubectl port-forward $(kubectl get pods --selector &quot;app=mysql&quot; --output &quot;jsonpath={.items..metadata.name}&quot;) 3306
+</code></pre><ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#port-forward" target="_blank" rel="noopener">kubectl port-forward | Kubectl Reference Docs</a></li>
+</ul>
+<h3 id="kubectl-delete-APIオブジェクトの削除"><a href="#kubectl-delete-APIオブジェクトの削除" class="headerlink" title="kubectl delete: APIオブジェクトの削除"></a>kubectl delete: APIオブジェクトの削除</h3><p><code>kubectl apply -f</code>で指定したファイルを指定してオブジェクトを削除することができます。</p>
+<pre><code>$ kubectl delete -f k8s/manifests-step0/mysql-deploy.yaml
+</code></pre><ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete" target="_blank" rel="noopener">kubectl delete | Kubectl Reference Docs</a></li>
+</ul>
+<h3 id="Serviceの概要"><a href="#Serviceの概要" class="headerlink" title="Serviceの概要"></a><code>Service</code>の概要</h3><p>k8sの最も重要なAPIオブジェクトのもう一つは<code>Service</code>です。</p>
+<p>前節では<code>mysql</code>コンテナを管理する<code>Deployment</code>の例を示しましたが、
+別の<code>Pod</code>からこのMySQLサーバにアクセスするためには<code>Pod</code>のIPアドレスとポートを指定する必要があります。
+<code>Pod</code>のIPアドレスは起動するたびに変わってしまうので、アプリケーションの設定に記述することはできません。</p>
+<p><code>Service</code>オブジェクトを作ると、ラベルで指定した<code>Pod</code>群へアクセスできるIPアドレスとDNS名がk8sによって用意されます。</p>
+<p>前節の<code>mysql</code>の<code>Deployment</code>に対応する<code>Service</code>定義の例を示します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step0/mysql-svc.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> mysql
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> ClusterIP
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306     </span><span class="token comment" spellcheck="true"># 接続するPod側のポートを指定</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>          <span class="token comment" spellcheck="true"># 接続するPodのラベルを指定</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> mysql
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上記のマニフェストを<code>kubectl apply</code>で実行して<code>Service</code>オブジェクトを作ると、
+k8sクラスタ上のコンテナ上では<code>Service</code>オブジェクトの名前である<code>&quot;mysql&quot;</code>という文字列をホスト名として指定することで
+<code>mysql</code>の<code>Deployment</code>が管理している<code>Pod</code>にアクセスできるようになります。</p>
+<p><code>.spec.type</code>には<code>ClusterIP</code>、<code>NodePort</code>、<code>LoadBalancer</code>、<code>ExternalName</code>のいずれかを指定します。
+<code>ClusterIP</code>は、この<code>Service</code>オブジェクトが作るエンドポイントがk8sクラスタの内部向けであることを意味します。
+k8sクラスタの外側からアクセスできるようなエンドポイントを作る場合には<code>NodePort</code>または<code>LoadBalancer</code>を指定します。
+このドキュメントでは、最終的には<code>Ingress</code>オブジェクトを使用して外部向けのエンドポイントを用意するため、
+<code>NodePort</code>や<code>LoadBalancer</code>の詳細については割愛します。
+また、<code>ExternalName</code>を使うとk8sの外側のサービスのエイリアスを作ることができますが、このドキュメントでは扱いません。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Serviceのドキュメント</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#service-v1-core" target="_blank" rel="noopener">ServiceのAPIリファレンス</a></li>
+</ul>
+<h3 id="kubectl-run-コマンドによるDeploymentの作成"><a href="#kubectl-run-コマンドによるDeploymentの作成" class="headerlink" title="kubectl run: コマンドによるDeploymentの作成"></a><code>kubectl run</code>: コマンドによる<code>Deployment</code>の作成</h3><p>インフラ構成管理の観点からは全ての<code>Deployment</code>はマニフェストファイルで管理するのが望ましいのですが、
+k8sクラスタ上に一時的なコンテナを作成して簡単なオペレーションを実行したい時もあります。</p>
+<p>そのような場合には<code>kubectl run</code>コマンドを使うとYAMLファイル無しで<code>Deployment</code>を作成することができ便利です。
+フォアグラウンドで対話的なコマンドを実行することもできるため、トラブルシュートにも最適です。</p>
+<p>利用例として、前節までに紹介した<code>mysql</code>用の<code>Deployment</code>と<code>Service</code>を作成した後、
+<code>kubectl run</code>コマンドでシェルを起動し、<code>Service</code>によって用意されたエンドポイント経由でMySQLサーバに接続する方法を示します。</p>
+<p>まず<code>mysql</code>の<code>Deployment</code>と<code>Service</code>を作成します。</p>
+<pre><code>$ kubectl apply -f k8s/manifests-step0/mysql-deploy.yaml
+deployment.apps &quot;mysql&quot; created
+
+$ kubectl apply -f k8s/manifests-step0/mysql-svc.yaml
+service &quot;mysql&quot; created
+
+$ kubectl get deployments,replicasets,pods,services
+NAME                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/mysql   1         1         1            1           9s
+
+NAME                                    DESIRED   CURRENT   READY     AGE
+replicaset.extensions/mysql-b59b886c9   1         1         1         9s
+
+NAME                        READY     STATUS    RESTARTS   AGE
+pod/mysql-b59b886c9-955tg   1/1       Running   0          9s
+
+NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes   ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP    1d
+service/mysql        ClusterIP   10.110.107.218   &lt;none&gt;        3306/TCP   4s
+</code></pre><p><code>service/kubernetes</code>はシステム標準の<code>Service</code>です。
+<code>service/mysql</code>という<code>Service</code>オブジェクトが作成されているのを確認できます。</p>
+<p>次に下記のコマンドで新たに<code>mysql:5.7.21</code>イメージの<code>Deployment</code>を作成します。
+コンテナの中では<code>mysqld</code>コマンドの代わりに対話モードで<code>bash</code>を起動して、プロンプトからMySQLサーバに接続します。</p>
+<pre><code>$ kubectl run mysql-client --image=mysql:5.7.21 -it --rm --restart=Never /bin/bash
+If you don&#39;t see a command prompt, try pressing enter.
+root@mysql-client:/#
+</code></pre><p>上記のようにシェルのプロンプトが表示されたら<code>mysql</code>コマンドを入力してください。</p>
+<pre><code>root@mysql-client:/# mysql -u root --host mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.21 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement.
+
+mysql&gt;
+</code></pre><p>MySQLサーバに接続できました。<code>kubectl run</code>コマンドのパラメータの意味は次の通りです。</p>
+<ul>
+<li><code>mysql-client</code>は<code>Deployment</code>の名前です。</li>
+<li><code>--image</code>はコンテナのイメージ名です。</li>
+<li><code>-it</code>オプションは<code>docker container run(旧 docker run)</code>コマンドと同じ意味です。</li>
+<li><code>--rm</code>オプションを指定すると、コマンドの終了時に自動的に<code>Deployment</code>削除されます。</li>
+<li><code>--restart=Never</code>をつけておかないと<code>Deployment</code>が削除されるまでのわずかな間に<code>Pod</code>が再起動されるケースがあり、動作がやや不安定になります。</li>
+</ul>
+<h3 id="kubectl-explain-ドキュメントの表示"><a href="#kubectl-explain-ドキュメントの表示" class="headerlink" title="kubectl explain: ドキュメントの表示"></a><code>kubectl explain</code>: ドキュメントの表示</h3><p>すでに見てきたように、マニフェストファイルは結構複雑な構造のYAMLデータです。
+慣れないうちはリファレンスを見ながら書くことになると思いますが、
+公式サイトのドキュメントは個々の機能の解説に注力しているため、
+今ひとつマニフェスト定義自体の全貌をつかむことができません。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deploymentのドキュメント</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Serviceのドキュメント</a></li>
+</ul>
+<p>マニフェストの構造を確認するためにはAPIのリファレンスを参照する方が確実です。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deployment-v1-apps" target="_blank" rel="noopener">DeploymentのAPIリファレンス</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#service-v1-core" target="_blank" rel="noopener">ServiceのAPIリファレンス</a></li>
+</ul>
+<p>また、<code>kubectl</code>には指定したオブジェクトのAPIリファレンスを参照する機能があります。
+Webよりもこちらの方が便利かもしれません。</p>
+<pre><code>$ kubectl explain --api-version=apps/v1 deployment
+KIND:     Deployment
+VERSION:  apps/v1
+
+DESCRIPTION:
+     Deployment enables declarative updates for Pods and ReplicaSets.
+
+FIELDS:
+   apiVersion   &lt;string&gt;
+     APIVersion defines the versioned schema of this representation of an
+     object. Servers should convert recognized schemas to the latest internal
+     value, and may reject unrecognized values. More info:
+     https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
+
+   kind &lt;string&gt;
+     Kind is a string value representing the REST resource this object
+     represents. Servers may infer this from the endpoint the client submits
+     requests to. Cannot be updated. In CamelCase. More info:
+     https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
+
+   metadata     &lt;Object&gt;
+     Standard object metadata.
+
+   spec &lt;Object&gt;
+     Specification of the desired behavior of the Deployment.
+
+   status       &lt;Object&gt;
+     Most recently observed status of the Deployment.
+</code></pre><p>オブジェクトの名前に続けて<code>.</code>区切りでフィールドを指定するとネストした要素のドキュメントを参照できます。
+また、オブジェクトの名前は<code>kubectl get</code>と同じ略称を使うことができます。</p>
+<pre><code>$ kubectl explain --api-version=apps/v1 deployment.spec.template.spec.containers.resources
+KIND:     Deployment
+VERSION:  apps/v1
+
+RESOURCE: resources &lt;Object&gt;
+
+DESCRIPTION:
+     Compute Resources required by this container. Cannot be updated. More info:
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
+
+     ResourceRequirements describes the compute resource requirements.
+
+FIELDS:
+   limits       &lt;map[string]string&gt;
+     Limits describes the maximum amount of compute resources allowed. More
+     info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+
+   requests     &lt;map[string]string&gt;
+     Requests describes the minimum amount of compute resources required. If
+     Requests is omitted for a container, it defaults to Limits if that is
+     explicitly specified, otherwise to an implementation-defined value. More
+     info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+</code></pre><h1 id="参考情報"><a href="#参考情報" class="headerlink" title="参考情報"></a>参考情報</h1><p>Kubernetesのより詳細な情報は下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/" target="_blank" rel="noopener">APIリファレンス(v1.10)</a><ul>
+<li>マニフェストのスキーマに関する網羅的な定義はここが詳しいです。</li>
+</ul>
+</li>
+<li><a href="https://kubernetes.io/docs/concepts/" target="_blank" rel="noopener">Concepts | Kubernetes</a><ul>
+<li>メニューが階層化しているため慣れるまでわかりにくいですが、各種APIオブジェクトの解説はここが公式なドキュメントです。
+今回のドキュメントで取り上げたオブジェクトのドキュメントを挙げておきます。</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deployments</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/" target="_blank" rel="noopener">ReplicaSet</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/" target="_blank" rel="noopener">Pods</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Services</a></li>
+</ul>
+</li>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank" rel="noopener">kubectl Cheat Sheet | Kubernetes</a><ul>
+<li><code>kubectl</code>コマンドのチートシートです。1度目を通しておくと引き出しが増えるのでおすすめです。</li>
+</ul>
+</li>
+</ul>
+<p>おすすめの書籍はこの2冊です。</p>
+<div style="display: flex;">
+<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="https://rcm-fe.amazon-adsystem.com/e/cm?ref=tf_til&t=chopschips03-22&m=amazon&o=9&p=8&l=as1&IS1=1&detail=1&asins=4798153222&linkId=db46cec2f20263827bcad4a1cd4c7b7f&bc1=000000&lt1=_blank&fc1=333333&lc1=0066c0&bg1=ffffff&f=ifr"></iframe>
+<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="https://rcm-fe.amazon-adsystem.com/e/cm?ref=tf_til&t=chopschips03-22&m=amazon&o=9&p=8&l=as1&IS1=1&detail=1&asins=4873118409&linkId=18062ba97ff4f47881d230671bb90713&bc1=000000&lt1=_blank&fc1=333333&lc1=0066c0&bg1=ffffff&f=ifr"></iframe>
+</div>
+
+<p>一冊めの「プログラマのためのDocker教科書」は前回の記事でも紹介した書籍です。
+おおよそ2章分と比較的大きく紙面を割いてKubernetesの概要と基礎的なAPIオブジェクトの説明がわかりやすく書いてあります。
+また、GCP上で開発を行う方法がコードの管理からイメージのビルドまで丁寧に説明してあり、付録でGCPの使い方まで説明されていて手厚いです。</p>
+<p>一方、<code>Pod</code>の死活監視の設定や<code>Service</code>によるサービスディスカバリの詳細など、少し踏み込んだ内容は大胆に省略してあります。
+もう少し詳しい仕組みを知りたい場合は二冊目の「入門Kubernetes」で補うのが良いと思います。
+これ一冊で入門するのは正直しんどいと思うのですが、ある程度知識を持った状態で読むのであればおすすめです。</p>
+<p>次回は <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a> です。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" data-id="cjhtbua0j0028kzrc7gx1pu1p" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/05/30/kubernetes-with-rails/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/05/30/docker-compose-with-rails/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

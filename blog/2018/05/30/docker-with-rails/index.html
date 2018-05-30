@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門1 Docker編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(k8s)で運用できるようにするための手順を書きます。 概要この記事はシリーズ連載記事の第一回です。シリーズ全体の概要は次の通りです。 はじめに、DockerやKubernetesの概要について簡単に説明しつつ、 dockerコマンドやkubectlコマンドの基本的な使い方をチュートリアル風味で紹介します。 次に、ごく小さな仕様の具体的なRailsア">
+<meta name="keywords" content="docker,kubernetes,k8s,rails">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門1 Docker編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/docker-with-rails/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(k8s)で運用できるようにするための手順を書きます。 概要この記事はシリーズ連載記事の第一回です。シリーズ全体の概要は次の通りです。 はじめに、DockerやKubernetesの概要について簡単に説明しつつ、 dockerコマンドやkubectlコマンドの基本的な使い方をチュートリアル風味で紹介します。 次に、ごく小さな仕様の具体的なRailsア">
+<meta property="og:locale" content="ja">
+<meta property="og:updated_time" content="2018-05-30T14:15:47.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門1 Docker編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(k8s)で運用できるようにするための手順を書きます。 概要この記事はシリーズ連載記事の第一回です。シリーズ全体の概要は次の通りです。 はじめに、DockerやKubernetesの概要について簡単に説明しつつ、 dockerコマンドやkubectlコマンドの基本的な使い方をチュートリアル風味で紹介します。 次に、ごく小さな仕様の具体的なRailsア">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-docker-with-rails" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/docker-with-rails/" class="article-date">
+  <time datetime="2018-05-30T13:00:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門1 Docker編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/docker-with-rails/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/docker-with-rails/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/docker-with-rails/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/docker-with-rails/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#概要"><span class="toc-number">1.</span> <span class="toc-text">概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">2.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#最小限のDocker入門"><span class="toc-number">3.</span> <span class="toc-text">最小限のDocker入門</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dockerとは"><span class="toc-number">3.1.</span> <span class="toc-text">Dockerとは</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dockerのコマンド体系について"><span class="toc-number">3.2.</span> <span class="toc-text">dockerのコマンド体系について</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#シェルの補完について"><span class="toc-number">3.3.</span> <span class="toc-text">シェルの補完について</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-image-pull-docker-pull-イメージを取得する"><span class="toc-number">3.4.</span> <span class="toc-text">docker image pull (docker pull): イメージを取得する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-image-ls-docker-images-イメージの一覧を表示する"><span class="toc-number">3.5.</span> <span class="toc-text">docker image ls (docker images): イメージの一覧を表示する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-image-rm-docker-rmi-イメージを削除する"><span class="toc-number">3.6.</span> <span class="toc-text">docker image rm (docker rmi): イメージを削除する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-run-docker-run-コンテナを起動する-シェル編"><span class="toc-number">3.7.</span> <span class="toc-text">docker container run (docker run): コンテナを起動する(シェル編)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-run-docker-run-コンテナを起動する-mysqld編"><span class="toc-number">3.8.</span> <span class="toc-text">docker container run (docker run): コンテナを起動する(mysqld編)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-ls-docker-ps-コンテナの一覧を取得する"><span class="toc-number">3.9.</span> <span class="toc-text">docker container ls (docker ps): コンテナの一覧を取得する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-exec-docker-exec-起動中のコンテナで別のコマンドを実行する"><span class="toc-number">3.10.</span> <span class="toc-text">docker container exec (docker exec): 起動中のコンテナで別のコマンドを実行する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-logs-docker-logs-コンテナのログを取得する"><span class="toc-number">3.11.</span> <span class="toc-text">docker container logs (docker logs): コンテナのログを取得する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-container-rm-docker-rm-コンテナを削除する"><span class="toc-number">3.12.</span> <span class="toc-text">docker container rm (docker rm): コンテナを削除する</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考情報"><span class="toc-number">3.13.</span> <span class="toc-text">参考情報</span></a></li></ol></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(k8s)で運用できるようにするための手順を書きます。</p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>この記事はシリーズ連載記事の第一回です。シリーズ全体の概要は次の通りです。</p>
+<p>はじめに、DockerやKubernetesの概要について簡単に説明しつつ、
+<code>docker</code>コマンドや<code>kubectl</code>コマンドの基本的な使い方をチュートリアル風味で紹介します。</p>
+<p>次に、ごく小さな仕様の具体的なRailsアプリを題材として、
+Docker Composeの構成ファイルやKubernetesのマニフェストの具体的なサンプルと使い方を示し、
+最終的にHelmを使ってKubernetesクラスタにデプロイする方法を説明します。</p>
+<p>DockerとKubernetesの全機能を網羅的に学ぼうとすると膨大な時間が必要になるので、
+この記事では「RailsアプリをKubernetesで運用すること」にフォーカスして一つ一つの概念や機能の詳細は必要最小限に絞り、
+より詳細な資料へのポインタを置くに留めます。</p>
+<p>シリーズ全体の構成は次の通りです。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a><ul>
+<li>最小限のDocker入門</li>
+<li><code>docker</code>コマンドのチュートリアル</li>
+</ul>
+</li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a><ul>
+<li>最小限のDocker Compose入門</li>
+<li>Docker Composeを使った各種ミドルウェアのインストールと管理</li>
+<li>RailsアプリケーションのDockerイメージの作り方</li>
+<li>Docker Composeによるローカルプレビュー環境の構築</li>
+</ul>
+</li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a><ul>
+<li>最小限のk8s入門</li>
+<li>minikubeの使い方</li>
+<li><code>kubectl</code>コマンドのチュートリアル</li>
+</ul>
+</li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a><ul>
+<li><code>kubectl</code>コマンドとYAML形式のマニフェストファイルでRailsアプリをk8sにデプロイする方法</li>
+</ul>
+</li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a><ul>
+<li>基礎編で残した課題の解決編</li>
+</ul>
+</li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a><ul>
+<li>最小限のHelm入門</li>
+<li>HelmでRailsアプリをk8sにデプロイする方法</li>
+</ul>
+</li>
+</ul>
+<p>全てのサンプルコードはここにあります。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>各種ツール類のインストール手順はmacOSでの作業を前提としています。</li>
+<li><a href="https://docs.brew.sh/Installation" target="_blank" rel="noopener">Homebrew</a>と<a href="https://caskroom.github.io/" target="_blank" rel="noopener">Homebrew-Cask</a>を使います。<ul>
+<li>Homebrew-Caskのインストールは<code>brew tap caskroom/cask</code></li>
+</ul>
+</li>
+<li>Docker for Macを使います。<ul>
+<li><a href="https://store.docker.com/editions/community/docker-ce-desktop-mac" target="_blank" rel="noopener">Docker Community Edition for Mac</a>のGet Dockerをクリック</li>
+</ul>
+</li>
+<li>k8s関連ツールのインストール手順は後述します。</li>
+<li>ツールのインストール手順を除けば、Linuxでもおおよそ同じ手順で動作を確認できると思います。</li>
+</ul>
+<p>それぞれ下記のバージョンで動作を確認しています。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>バージョン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>macOS</td>
+<td>High Sierra(10.13.4)</td>
+</tr>
+<tr>
+<td>Docker for Mac</td>
+<td>18.0.3.1-ce-mac65</td>
+</tr>
+<tr>
+<td>Ruby</td>
+<td>2.5.1</td>
+</tr>
+<tr>
+<td>Rails</td>
+<td>5.2.0</td>
+</tr>
+<tr>
+<td>minikube</td>
+<td>0.27.0 (k8s 1.10.0)</td>
+</tr>
+<tr>
+<td>kubectl</td>
+<td>1.10.2</td>
+</tr>
+<tr>
+<td>helm</td>
+<td>2.9.1</td>
+</tr>
+<tr>
+<td>hyperkit</td>
+<td>v0.20171204-60-g0e5b6b</td>
+</tr>
+<tr>
+<td>virtualbox</td>
+<td>5.2.8</td>
+</tr>
+</tbody>
+</table>
+<h1 id="最小限のDocker入門"><a href="#最小限のDocker入門" class="headerlink" title="最小限のDocker入門"></a>最小限のDocker入門</h1><p>Docker初心者がRailsアプリをk8sで動かすまでに最低限必要なDockerについての知識と<code>docker</code>コマンドの操作方法を書きます。
+Rails固有のトピックを知りたい人は <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a> までスキップしてください。</p>
+<h2 id="Dockerとは"><a href="#Dockerとは" class="headerlink" title="Dockerとは"></a>Dockerとは</h2><p>LXC(Linux Containers)と呼ばれる技術を使ってアプリケーションの開発やデプロイを行うためのツール及びプラットフォームです。
+LXCやDockerについて解説されたドキュメントは山ほどあるのでここでは詳細は割愛します。</p>
+<ul>
+<li><a href="https://knowledge.sakura.ad.jp/2108/" target="_blank" rel="noopener">15分で分かるLXC（Linux Containers）の仕組みと基本的な使い方 | さくらのナレッジ</a></li>
+<li><a href="http://www.atmarkit.co.jp/ait/articles/1701/30/news037.html" target="_blank" rel="noopener">第1回 Dockerとは : 超入門Docker - ＠IT</a></li>
+</ul>
+<h2 id="dockerのコマンド体系について"><a href="#dockerのコマンド体系について" class="headerlink" title="dockerのコマンド体系について"></a>dockerのコマンド体系について</h2><p>2017年1月にリリースされたDocker 1.13で <code>docker</code> コマンドの構成が整理されました。
+アナウンスは <a href="https://blog.docker.com/2017/01/whats-new-in-docker-1-13/" target="_blank" rel="noopener">Introducing Docker 1.13 - Docker Blog</a>の<code>CLI restructured</code>の部分です。</p>
+<p>「旧コマンドは引き続きサポートするが、新コマンドの使用を勧める」とのことなので
+このドキュメントでは新しいコマンド体系で説明します。
+ただ、古いドキュメントには旧コマンド体系で書かれているものも多いため、
+対応する旧コマンドについても紹介します。</p>
+<p>このドキュメントで紹介するコマンドの新旧対応は下記の通りです。
+基本的にはimageかcontainerのサブコマンドへの移動ですが、一部違うものがあるので太字にしています。</p>
+<table>
+<thead>
+<tr>
+<th>旧コマンド</th>
+<th>新コマンド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>docker pull</td>
+<td>docker image pull</td>
+<td>イメージを取得する</td>
+</tr>
+<tr>
+<td>docker <strong>images</strong></td>
+<td>docker image <strong>ls</strong></td>
+<td>イメージの一覧を表示する</td>
+</tr>
+<tr>
+<td>docker rmi</td>
+<td>docker image <strong>rm</strong></td>
+<td>イメージを削除する</td>
+</tr>
+<tr>
+<td>docker run</td>
+<td>docker container run</td>
+<td>コンテナを起動する</td>
+</tr>
+<tr>
+<td>docker <strong>ps</strong></td>
+<td>docker container <strong>ls</strong></td>
+<td>コンテナの一覧を表示する</td>
+</tr>
+<tr>
+<td>docker exec</td>
+<td>docker container exec</td>
+<td>起動中のコンテナで新しいコマンドを実行する</td>
+</tr>
+<tr>
+<td>docker logs</td>
+<td>docker container logs</td>
+<td>コンテナのログを表示する</td>
+</tr>
+<tr>
+<td>docker rm</td>
+<td>docker container rm</td>
+<td>コンテナを削除する</td>
+</tr>
+</tbody>
+</table>
+<p>以降の節で順にこれらのコマンドの使い方を説明します。見出しの括弧は旧コマンドです。</p>
+<p>また、各節の終わりにリファレンスへのリンクを置いていますが、
+少なくとも本稿の執筆時点においては旧コマンドの方が詳細に書かれているので、必要に応じてそちらも参照してください。
+なお日本語版のドキュメントにはまだ新コマンド版のリファレンスはありません。</p>
+<h2 id="シェルの補完について"><a href="#シェルの補完について" class="headerlink" title="シェルの補完について"></a>シェルの補完について</h2><p><code>docker</code>のサブコマンドは、 <code>861162a44</code> のようなハッシュ値や、
+<code>romantic_neumann</code> のようにランダムな英単語の組み合わせで自動生成されたコンテナ名をパラメータとして受け取ります。</p>
+<p>Docker for Macにはbashやzshでコマンドの補完を行うためのスクリプトが同梱されていますが、
+ただインストールするだけでは有効になりません。
+補完のための設定については別に記事を書いたのでこちらを参照してください。</p>
+<p><a href="https://chopschips.net/blog/2018/04/17/docker-completion/">bash/zshとfzfでDocker関連コマンドの補完を行う方法</a></p>
+<h2 id="docker-image-pull-docker-pull-イメージを取得する"><a href="#docker-image-pull-docker-pull-イメージを取得する" class="headerlink" title="docker image pull (docker pull): イメージを取得する"></a>docker image pull (docker pull): イメージを取得する</h2><p>イメージとはコンテナの雛形です。<code>docker image pull</code>コマンドでリポジトリとタグを指定し、イメージを取得します。
+MySQLの公式リポジトリから<code>5.7.21</code>のタグが付いたイメージを取得する場合は下記のようにします。</p>
+<pre><code>$ docker image pull mysql:5.7.21
+5.7.21: Pulling from library/mysql
+2a72cbf407d6: Pull complete
+38680a9b47a8: Pull complete
+4c732aa0eb1b: Pull complete
+c5317a34eddd: Pull complete
+f92be680366c: Pull complete
+e8ecd8bec5ab: Pull complete
+2a650284a6a8: Pull complete
+5b5108d08c6d: Pull complete
+beaff1261757: Pull complete
+c1a55c6375b5: Pull complete
+8181cde51c65: Pull complete
+Digest: sha256:691c55aabb3c4e3b89b953dd2f022f7ea845e5443954767d321d5f5fa394e28c
+Status: Downloaded newer image for mysql:5.7.21
+</code></pre><p>タグは、多くの場合バージョンを指します。ただし、ここでいうバージョンはイメージのバージョンではなく、
+アプリケーションのバージョンであることが多いため、
+同じタグを指定してもタイミングによって違うイメージを取得するケースがある点に注意が必要です。</p>
+<p>例えば<code>mysql:5.7</code>は現時点では<code>mysql:5.7.21</code>と同じイメージを指していますが、以前は<code>mysql:5.7.20</code>を指していました。
+タグを指定しないと<code>latest</code>というタグを指定したとみなされます。</p>
+<p>リポジトリを管理しているサービスをレジストリと呼びます。
+MySQLやRedisなどの主要なプロダクトの公式イメージは Docker Hub というレジストリで配布されており、
+上記の例ではDocker Hub上のリポジトリからイメージを取得しています。
+Docker Hub上のリポジトリは下記のページで探すことができます。</p>
+<p><a href="https://hub.docker.com/explore/" target="_blank" rel="noopener">https://hub.docker.com/explore/</a></p>
+<p>Docker Hub以外のレジストリを使う場合は下記のようにリポジトリの前にレジストリのホスト名とポート番号を書きます。
+例えばローカルレジストリ <code>myregistry.local:5000</code> から <code>testing/test-image</code> を取得する場合は下記のようになります。</p>
+<pre><code>$ docker image pull myregistry.local:5000/testing/test-image
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/image_pull/" target="_blank" rel="noopener">docker image pull | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker pull</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/pull/" target="_blank" rel="noopener">docker pull | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/pull.html" target="_blank" rel="noopener">docker pull | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="docker-image-ls-docker-images-イメージの一覧を表示する"><a href="#docker-image-ls-docker-images-イメージの一覧を表示する" class="headerlink" title="docker image ls (docker images): イメージの一覧を表示する"></a>docker image ls (docker images): イメージの一覧を表示する</h2><p>持っているイメージの一覧を表示します。</p>
+<pre><code>$ docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+mysql               5.7.21              5195076672a7        3 weeks ago         371MB
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/image_ls/" target="_blank" rel="noopener">docker image ls | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker images</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/images/" target="_blank" rel="noopener">docker images | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/images.html" target="_blank" rel="noopener">docker images | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-image-rm-docker-rmi-イメージを削除する"><a href="#docker-image-rm-docker-rmi-イメージを削除する" class="headerlink" title="docker image rm (docker rmi): イメージを削除する"></a>docker image rm (docker rmi): イメージを削除する</h2><p><code>docker image ls</code> で表示された <code>IMAGE ID</code> を指定します。</p>
+<pre><code>$ docker image rm 5195076672a7
+Untagged: mysql:5.7.21
+Untagged: mysql@sha256:691c55aabb3c4e3b89b953dd2f022f7ea845e5443954767d321d5f5fa394e28c
+Deleted: sha256:5195076672a7e30525705a18f7d352c920bbd07a5ae72b30e374081fe660a011
+Deleted: sha256:bc52f6d08bc65c22baab4384ae534d4c5ba8c988197de49975e0a0f78310dd89
+Deleted: sha256:b2590548a0917767b420cf20d0cef3aae8912314de216f624c0840f3ad827aa7
+Deleted: sha256:756d63a7d5896b52d445ea84ee392cb08a7c119322cfcdfed6303de1ed0d0eab
+Deleted: sha256:8e4736576db75536185beba95c5877deeb3915740688cbbc17fe04aed3632282
+Deleted: sha256:e6e6e1bb8a16eadbe6628770767615fbc8d67bf11dde69a902116efe847baa7e
+Deleted: sha256:080b6c4ec1d55d91a7087e12ae3bd4df252148d94f9911209e0a83d50dc63784
+Deleted: sha256:58b97da9f98f75af01ae59c3cb1fdd07a07297015459f3f9f88b140699b29147
+Deleted: sha256:3918448e7fe95f36f67a55c938559bab787249b8fa5c7e9914afd46994d045b0
+Deleted: sha256:fac8373d1ec4f5bb6c13f12170f558edc3cfbfe8215ae3d1c869940401bc14cf
+Deleted: sha256:130f3e567e288fdbbc3ae7cd7aa6c8b3d952bebd3eae58f0a7da93acbb22a258
+Deleted: sha256:3358360aedad76edf49d0022818228d959d20a4cccc55d01c32f8b62e226e2c2
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/image_rm/" target="_blank" rel="noopener">docker image rm | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker rmi</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/rmi/" target="_blank" rel="noopener">docker rmi | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/rmi.html" target="_blank" rel="noopener">docker rmi | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-run-docker-run-コンテナを起動する-シェル編"><a href="#docker-container-run-docker-run-コンテナを起動する-シェル編" class="headerlink" title="docker container run (docker run): コンテナを起動する(シェル編)"></a>docker container run (docker run): コンテナを起動する(シェル編)</h2><p><code>docker container run</code>コマンドを使います。下記のようなフォーマットです。</p>
+<pre><code>$ docker container run [OPTIONS] IMAGE [COMMAND] [ARGS...]
+</code></pre><p>指定したIMAGEで新しいコンテナを起動し、COMMANDを実行します。ARGSはCOMMANDに対する引数です。</p>
+<p>COMMANDを省略した場合は、そのイメージに定義されたデフォルトのコマンドが実行されます。</p>
+<p><code>mysql:5.7.21</code> イメージでbashを実行する場合は下記のようにします。</p>
+<pre><code>$ docker container run -it --rm mysql:5.7.21 /bin/bash
+</code></pre><p>オプションはそれぞれ下記のような意味です。</p>
+<ul>
+<li><code>-it</code>: シェルのような対話型のCLIコマンドを起動する場合に指定します。</li>
+<li><code>--rm</code>: プロセス終了時にコンテナを削除したい場合に指定します。(指定しないとコンテナの残骸が残ります)</li>
+</ul>
+<p><code>-i</code>と<code>-t</code>は別々のオプションですが、セットで指定することが多いオプションです。詳細は<a href="http://docs.docker.jp/engine/reference/commandline/run.html#tty-name-it" target="_blank" rel="noopener">リファレンス</a>で確認してください。</p>
+<p>なお、指定したイメージがない場合は自動的にレジストリからダウンロードされるため、事前に<code>docker image pull</code>を実行する必要はありません。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_run/" target="_blank" rel="noopener">docker container run | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker run</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/run/" target="_blank" rel="noopener">docker run | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/run.html" target="_blank" rel="noopener">docker run | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-run-docker-run-コンテナを起動する-mysqld編"><a href="#docker-container-run-docker-run-コンテナを起動する-mysqld編" class="headerlink" title="docker container run (docker run): コンテナを起動する(mysqld編)"></a>docker container run (docker run): コンテナを起動する(mysqld編)</h2><p><code>mysql:5.7.21</code> イメージでコンテナを起動し、ローカルから接続してみます。</p>
+<pre><code>$ docker container run --rm -d -p 3306:3306 -v $(pwd)/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mysql --name db1 mysql:5.7.21
+40a551e33878d12c0c2fff330e6af0ad487be2235919a49ebc29dd4c084ddcf1
+</code></pre><p>表示されたのは<code>CONTAINER ID</code>です。後述するコンテナへの操作を行う際には、このIDか<code>--name</code>で指定した名前を指定します。
+今回はCOMMANDを指定していないので、自動的に<code>mysqld</code>コマンドが実行されます。
+<code>mysql</code>イメージの内容については <a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">Docker Hubのmysqlのページ</a>にあるDockerfileへのリンクで確認できます。</p>
+<p>オプションはそれぞれ下記のような意味です。</p>
+<ul>
+<li><code>--rm</code>: プロセス終了時にコンテナを削除したい場合に指定します。(指定しないとコンテナの残骸が残ります)</li>
+<li><code>-d</code>: コンテナをバックグラウンドで起動します。</li>
+<li><code>-p 3306:3306</code>: コンテナのポートをホスト側のポートにマッピングします。左側がホスト側のポートです。</li>
+<li><code>-v $(pwd)/data:/var/lib/mysql</code>: ホスト側のパスをコンテナ上のパスにマッピングします。左側がホスト側のパスで、絶対パスで指定する必要があります。</li>
+<li><code>-e MYSQL_ROOT_PASSWORD=mysql</code>: 環境変数を追加してコンテナを起動します。</li>
+<li><code>--name db1</code>: コンテナの名前です。省略するとランダムな値が自動的に与えられます。</li>
+</ul>
+<p><code>MYSQL_ROOT_PASSWORD</code>のように、イメージによっては環境変数を指定することでコンテナの動作を変えることができる場合があります。
+<code>mysql</code>イメージにおける環境変数の仕様は <a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">このページ</a>の<code>Environment Variables</code>以下に書かれています。
+大体の場合はDocker Hubのリポジトリのページに説明があります。</p>
+<p><code>-v</code>オプションは、<code>Data Volume</code>の指定に使います。
+コンテナを削除するとコンテナに書き込まれたデータは全て削除されますが、
+データベースのようなプロダクトではそれだと困るので、永続化データをコンテナの外部に持つ仕組み(Data Volume)があります。
+今回のケースではホスト側のカレントディレクトリ以下の<code>data/</code>というディレクトリをコンテナ上の<code>/var/lib/mysql/</code>にマウントしています。
+<code>mysql</code>イメージのデフォルト設定では<code>/var/lib/mysql/</code>はMySQLのデータディレクトリなので、
+ホスト側で<code>data/</code>ディレクトリを削除しない限り、コンテナを削除しても同じパスにマウントしてまたコンテナを起動すればデータベースの内容を維持できます。
+Data Volumeの詳細については下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="http://docs.docker.jp/engine/userguide/storagedriver/imagesandcontainers.html#data-volumes-and-the-storage-driver" target="_blank" rel="noopener">イメージ、コンテナ、ストレージ・ドライバの理解 — Docker-docs-ja 17.06.Beta ドキュメント</a></li>
+<li><a href="https://docs.docker.com/storage/volumes/#create-and-manage-volumes" target="_blank" rel="noopener">Use volumes | Docker Documentation</a></li>
+</ul>
+<p>なお、起動したコンテナ上のmysqldには下記のコマンドで接続できます。(mysqlコマンドがない場合、<code>brew install mysql</code>でインストールできます)</p>
+<pre><code>$ mysql --host 127.0.0.1 -uroot -pmysql
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_run/" target="_blank" rel="noopener">docker container run | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker run</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/run/" target="_blank" rel="noopener">docker run | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/run.html" target="_blank" rel="noopener">docker run | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-ls-docker-ps-コンテナの一覧を取得する"><a href="#docker-container-ls-docker-ps-コンテナの一覧を取得する" class="headerlink" title="docker container ls (docker ps): コンテナの一覧を取得する"></a>docker container ls (docker ps): コンテナの一覧を取得する</h2><pre><code>$ docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED                  STATUS              PORTS                    NAMES
+40a551e33878        mysql:5.7.21        &quot;docker-entrypoint.s…&quot;   Less than a second ago   Up 2 seconds        0.0.0.0:3306-&gt;3306/tcp   db1
+</code></pre><p><code>-a</code> オプションは停止中のコンテナも表示するという意味です。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_ls/" target="_blank" rel="noopener">docker container ls | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker ps</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/ps/" target="_blank" rel="noopener">docker ps | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/ps.html" target="_blank" rel="noopener">docker ps | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-exec-docker-exec-起動中のコンテナで別のコマンドを実行する"><a href="#docker-container-exec-docker-exec-起動中のコンテナで別のコマンドを実行する" class="headerlink" title="docker container exec (docker exec): 起動中のコンテナで別のコマンドを実行する"></a>docker container exec (docker exec): 起動中のコンテナで別のコマンドを実行する</h2><p><code>CONTAINER ID</code>または<code>docker container run</code>でコンテナを起動するときに<code>--name</code>オプションで指定した名前でコンテナを指定します。
+以下の例では、先ほどバックグラウンドで起動したmysqlコンテナでbashを起動し、ターミナルからmysqladminコマンドを実行しています。
+オプションの <code>-it</code> の意味は <code>docker container run</code> と同じです。</p>
+<pre><code>% docker container exec -it db1 /bin/bash
+root@40a551e33878:/# mysqladmin status -pmysql
+mysqladmin: [Warning] Using a password on the command line interface can be insecure.
+Uptime: 43  Threads: 1  Questions: 4  Slow queries: 0  Opens: 105  Flush tables: 1  Open tables: 98  Queries per second avg: 0.093
+root@40a551e33878:/# exit
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_exec/" target="_blank" rel="noopener">docker container exec | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker exec</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/exec/" target="_blank" rel="noopener">docker exec | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/exec.html" target="_blank" rel="noopener">docker exec | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-logs-docker-logs-コンテナのログを取得する"><a href="#docker-container-logs-docker-logs-コンテナのログを取得する" class="headerlink" title="docker container logs (docker logs): コンテナのログを取得する"></a>docker container logs (docker logs): コンテナのログを取得する</h2><p><code>docker container logs</code>コマンドを使うと、BG実行したコンテナのログを端末に表示できます。
+<code>CONTAINER ID</code>または<code>docker container run</code>でコンテナを起動するときに<code>--name</code>オプションで指定した名前でコンテナを指定します。</p>
+<pre><code>$ docker container logs -f db1
+(省略)
+2018-04-08T05:04:39.040525Z 0 [Note] Event Scheduler: Loaded 0 events
+2018-04-08T05:04:39.041069Z 0 [Note] mysqld: ready for connections.
+Version: &#39;5.7.21&#39;  socket: &#39;/var/run/mysqld/mysqld.sock&#39;  port: 3306  MySQL Community Server (GPL)
+</code></pre><p><code>-f(--follow)</code>オプションを指定すると、コンテナのSTDOUTとSTDERRから新しい出力があれば表示し続けます。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_logs/" target="_blank" rel="noopener">docker container logs | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker logs</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/logs/" target="_blank" rel="noopener">docker logs | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/logs.html" target="_blank" rel="noopener">docker logs | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="docker-container-rm-docker-rm-コンテナを削除する"><a href="#docker-container-rm-docker-rm-コンテナを削除する" class="headerlink" title="docker container rm (docker rm): コンテナを削除する"></a>docker container rm (docker rm): コンテナを削除する</h2><p><code>CONTAINER ID</code>または<code>docker container run</code>でコンテナを起動するときに<code>--name</code>オプションで指定した名前でコンテナを指定します。</p>
+<pre><code># コンテナの停止
+$ docker container stop db1
+
+# コンテナの削除
+$ docker container rm db1
+</code></pre><p>または</p>
+<pre><code># コンテナを停止して削除
+$ docker container rm -f db1
+</code></pre><ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_stop/" target="_blank" rel="noopener">docker container stop | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker stop</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/stop/" target="_blank" rel="noopener">docker stop | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/stop.html" target="_blank" rel="noopener">docker stop | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+<li><a href="https://docs.docker.com/engine/reference/commandline/container_rm/" target="_blank" rel="noopener">docker container rm | Docker Documentation</a></li>
+<li>旧コマンド名は <code>docker rm</code> です。ドキュメントはこちらの方が詳しいです。<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/rm/" target="_blank" rel="noopener">docker rm | Docker Documentation</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/rm.html" target="_blank" rel="noopener">docker rm | 日本語版 ドキュメント</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="参考情報"><a href="#参考情報" class="headerlink" title="参考情報"></a>参考情報</h2><p>より詳細な使い方は下記のドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://docs.docker.com/engine/reference/commandline/cli/" target="_blank" rel="noopener">Use the Docker command line | Docker Documentation</a></li>
+</ul>
+<p>また、対応しているバージョンが少し古いですが、日本語化されたドキュメントもあります。</p>
+<ul>
+<li><a href="http://docs.docker.jp/index.html" target="_blank" rel="noopener">Docker ドキュメント日本語化プロジェクト</a><ul>
+<li><a href="http://docs.docker.jp/glossary.html" target="_blank" rel="noopener">用語集</a></li>
+<li><a href="http://docs.docker.jp/engine/reference/commandline/toc.html" target="_blank" rel="noopener">dockerコマンドのリファレンス</a></li>
+</ul>
+</li>
+</ul>
+<p>次回は <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a> です。おすすめの書籍もこちらで紹介しています。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/docker-with-rails/" data-id="cjhtbu9zy001mkzrc6hjuf77e" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/05/30/docker-compose-with-rails/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/04/17/docker-completion/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">bash/zshとfzfでDocker関連コマンドの補完を行う方法</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

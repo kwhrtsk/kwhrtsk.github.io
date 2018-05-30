@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編 | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,docker,kubernetes,k8s,rails">
+  
+  <meta name="description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第四回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は以下のサンプルアプリケー">
+<meta name="keywords" content="docker,kubernetes,k8s,rails">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門4 Kubernetes基礎編">
+<meta property="og:url" content="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第四回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は以下のサンプルアプリケー">
+<meta property="og:locale" content="ja">
+<meta property="og:image" content="https://chopschips.net/images/post_20180502_kubernetes_with_rails/sidekiq-web-ui.png">
+<meta property="og:updated_time" content="2018-05-30T16:10:13.435Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門4 Kubernetes基礎編">
+<meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第四回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  今回は以下のサンプルアプリケー">
+<meta name="twitter:image" content="https://chopschips.net/images/post_20180502_kubernetes_with_rails/sidekiq-web-ui.png">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-kubernetes-with-rails" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/05/30/kubernetes-with-rails/" class="article-date">
+  <time datetime="2018-05-30T13:30:00.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HowTo/">HowTo</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前提"><span class="toc-number">1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#準備"><span class="toc-number">2.</span> <span class="toc-text">準備</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#概要"><span class="toc-number">3.</span> <span class="toc-text">概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Railsアプリのイメージをminikube上で使えるようにする方法"><span class="toc-number">4.</span> <span class="toc-text">Railsアプリのイメージをminikube上で使えるようにする方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step1-Deployment-Service-ConfigMap-Secret"><span class="toc-number">5.</span> <span class="toc-text">Step1: Deployment, Service, ConfigMap, Secret</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-deploy-yaml-mysql-の-Deployment"><span class="toc-number">5.1.</span> <span class="toc-text">mysql-deploy.yaml: mysql の Deployment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-svc-yaml-mysql-の-Service"><span class="toc-number">5.2.</span> <span class="toc-text">mysql-svc.yaml: mysql の Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-env-cm-yaml-mysqlの環境変数用ConfigMap"><span class="toc-number">5.3.</span> <span class="toc-text">mysql-env-cm.yaml: mysqlの環境変数用ConfigMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-env-secret-yaml-mysqlの環境変数用Secret"><span class="toc-number">5.4.</span> <span class="toc-text">mysql-env-secret.yaml: mysqlの環境変数用Secret</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-deploy-yaml-redis-の-Deployment"><span class="toc-number">5.5.</span> <span class="toc-text">redis-deploy.yaml: redis の Deployment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-svc-yaml-redis-の-Service"><span class="toc-number">5.6.</span> <span class="toc-text">redis-svc.yaml: redis の Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#puma-deploy-yaml-puma-の-Deployment"><span class="toc-number">5.7.</span> <span class="toc-text">puma-deploy.yaml: puma の Deployment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#puma-svc-yaml-puma-の-Service"><span class="toc-number">5.8.</span> <span class="toc-text">puma-svc.yaml: puma の Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rails-env-cm-yaml-pumaとsidekiqに共通の環境変数用ConfigMap"><span class="toc-number">5.9.</span> <span class="toc-text">rails-env-cm.yaml: pumaとsidekiqに共通の環境変数用ConfigMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rails-env-secret-yaml-pumaとsidekiqに共通の環境変数用Secret"><span class="toc-number">5.10.</span> <span class="toc-text">rails-env-secret.yaml: pumaとsidekiqに共通の環境変数用Secret</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sidekiq-deploy-yaml-sidekiq-の-Deployment"><span class="toc-number">5.11.</span> <span class="toc-text">sidekiq-deploy.yaml: sidekiq の Deployment</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sidekiqワーカープロセスの死活監視"><span class="toc-number">5.11.1.</span> <span class="toc-text">sidekiqワーカープロセスの死活監視</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#まとめ"><span class="toc-number">5.12.</span> <span class="toc-text">まとめ</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考情報"><span class="toc-number">6.</span> <span class="toc-text">参考情報</span></a></li></ol>
+          </div>
+        
+        <p>RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。
+この記事はシリーズ連載記事の第四回です。</p>
+<ul>
+<li>第一回 <a href="/blog/2018/05/30/docker-with-rails/">Docker編</a></li>
+<li>第二回 <a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a></li>
+<li>第三回 <a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a></li>
+<li>第四回 <a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a></li>
+<li>第五回 <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a></li>
+<li>第六回 <a href="/blog/2018/05/30/helm-with-rails/">Helm編</a></li>
+</ul>
+<p>今回は以下のサンプルアプリケーションをminikubeにデプロイするためのマニフェストや手順について説明します。</p>
+<p><a href="https://github.com/kwhrtsk/rails-k8s-demoapp" target="_blank" rel="noopener">https://github.com/kwhrtsk/rails-k8s-demoapp</a></p>
+<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>macOSでの作業を前提としています。</li>
+<li>使用したツールのバージョンなどは <a href="/blog/2018/05/30/docker-with-rails/#前提">初回</a> の記事を参照してください。</li>
+<li>ツールのインストール手順は <a href="/blog/2018/05/30/kubernetes-tutorial/#開発環境の構築">前回</a> の記事を参照してください。</li>
+</ul>
+<h1 id="準備"><a href="#準備" class="headerlink" title="準備"></a>準備</h1><p>まずサンプルアプリのコードをチェックアウトしてminikubeを起動してください。
+(前回と同じなのですでにやっている人は読み飛ばしてください)</p>
+<pre><code># サンプルアプリのコードをチェックアウト
+$ git clone https://github.com/kwhrtsk/rails-k8s-demoapp.git
+$ cd rails-k8s-demoapp
+
+# minikubeを起動
+$ minikube start --cpus=3 --memory=2048 --vm-driver=hyperkit --disk-size=12g
+
+# kubernetesのダッシュボードをオープン
+$ minikube dashboard
+</code></pre><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>前回は下記について説明しました。</p>
+<ul>
+<li>APIオブジェクトを定義するマニフェストファイルをYAML形式で記述する方法</li>
+<li>マニフェストファイルと<code>kubectl</code>コマンドを使ってAPIオブジェクトを管理する方法</li>
+</ul>
+<p>今回は実際にRailsアプリをMySQLやRedisなどのミドルウェアも含めて丸ごとk8sクラスタ上にデプロイするための手順を説明します。
+一度に多種のAPIオブジェクトを使うと全体を理解するのが難しくなるので、
+4つのステップに分けて進めます。</p>
+<p>Step1では、第2回<a href="/blog/2018/05/30/docker-compose-with-rails/#docker-composeコマンドによるローカルプレビュー環境">Docker Compose/Dockerfile編</a>
+の<code>docker-compose-preview.yml</code>に相当する構成をできるだけ少ないAPIオブジェクトで簡潔に記述します。
+この時点では簡潔さと引き換えにいくつかの制約がありますが、それらをStep2からStep4で解消していきます。</p>
+<p>今回の<a href="/blog/2018/05/30/kubernetes-with-rails/">Kubernetes基礎編</a>ではStep1を説明し、
+次回の<a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a>でStep2以降を説明します。</p>
+<a id="more"></a>
+<h1 id="Railsアプリのイメージをminikube上で使えるようにする方法"><a href="#Railsアプリのイメージをminikube上で使えるようにする方法" class="headerlink" title="Railsアプリのイメージをminikube上で使えるようにする方法"></a>Railsアプリのイメージをminikube上で使えるようにする方法</h1><p>マニフェストの説明に入る前に、ビルドしたRailsアプリのイメージをminikube上にデプロイできるようにする方法を説明します。</p>
+<p>いくつかの方法があります。</p>
+<ol>
+<li>Docker Hubのようなパブリックレジストリに登録する。</li>
+<li><a href="https://aws.amazon.com/jp/ecr/" target="_blank" rel="noopener">AWSのECR</a>や<a href="https://cloud.google.com/container-registry/?hl=ja" target="_blank" rel="noopener">GCPのContainer Registry</a>
+のようなプライベートレジストリサービスに登録する。</li>
+<li>プライベートレジストリサービスを自前で用意してそこに登録する。</li>
+<li>minikube VM上のDockerプロセス上に接続して直接イメージをビルドする。</li>
+</ol>
+<p>今回は一番簡単な4の方法を使います。</p>
+<p><a href="#準備">準備</a> の節を参照して、サンプルコードをチェックアウトしminikubeを起動したら、下記のコマンドを実行してください。</p>
+<pre><code>$ (eval $(minikube docker-env) &amp;&amp; docker build . -t demoapp:0.0.1)
+</code></pre><p><code>minikube docker-env</code>コマンドは、minikube VM上のDockerプロセスに接続できるようにするための環境変数を出力します。
+上記のようにすることでminikube VM上のDockerプロセス上で直接イメージをビルドします。
+これにより、マニフェストではイメージ名を<code>demoapp:0.0.1</code>と指定すればこのイメージを使えるようになります。</p>
+<p>この方法を使う場合、タグには<code>latest</code>以外の値を指定してください。
+k8sの仕様で、タグが<code>latest</code>になっているイメージを指定するとコンテナの起動前に必ずレジストリからイメージをpullしようとするため、
+4の方法だと必ず失敗するようになってしまいます。</p>
+<p>これは4の方法を使う場合の制約ではあるのですが、
+インフラの構成管理という観点ではそもそもイメージのタグに<code>latest</code>を使うとデプロイされるバージョンがタイミング依存になるため、
+4以外の方法でも<code>latest</code>タグの使用は避けたほうが良いと思います。</p>
+<h1 id="Step1-Deployment-Service-ConfigMap-Secret"><a href="#Step1-Deployment-Service-ConfigMap-Secret" class="headerlink" title="Step1: Deployment, Service, ConfigMap, Secret"></a>Step1: Deployment, Service, ConfigMap, Secret</h1><p>Step1では、第2回<a href="/blog/2018/05/30/docker-compose-with-rails/">Docker Compose/Dockerfile編</a>の
+Composeファイル<code>docker-compose-preview.yml</code>に相当する構成を(いくつかの制約と引き換えに)できるだけ簡潔に記述します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># docker-compose-preview.yml</span>
+<span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">puma</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">build</span><span class="token punctuation">:</span>
+      <span class="token key atrule">context</span><span class="token punctuation">:</span> .
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/rails
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 3000<span class="token punctuation">:</span><span class="token number">3000</span>
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> mysql
+      <span class="token punctuation">-</span> redis
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> ./bin/setup<span class="token punctuation">-</span>db<span class="token punctuation">-</span>and<span class="token punctuation">-</span>start<span class="token punctuation">-</span>puma
+
+  <span class="token key atrule">sidekiq</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/rails
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> puma
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> ./bin/start<span class="token punctuation">-</span>sidekiq
+
+  <span class="token key atrule">mysql</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+    <span class="token key atrule">env_file</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> .dockerenv/mysql
+
+  <span class="token key atrule">redis</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> redis<span class="token punctuation">:</span>4.0.9
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> redis<span class="token punctuation">-</span>server <span class="token punctuation">-</span><span class="token punctuation">-</span>appendonly yes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>このComposeファイルの要点は下記の通りです。</p>
+<ul>
+<li>puma, sidekiq, mysql, redisの4つのサービス(コンテナ)を起動</li>
+<li>puma, sidekiqコンテナに設定する環境変数は <code>.dockerenv/rails</code> にまとめて記述</li>
+<li>mysqlコンテナに設定する環境変数は <code>.dockerenv/mysql</code> にまとめて記述</li>
+<li>pumaコンテナには3000番ポートで接続可能</li>
+<li>データベーススキーマの初期化(<code>rails db:setup</code>)はpumaコンテナの起動時に実行<ul>
+<li>詳細は<a href="/blog/2018/05/30/docker-compose-with-rails/">前回の記事</a>の<code>./bin/setup-db-and-start-puma</code>の解説を参照</li>
+</ul>
+</li>
+</ul>
+<p>これと同等の構成をk8sで実現するために、<code>Deployment</code>、<code>Service</code>、<code>ConfigMap</code>、<code>Secret</code>の4種類のAPIオブジェクトを使います。</p>
+<p><code>Deployment</code>は、<code>Pod</code>(≒コンテナ)の起動管理を行うオブジェクトです。
+<code>Service</code>は、<code>Pod</code>へアクセスするためのI/Fを提供します。
+この二つは前回の<a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a>で解説したので詳細はそちらを参照してください。</p>
+<p><code>Deployment</code>と<code>Service</code>の組み合わせで、Docker Composeにおける<code>service</code>に相当する機能になります。
+今回の例だと、<code>mysql</code>, <code>redis</code>, <code>puma</code>のサービスには外部のコンテナまたはクラスタの外部（ブラウザ）からアクセスする必要があるため、
+<code>Deployment</code>と<code>Service</code>を一組ずつ定義します。
+<code>sidekiq</code>は外から参照する必要がないため、<code>Deployment</code>のみ定義します。</p>
+<p><code>ConfigMap</code>と<code>Secret</code>は、<code>Deployment</code>に設定する環境変数の管理に使います。
+今回の使い方ではComposeファイルにおける<code>.dockerenv/mysql</code>と<code>.dockerenv/rails</code>に相当します。</p>
+<p>使用するマニフェストファイルは以下の11個で、全て<a href="https://github.com/kwhrtsk/rails-k8s-demoapp/blob/master/k8s/manifests-step1/" target="_blank" rel="noopener">k8s/manifests-step1/</a>に置いてあります。
+一つのYAMLファイルに一つのAPIオブジェクトの定義を書いています。</p>
+<ul>
+<li>mysql-deploy.yaml</li>
+<li>mysql-env-cm.yaml</li>
+<li>mysql-env-secret.yaml</li>
+<li>mysql-svc.yaml</li>
+<li>redis-deploy.yaml</li>
+<li>redis-svc.yaml</li>
+<li>puma-deploy.yaml</li>
+<li>puma-svc.yaml</li>
+<li>rails-env-cm.yaml</li>
+<li>rails-env-secret.yaml</li>
+<li>sidekiq-deploy.yaml</li>
+</ul>
+<p>これから順に内容を説明していきますが、まずはデプロイを実行してみましょう。</p>
+<p><a href="#準備">準備</a> の節を参照して、サンプルコードをチェックアウトしminikubeを起動したら、下記のコマンドを実行してください。
+デプロイが済んだ後、ブラウザでサンプルアプリを開くことができます。</p>
+<pre><code># Railsアプリのイメージをビルド
+$ (eval $(minikube docker-env) &amp;&amp; docker build . -t demoapp:0.0.1)
+
+$ cd k8s/manifests-step1
+
+# APIオブジェクトを作成
+$ cat *.yaml | kubectl apply -f -
+
+# pumaとsidekiqの起動が完了するまで待機
+$ kubectl rollout status deploy demoapp-puma
+$ kubectl rollout status deploy demoapp-sidekiq
+
+# puma serviceのエンドポイントをブラウザでオープン
+$ minikube service demoapp-puma
+</code></pre><p>上記の手順と等価なタスクをMakefileに定義してあるので、代わりに<code>make</code>コマンドで実行することもできます。</p>
+<pre><code>$ cd k8s/manifests-step1
+$ make kubectl-apply
+$ make kubectl-rollout-status
+$ make minikube-service
+
+# またはパラメータなしの make で全て順に実行
+</code></pre><p>APIオブジェクトを削除するには次のようにします。</p>
+<pre><code>$ cd k8s/manifests-step1
+$ cat *.yaml | kubectl delete -f -
+# または make clean
+</code></pre><p>Makefileは下記のような内容です。GNU Makeで動作を確認しています。</p>
+<pre class="line-numbers language-makefile"><code class="language-makefile"><span class="token comment" spellcheck="true"># k8s/manifests-step1/Makefile</span>
+
+SHELL <span class="token operator">=</span> /bin/bash
+
+<span class="token symbol">all</span><span class="token punctuation">:</span>
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> minikube-docker-build
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> kubectl-apply
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> kubectl-rollout-status
+    <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> minikube-service
+
+<span class="token symbol">clean</span><span class="token punctuation">:</span> kubectl-delete
+
+<span class="token symbol">minikube-docker-build</span><span class="token punctuation">:</span>
+<span class="token symbol">    eval <span class="token variable">$$</span>(minikube docker-env) &amp;&amp; docker build ../../ -t demoapp</span><span class="token punctuation">:</span>0.0.1
+
+<span class="token symbol">kubectl-apply</span><span class="token punctuation">:</span>
+    cat *.yaml <span class="token operator">|</span> kubectl apply -f -
+
+<span class="token symbol">kubectl-rollout-status</span><span class="token punctuation">:</span>
+    kubectl rollout status deploy demoapp-puma
+    kubectl rollout status deploy demoapp-sidekiq
+
+<span class="token symbol">minikube-service</span><span class="token punctuation">:</span>
+    minikube service demoapp-puma
+
+<span class="token symbol">kubectl-delete</span><span class="token punctuation">:</span>
+    cat *.yaml <span class="token operator">|</span> kubectl delete -f -
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>スクリプト化するまでもないような短いコマンドであっても、
+定型的な処理はこのように形として残しておくのがおすすめです。
+こういった小さな積み重ねがチーム内に暗黙知が生まれることを防ぎます。</p>
+<p>次に、各マニフェストファイルの内容を説明します。</p>
+<h2 id="mysql-deploy-yaml-mysql-の-Deployment"><a href="#mysql-deploy-yaml-mysql-の-Deployment" class="headerlink" title="mysql-deploy.yaml: mysql の Deployment"></a>mysql-deploy.yaml: mysql の Deployment</h2><p>はじめにMySQLに関連するマニフェストの内容を説明します。</p>
+<p>まずは <code>Deployment</code> から。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>最初なので全般事項についてもここで説明します。</p>
+<ul>
+<li><code>.metadata.name</code>には<code>demoapp-mysql</code>のように<code>demoapp-</code>というプレフィクスをつけます。
+例えば、<code>Service</code>オブジェクトの名前を<code>redis</code>にしてしまうと、それ以降に起動する全てのコンテナにk8sによって<code>REDIS_PORT</code>のような環境変数が設定されるのですが、
+sidekiqなど一部のgemはこういった環境変数によって動作が変わってしまう場合があります。
+名前のプレフィクスはこのような環境変数とgemなどで一般的に使用される環境変数が競合するのを避けるのが目的です。
+自動設定される環境変数の詳細については<a href="https://kubernetes.io/docs/concepts/services-networking/service/#environment-variables" target="_blank" rel="noopener">ドキュメント</a>を参照してください。</li>
+<li>各種ラベルには、共通で<code>app</code>ラベルに<code>demoapp</code>を、コンポーネントごとに<code>component</code>ラベルを設定します。
+コンポーネントは<code>puma</code>, <code>sidekiq</code>, <code>mysql</code>, <code>redis</code>などです。</li>
+<li>同一のコンポーネントに属するAPIオブジェクトには、同一の名前とラベルを設定します。
+例えば、<code>mysql</code>用の<code>Deployment</code>、<code>Service</code>には<code>.metadata.name</code>に共通の<code>demoapp-mysql</code>という名前をつけます。
+また、<code>.metadata.labels</code>には<code>app: demoapp</code>, <code>component: mysql</code>の二つを設定します。</li>
+<li>マニフェストのファイル名には、コンポーネントとAPIオブジェクトの種類の略称を使います。
+例えば <code>mysql</code> の <code>Deployment</code>であれば <code>mysql-deploy.yaml</code> となります。
+略称については <a href="/blog/2018/05/30/kubernetes-tutorial/#kubectl-get-APIオブジェクトの状態の確認">前回の<code>kubectl get</code>の節</a>を参照してください。</li>
+</ul>
+<p>次に、<code>mysql</code>のための固有の設定について説明します。</p>
+<p><code>livenessProbe</code>と<code>readinessProbe</code>は、コンテナの死活監視のための設定項目です。
+この例では3306番ポートにTCP接続できるかどうかで判定を行なっています。
+また、上記では使用していませんが、それぞれ<code>initialDelaySeconds</code>(最初に検査を行うまでの待機秒数)や<code>periodSeconds</code>(検査の間隔: デフォルト10秒)
+などの項目を設定することができます(<a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes" target="_blank" rel="noopener">詳細</a>)。
+また、コマンドを実行したりHTTPリクエストを投げることもできます。</p>
+<p><code>livenessProbe</code>で死亡判定されると、<code>ReplicaSet</code>は<code>restartPolicy</code>に基づいてその<code>Pod</code>の再起動か再作成を試みます。
+条件が厳しすぎるとプロセスの起動処理中に強制的に再起動されていつまで経っても起動しなくなります。
+その場合は<code>initialDelaySeconds</code>などの値を緩めるなどして調整する必要があります。</p>
+<p><code>readinessProbe</code>は<code>Service</code>オブジェクトがその<code>Pod</code>に接続リクエストを転送するかどうかの判定に使います。
+こちらは起動直後の<code>Pod</code>にリクエストを転送するのを防ぐことなどを目的に使用します。</p>
+<p><code>envFrom</code>は環境変数を設定するための項目です。
+この例では <code>ConfigMap</code> と <code>Secret</code> という別のAPIオブジェクトを参照して環境変数を設定しています。
+<code>ConfigMap</code>と<code>Secret</code>については後述します。</p>
+<p><code>env</code>を使うと直接<code>Deployment</code>の定義の内部に環境変数を定義することもできます。詳細は下記を参照してください。</p>
+<p><a href="https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/" target="_blank" rel="noopener">Define Environment Variables for a Container | Kubernetes</a></p>
+<h2 id="mysql-svc-yaml-mysql-の-Service"><a href="#mysql-svc-yaml-mysql-の-Service" class="headerlink" title="mysql-svc.yaml: mysql の Service"></a>mysql-svc.yaml: mysql の Service</h2><p>続いて<code>mysql-service.yaml</code>の内容を説明します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-svc.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3306</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> mysql
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.spec.selector</code>に<code>app</code>と<code>component</code>という二つのラベルを指定しています。
+これは<code>mysql-deploy.yaml</code>の<code>.spec.template.metadata.labels</code>と一致させる必要があります。</p>
+<p>前回の<a href="/blog/2018/05/30/kubernetes-tutorial/">Kubernetes入門編</a>では<code>app</code>というラベル一つで
+<code>Deployment</code>と<code>Service</code>を接続していましたが、
+今回は<code>Deployment</code>が<code>mysql</code>の他に<code>redis</code>や<code>puma</code>など複数存在するため、
+<code>app: demoapp</code>というラベルだけだと<code>mysql</code>の<code>Service</code>が<code>redis</code>や<code>puma</code>の<code>Pod</code>を参照して混線することになります。
+これを避けるために<code>app</code>と<code>component</code>という二つのラベルをセレクタに指定しています。</p>
+<h2 id="mysql-env-cm-yaml-mysqlの環境変数用ConfigMap"><a href="#mysql-env-cm-yaml-mysqlの環境変数用ConfigMap" class="headerlink" title="mysql-env-cm.yaml: mysqlの環境変数用ConfigMap"></a>mysql-env-cm.yaml: mysqlの環境変数用ConfigMap</h2><p>次に<code>mysql-env-cm.yaml</code>を説明します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-env-cm.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ConfigMap
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">MYSQL_USER</span><span class="token punctuation">:</span> demoapp
+  <span class="token key atrule">MYSQL_DATABASE</span><span class="token punctuation">:</span> demoapp_production
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>ConfigMap</code>は環境変数や設定ファイルなどアプリケーションのパラメータを管理するためのAPIオブジェクトです。
+使用形態には大まかに3つの方法があります。</p>
+<ol>
+<li><code>envFrom</code>で丸ごと環境変数に設定する。</li>
+<li><code>env</code>でキーを指定して個別に環境変数に設定する。</li>
+<li>キーを指定して値をファイルとして<code>Pod</code>上のファイルにマウントする。</li>
+</ol>
+<p><code>mysql-deploy.yaml</code>では1の方法を使っています。関係ある部分だけ抜き出すと下記の通りです。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env <span class="token comment" spellcheck="true"># ConfigMapの `.metadata.name` を指定</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>このように参照すると、ConfigMapの<code>.data</code>の各エントリが全て環境変数として設定されます。</p>
+<p>2の方法で同じことをしようとすると下記のようになります。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mysql
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.21
+          <span class="token key atrule">env</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> MYSQL_USER  <span class="token comment" spellcheck="true"># 環境変数名を指定</span>
+              <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
+                <span class="token key atrule">configMapKeyRef</span><span class="token punctuation">:</span>
+                  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env <span class="token comment" spellcheck="true"># ConfigMapの`.metadata.name`を指定</span>
+                  <span class="token key atrule">key</span><span class="token punctuation">:</span> MYSQL_USER         <span class="token comment" spellcheck="true"># ConfigMapの`.data`エントリのキーを指定</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> MYSQL_DATABASE
+              <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
+                <span class="token key atrule">configMapKeyRef</span><span class="token punctuation">:</span>
+                  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+                  <span class="token key atrule">key</span><span class="token punctuation">:</span> DATABASE
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>だいぶ冗長になりました。<code>envFrom</code>は比較的最近追加された機能なので以前はこの方法で書いていましたが大変でした。
+<code>ConfigMap</code>はできるだけ用途に応じた単位で分割して、<code>envFrom</code>を使えるようにした方が良いと思います。</p>
+<p>3の方法は、例えば<code>/etc/mysql/my.cnf</code>のような設定ファイルを<code>ConfigMap</code>で管理する方法です。
+<code>.data</code>エントリに定義した値をファイルとして<code>Pod</code>上の任意のパスにマウントすることができます。
+この方法についてはこのドキュメントでは扱いませんので、詳細は下記の資料を参照してください。</p>
+<p><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume" target="_blank" rel="noopener">Configure a Pod to Use a ConfigMap | Kubernetes</a></p>
+<p><code>ConfigMap</code>と<code>Secret</code>については、APIオブジェクトの名前(<code>.metadata.name</code>)を
+<code>${プレフィクス}-${コンポーネント}</code>の形式ではなく、さらに<code>-env</code>を付け加えて<code>demoapp-mysql-env</code>のような形にしています。
+これは将来的に環境変数に加えて3の方法で設定ファイルを追加する場合に名前が競合するのを防ぐ意図があります。
+(設定ファイル用の<code>ConfigMap</code>を追加する場合は<code>demoapp-mysql-conf</code>のような名前にするのが良いと思います)</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" target="_blank" rel="noopener">Configure a Pod to Use a ConfigMap | Kubernetes</a></li>
+</ul>
+<h2 id="mysql-env-secret-yaml-mysqlの環境変数用Secret"><a href="#mysql-env-secret-yaml-mysqlの環境変数用Secret" class="headerlink" title="mysql-env-secret.yaml: mysqlの環境変数用Secret"></a>mysql-env-secret.yaml: mysqlの環境変数用Secret</h2><p>最後に<code>mysql-env-secret.yaml</code>を説明します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/mysql-env-secret.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Secret
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>mysql<span class="token punctuation">-</span>env
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> c2VjcmV0 <span class="token comment" spellcheck="true"># echo -n "secret" | base64</span>
+  <span class="token key atrule">MYSQL_ROOT_PASSWORD</span><span class="token punctuation">:</span> dG9wc2VjcmV0 <span class="token comment" spellcheck="true"># echo -n "topsecret" | base64</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>Secret</code>は<code>ConfigMap</code>同様キー・バリュー形式で設定値を管理できるAPIオブジェクトですが、
+パスワードやクレデンシャルなど機密性の高い情報を管理することを前提としています。</p>
+<p><code>Secret</code>は、<code>ConfigMap</code>と比較すると表面的には下記の点が異なります。</p>
+<ul>
+<li><code>.data</code>エントリに値を書き込むときはBASE64エンコードして書く必要がある。</li>
+<li>Dashboard上ではデフォルトで値が表示されないようになっている。(クリックで表示させることはできる)<ul>
+<li>GCPのConsole上だと表示できない</li>
+</ul>
+</li>
+</ul>
+<p>また、<code>Secret</code>の中身は<code>Pod</code>のtmpfs上に展開されディスクには書き込まれないなど、
+内部的には<code>ConfigMap</code>よりも安全性に配慮された運用が行われます。
+セキュリティ上の制限については下記のドキュメントを参照してください。</p>
+<p><a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="noopener">Encrypting Secret Data at Rest | Kubernetes</a></p>
+<p><code>Deployment</code>からの参照方法はほとんど<code>ConfigMap</code>と同じなので説明を割愛します。
+<code>configMapRef</code>の代わりに<code>secretRef</code>を使う必要がある点にだけ注意してください。</p>
+<p>なお、<code>Secret</code>オブジェクトのマニフェストファイルにはBASE64エンコードしただけの値を書いているので平文で機密情報を書いているのと同じです。
+通常はこのままgitリポジトリにコミットすることはしません。
+実際の運用の際には <a href="https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree" target="_blank" rel="noopener">sops</a>や<a href="https://github.com/joker1007/yaml_vault" target="_blank" rel="noopener">yaml_vault</a> とGCP/AWSのKMSで暗号化するのがおすすめですが、それについてはHelm編で紹介したいと思います。</p>
+<h2 id="redis-deploy-yaml-redis-の-Deployment"><a href="#redis-deploy-yaml-redis-の-Deployment" class="headerlink" title="redis-deploy.yaml: redis の Deployment"></a>redis-deploy.yaml: redis の Deployment</h2><p>次にRedisに関連するマニフェストの内容を説明します。</p>
+<p>まずは <code>Deployment</code> から。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/redis-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>redis
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> redis
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> redis
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> redis
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> redis
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> redis<span class="token punctuation">:</span>4.0.9
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">6379</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">tcpSocket</span><span class="token punctuation">:</span>
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">6379</span>
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> redis<span class="token punctuation">-</span>server
+            <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>appendonly
+            <span class="token punctuation">-</span> <span class="token string">"yes"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>構造としては <code>mysql-deploy.yaml</code> とほとんど同じです。</p>
+<p><code>command</code>に関しては、<code>docker-compose-preview.yaml</code>では下記のように文字列のエントリとして定義していましたが、
+k8sのマニフェストでは上記の通り配列として定義する必要がある点に注意してください。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">redis</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> redis<span class="token punctuation">:</span>4.0.9
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> redis<span class="token punctuation">-</span>server <span class="token punctuation">-</span><span class="token punctuation">-</span>appendonly yes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="redis-svc-yaml-redis-の-Service"><a href="#redis-svc-yaml-redis-の-Service" class="headerlink" title="redis-svc.yaml: redis の Service"></a>redis-svc.yaml: redis の Service</h2><p>続いて <code>Service</code> の内容を確認します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/redis-svc.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>redis
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> redis
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">6379</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> redis
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>component</code>とポート番号が違うだけで<code>mysql</code>のものとほとんど同じです。
+特筆すべき点はありません。</p>
+<h2 id="puma-deploy-yaml-puma-の-Deployment"><a href="#puma-deploy-yaml-puma-の-Deployment" class="headerlink" title="puma-deploy.yaml: puma の Deployment"></a>puma-deploy.yaml: puma の Deployment</h2><p>いよいよRailsアプリ本体のためのマニフェストの説明に移ります。</p>
+<p>まずは<code>puma</code>用の<code>Deployment</code>から説明します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/puma-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> puma
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">:</span>0.0.1
+          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> IfNotPresent
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ./bin/setup<span class="token punctuation">-</span>db<span class="token punctuation">-</span>and<span class="token punctuation">-</span>start<span class="token punctuation">-</span>puma
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">readinessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">httpGet</span><span class="token punctuation">:</span>
+              <span class="token key atrule">path</span><span class="token punctuation">:</span> /health_check/full
+              <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><code>image</code>には<a href="#Railsアプリのイメージをminikube上で使えるようにする方法">docker build</a>コマンドで指定したイメージ名を指定します。</li>
+<li><code>imagePullPolicy</code>は<code>IfNotPresent</code>を指定します。前述の通りこのイメージはレジストリに登録していないためです。</li>
+<li><code>command</code>には<code>docker-compose-preview.yml</code>と同じく<code>./bin/setup-db-and-start-puma</code>を指定します。
+これはpumaの起動前に<code>rails db:setup</code>を試みるスクリプトです。詳細は<a href="/blog/2018/05/30/docker-compose-with-rails/">第2回の記事</a>で説明しました。</li>
+<li><code>livenessProbe</code>と<code>readinessProbe</code>ではそれぞれ<code>/health_check/full</code>というパスを指定しています。
+このサンプルアプリでは<a href="https://github.com/ianheggie/health_check" target="_blank" rel="noopener">health_check</a>というgemで死活監視用のエンドポイントを実装しています。
+このパスを叩くだけでMySQLやRedisとの接続検証を行うことができるようになります。</li>
+<li><code>envFrom</code>では、<code>demoapp-rails-env</code>という名前の<code>ConfigMap</code>と<code>Secret</code>を参照しています。
+これらのオブジェクトは<code>docker-compose-preview.yml</code>における<code>env_file</code>に相当する環境変数の設定を保持しています。</li>
+</ul>
+<h2 id="puma-svc-yaml-puma-の-Service"><a href="#puma-svc-yaml-puma-の-Service" class="headerlink" title="puma-svc.yaml: puma の Service"></a>puma-svc.yaml: puma の Service</h2><p>次にpuma用の<code>Service</code>の定義を確認します。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/puma-svc.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>puma
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> NodePort
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> puma
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>.spec.type</code>に<code>NodePort</code>を指定しています。
+<code>mysql</code>や<code>redis</code>と異なり、<code>puma</code>の接続相手は他のコンテナではなくクラスタの外にあるブラウザです。
+そのため、クラスタ内での通信のためのエンドポイントを生成する<code>ClusterIP</code>の代わりに<code>NodePort</code>を指定しています。</p>
+<p><code>NodePort</code>を指定すると、k8sクラスタを構成する全てのノードに、このサービスへ接続するためのエンドポイントが作成されます。
+<code>.ports[*].nodePort</code>で公開するポートを指定することもできますが、使用中のポートを指定するとエラーになります。
+無指定の場合は、<code>30000-32767</code>のレンジから自動的に割り当てられます。
+いずれの場合も、ポート番号は全てのノードで同じになります。</p>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport" target="_blank" rel="noopener">Type NodePort</a></p>
+<p>minikubeの場合、このサービスへ接続するためのURLは<code>minikube service list</code>で確認することができます。</p>
+<pre><code>% minikube service list
+|-------------|----------------------|----------------------------|
+|  NAMESPACE  |         NAME         |            URL             |
+|-------------|----------------------|----------------------------|
+| default     | demoapp-mysql        | No node port               |
+| default     | demoapp-puma         | http://192.168.64.25:32320 |
+| default     | demoapp-redis        | No node port               |
+| default     | kubernetes           | No node port               |
+| kube-system | default-http-backend | http://192.168.64.25:30001 |
+| kube-system | kube-dns             | No node port               |
+| kube-system | kubernetes-dashboard | http://192.168.64.25:30000 |
+|-------------|----------------------|----------------------------|
+</code></pre><p>また、<code>minikube service demoapp-puma</code>のように<code>Service</code>の名前をパラメータとして渡せば、そのURLをブラウザでオープンすることができます。
+典型的には、<code>http://$(minikube ip):32320</code>のように<code>minikube ip</code>にランダムなポート番号を与えた形式のURLでアクセスできるようになります。</p>
+<p>さて、前述のように<code>NodePort</code>を指定するとk8sクラスタを構成する全てのノードにエンドポイントが用意されます。
+minikubeのようにシングルノード構成の検証用クラスタではこれで十分ですが、
+マルチノード構成の本番環境では不十分です。
+少なくとも負荷分散や可用性担保のためには前段にロードバランサが必要になるし、
+k8sの外側でロードバランサの管理をするのは面倒です。</p>
+<p>外向けのエンドポイントにロードバランサを組み合わせる場合、
+通常は<code>LoadBalancer</code>タイプの<code>Service</code>か<code>Ingress</code>というオブジェクトを使います。
+<a href="/blog/2018/05/30/practical-kubernetes-with-rails/#Step4-Ingress">次回Kubernetes応用編のStep4</a>
+では<code>Ingress</code>を使ってこの問題に対処する方法を示します。</p>
+<h2 id="rails-env-cm-yaml-pumaとsidekiqに共通の環境変数用ConfigMap"><a href="#rails-env-cm-yaml-pumaとsidekiqに共通の環境変数用ConfigMap" class="headerlink" title="rails-env-cm.yaml: pumaとsidekiqに共通の環境変数用ConfigMap"></a>rails-env-cm.yaml: pumaとsidekiqに共通の環境変数用ConfigMap</h2><p>下記のような内容です。MySQLやRedisのホスト名として、それぞれ<code>mysql-svc.yaml</code>と<code>redis-svc.yaml</code>で定義した
+<code>Service</code>オブジェクトの名前を指定しています。</p>
+<pre><code># k8s/manifests-step1/rails-env-cm.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demoapp-rails-env
+data:
+  RAILS_SERVE_STATIC_FILES: &quot;true&quot;
+  RAILS_LOG_TO_STDOUT: &quot;true&quot;
+  SIDEKIQ_TIMEOUT: &quot;60&quot;
+  MYSQL_HOST: demoapp-mysql
+  MYSQL_USER: demoapp
+  MYSQL_DATABASE: demoapp_production
+  REDIS_HOST: demoapp-redis
+  REDIS_URL: redis://demoapp-redis:6379/1
+</code></pre><h2 id="rails-env-secret-yaml-pumaとsidekiqに共通の環境変数用Secret"><a href="#rails-env-secret-yaml-pumaとsidekiqに共通の環境変数用Secret" class="headerlink" title="rails-env-secret.yaml: pumaとsidekiqに共通の環境変数用Secret"></a>rails-env-secret.yaml: pumaとsidekiqに共通の環境変数用Secret</h2><p>特筆すべき点は特にありません。</p>
+<p><code>mysql-env-secret.yaml</code>の説明の際にも述べたとおり、環境変数の値はこの時点では暗号化されていないため、
+実際の運用においては <a href="https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree" target="_blank" rel="noopener">sops</a>や<a href="https://github.com/joker1007/yaml_vault" target="_blank" rel="noopener">yaml_vault</a> で暗号化するなどしてからgitリポジトリに含める必要があります。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/rails-env-secret.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Secret
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">SECRET_KEY_BASE</span><span class="token punctuation">:</span> MTIz <span class="token comment" spellcheck="true"># echo -n "123" | base64</span>
+  <span class="token key atrule">MYSQL_PASSWORD</span><span class="token punctuation">:</span> c2VjcmV0 <span class="token comment" spellcheck="true"># echo -n "secret" | base64</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="sidekiq-deploy-yaml-sidekiq-の-Deployment"><a href="#sidekiq-deploy-yaml-sidekiq-の-Deployment" class="headerlink" title="sidekiq-deploy.yaml: sidekiq の Deployment"></a>sidekiq-deploy.yaml: sidekiq の Deployment</h2><p>最後にsidekiq用の<code>Deployment</code>の定義を見ます。</p>
+<pre class="line-numbers language-yaml"><code class="language-yaml"><span class="token comment" spellcheck="true"># k8s/manifests-step1/sidekiq-deploy.yaml</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>sidekiq
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+    <span class="token key atrule">component</span><span class="token punctuation">:</span> sidekiq
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+      <span class="token key atrule">component</span><span class="token punctuation">:</span> sidekiq
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> demoapp
+        <span class="token key atrule">component</span><span class="token punctuation">:</span> sidekiq
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">restartPolicy</span><span class="token punctuation">:</span> Always
+      <span class="token key atrule">terminationGracePeriodSeconds</span><span class="token punctuation">:</span> <span class="token number">65</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> sidekiq
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">:</span>0.0.1
+          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> IfNotPresent
+          <span class="token key atrule">command</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ./bin/start<span class="token punctuation">-</span>sidekiq
+          <span class="token key atrule">livenessProbe</span><span class="token punctuation">:</span>
+            <span class="token key atrule">exec</span><span class="token punctuation">:</span>
+              <span class="token key atrule">command</span><span class="token punctuation">:</span>
+                <span class="token punctuation">-</span> ./bin/health<span class="token punctuation">-</span>check<span class="token punctuation">-</span>sidekiq
+            <span class="token key atrule">initialDelaySeconds</span><span class="token punctuation">:</span> <span class="token number">30</span>
+          <span class="token key atrule">envFrom</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+            <span class="token punctuation">-</span> <span class="token key atrule">secretRef</span><span class="token punctuation">:</span>
+                <span class="token key atrule">name</span><span class="token punctuation">:</span> demoapp<span class="token punctuation">-</span>rails<span class="token punctuation">-</span>env
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>内容としてはほぼ<code>puma-deploy.yaml</code>と同じですが、下記の点に注目してください。</p>
+<ul>
+<li><code>terminationGracePeriodSeconds</code>は<code>Pod</code>にTERMシグナルを送ってからプロセスの終了を待つ時間です。
+この時間を超えるとプロセスはKILLシグナルで強制的に停止されます。デフォルト値は30秒です(<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#pod-v1-core" target="_blank" rel="noopener">参考</a>)。
+<code>./bin/start-sidekiq</code>では<code>-t $SIDEKIQ_TIMEOUT</code>オプションをつけて<code>sidekiq</code>を起動しており、
+<code>$SIDEKIQ_TIMEOUT</code>には<code>rails-env-cm.yaml</code>で60秒を指定しているので、<code>terminationGracePeriodSeconds</code>には65秒を設定しています。
+ローリングアップデートやコンテナ終了時の動作の詳細についてはStep2で説明します。</li>
+<li><code>livenessProbe</code>は<code>puma</code>と異なり<code>exec</code>タイプで独自実装のコマンドを呼び出します。内容については後述します。</li>
+<li><code>Service</code>と接続しないため<code>readinessProbe</code>は定義しません。</li>
+<li><code>envFrom</code>は完全に<code>puma</code>と同じです。厳密にいうと環境変数<code>SECRET_KEY_BASE</code>は無くても動作するのですが、
+設定を簡素化するために<code>puma</code>と共通化しています。</li>
+</ul>
+<h3 id="sidekiqワーカープロセスの死活監視"><a href="#sidekiqワーカープロセスの死活監視" class="headerlink" title="sidekiqワーカープロセスの死活監視"></a>sidekiqワーカープロセスの死活監視</h3><p><code>sidekiq</code>のワーカープロセスには、<code>puma</code>のようなヘルスチェックのためのインタフェースがありません。
+<code>sidekiq</code>のオプションでPIDをファイルに書き出すようにすればプロセスの存在確認くらいはできるのですが、
+そもそもプロセスが停止しているようなケースではコンテナ自体が終了してしまうためk8s側で死亡判定できます。
+問題は何らかの原因で<code>sidekiq</code>プロセスが生きたまま応答しなくなっているようなケースをいかに検出するかです。</p>
+<p><code>sidekiq</code>のワーカープロセスは定期的に自身のホスト名やプロセスIDなどの情報をRedisに書き込んでいます。
+この処理はheartbeatと呼ばれています。
+(詳細はこの<a href="https://github.com/mperham/sidekiq/blob/b2c8bc6e49707e3378044a1ba47068fc8b6154f6/lib/sidekiq/launcher.rb#L71" target="_blank" rel="noopener">素敵な絵文字メソッド</a>を参照)</p>
+<p>heartbeatは5秒間隔で実行されますが、60秒間更新が無いと自動的にRedisから削除されるようになっています。
+heartbeatによってRedisに書き込まれたワーカーのリストは<code>sidekiq</code>のWeb UI上でも確認することができます。</p>
+<img src="/images/post_20180502_kubernetes_with_rails/sidekiq-web-ui.png">
+<p>そしてこのワーカーのリストは、SidekiqのAPIでも取得することができます。</p>
+<p><a href="https://github.com/mperham/sidekiq/wiki/API#processes" target="_blank" rel="noopener">https://github.com/mperham/sidekiq/wiki/API#processes</a></p>
+<p>k8sでは<code>Pod</code>のホスト名は<code>Pod</code>の名前と同じになるのでユニークであることが保証されています。
+<code>livenessProbe</code>で実行しているスクリプト<code>./bin/health-check-sidekiq</code>では、
+このAPIを利用してワーカーのリストに自身のホスト名が含まれているかどうかを確認しています。</p>
+<pre class="line-numbers language-bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span> -e
+
+<span class="token function">cd</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> $0<span class="token variable">)</span></span>/<span class="token punctuation">..</span>
+
+./bin/rake sidekiq:status
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-ruby"><code class="language-ruby"><span class="token comment" spellcheck="true"># lib/tasks/sidekiq.rake</span>
+
+namespace <span class="token symbol">:sidekiq</span> <span class="token keyword">do</span>
+  desc <span class="token string">"Health check for sidekiq worker process."</span>
+  task status<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token symbol">:environment</span><span class="token punctuation">]</span> <span class="token keyword">do</span>
+    <span class="token keyword">require</span> <span class="token string">"socket"</span>
+
+    hostname <span class="token operator">=</span> <span class="token constant">Socket</span><span class="token punctuation">.</span>gethostname
+    <span class="token keyword">if</span> <span class="token constant">Sidekiq</span><span class="token punctuation">:</span><span class="token symbol">:ProcessSet</span><span class="token punctuation">.</span><span class="token keyword">new</span><span class="token punctuation">.</span>any<span class="token operator">?</span> <span class="token punctuation">{</span> <span class="token operator">|</span>ps<span class="token operator">|</span> ps<span class="token punctuation">[</span><span class="token string">"hostname"</span><span class="token punctuation">]</span> <span class="token operator">==</span> hostname <span class="token punctuation">}</span>
+      exit <span class="token number">0</span>
+    <span class="token keyword">else</span>
+      exit <span class="token number">1</span>
+    <span class="token keyword">end</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>死活監視が意図したように動作するかどうかは、<code>sidekiq</code>プロセスに<code>SIGSTOP</code>シグナルを送ってサスペンドすれば確認できます。
+<code>SIGKILL</code>や<code>SIGTERM</code>などでは即座にコンテナが終了するため、<code>livenessProbe</code>を待たず<code>Pod</code>が再起動される点に注意してください。</p>
+<pre><code>$ kubectl get pods
+NAME                               READY     STATUS    RESTARTS   AGE
+demoapp-mysql-57d56b47cd-ztc5k     1/1       Running   0          2m
+demoapp-puma-749c456c87-6vhrl      1/1       Running   0          2m
+demoapp-redis-58f795f487-v2x4j     1/1       Running   0          2m
+demoapp-sidekiq-669cd7cb6c-bfhpf   1/1       Running   0          2m
+
+$ kubectl exec demoapp-sidekiq-669cd7cb6c-bfhpf -- pgrep -l sidekiq
+31 sidekiq 5.1.3 app [0 of 25 busy]
+
+$ kubectl exec demoapp-sidekiq-669cd7cb6c-bfhpf -- pkill -STOP sidekiq
+</code></pre><p>この後、60秒ほど待つとSidekiqのWeb UI上でワーカープロセスが消えるのを確認できます。
+さらにその後、だいたい10秒に一度の頻度でヘルスチェックが失敗したというログが<code>sidekiq</code>の<code>Pod</code>のイベントログに表示されます。
+3回失敗したところでコンテナがKillされて再起動し、再びSidekiqのWeb UI上に新しいワーカーが
+現れるのを確認できます。</p>
+<pre><code>$ kubectl get pods --watch
+NAME                               READY     STATUS    RESTARTS   AGE
+demoapp-mysql-57d56b47cd-ztc5k     1/1       Running   0          3m
+demoapp-puma-749c456c87-6vhrl      1/1       Running   0          3m
+demoapp-redis-58f795f487-v2x4j     1/1       Running   0          3m
+demoapp-sidekiq-669cd7cb6c-bfhpf   1/1       Running   0          3m
+demoapp-sidekiq-669cd7cb6c-bfhpf   1/1       Running   1         5m
+
+$ kubectl describe pod demoapp-sidekiq-669cd7cb6c-bfhpf
+(省略)
+Events:
+  Type     Reason                 Age               From               Message
+  ----     ------                 ----              ----               -------
+  Normal   Scheduled              5m                default-scheduler  Successfully assigned demoapp-sidekiq-669cd7cb6c-bfhpf to minikube
+  Normal   SuccessfulMountVolume  5m                kubelet, minikube  MountVolume.SetUp succeeded for volume &quot;default-token-dzvgp&quot;
+  Warning  Unhealthy              42s (x3 over 1m)  kubelet, minikube  Liveness probe failed:
+  Normal   Pulled                 11s (x2 over 5m)  kubelet, minikube  Container image &quot;demoapp:0.0.1&quot; already present on machine
+  Normal   Created                11s (x2 over 5m)  kubelet, minikube  Created container
+  Normal   Started                11s (x2 over 5m)  kubelet, minikube  Started container
+  Normal   Killing                11s               kubelet, minikube  Killing container with id docker://sidekiq:Container failed liveness probe.. Container will be killed and recreated.
+</code></pre><h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>Step1では、第2回<a href="/blog/2018/05/30/docker-compose-with-rails/#docker-composeコマンドによるローカルプレビュー環境">Docker Compose/Dockerfile編</a>
+の<code>docker-compose-preview.yml</code>に相当する構成を<code>Deployment</code>, <code>Service</code>, <code>ConfigMap</code>, <code>Secret</code>の4種のAPIオブジェクトで記述しました。</p>
+<p>この時点では下記に挙げる三つの制約があります。</p>
+<ul>
+<li>pumaコンテナを複数起動すると<code>rails db:setup</code>が並列実行されてエラーになる。</li>
+<li>MySQLやRedisのデータが永続化されていないため、コンテナを停止するとデータも消える。</li>
+<li>pumaに外部からアクセスするためのエンドポイントを本番環境で運用するのが難しい。</li>
+</ul>
+<p>これらの制約を解消する方法は次回<a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Kubernetes応用編</a>で取り上げたいと思います。</p>
+<h1 id="参考情報"><a href="#参考情報" class="headerlink" title="参考情報"></a>参考情報</h1><ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/" target="_blank" rel="noopener">Kubernetes API Reference Docs(v1.10)</a></li>
+</ul>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" data-id="cjhtbua090022kzrctn5b88id" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rails/">rails</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/05/30/practical-kubernetes-with-rails/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer Post</strong>
+      <div class="article-nav-title">
+        
+          Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/05/30/kubernetes-tutorial/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/docker-compose-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門2 Docker Compose/Dockerfile編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2018 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
