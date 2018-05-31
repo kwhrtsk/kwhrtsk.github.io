@@ -4,7 +4,7 @@
   <url>
     <loc>https://chopschips.net/blog/2018/05/30/helm-with-rails/</loc>
     
-    <lastmod>2018-05-31T15:04:56.834Z</lastmod>
+    <lastmod>2018-05-31T15:11:49.300Z</lastmod>
     
   </url>
   
@@ -58,7 +58,14 @@
   </url>
   
   <url>
-    <loc>https://chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
+    <loc>https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
+    
+    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</loc>
     
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
     
@@ -72,13 +79,6 @@
   </url>
   
   <url>
-    <loc>https://chopschips.net/blog/2015/04/04/funcy-methods-in-sidekiq/</loc>
-    
-    <lastmod>2017-10-23T13:42:11.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://chopschips.net/blog/2015/08/23/migrate-to-hexo-from-octopress/</loc>
     
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
@@ -86,7 +86,7 @@
   </url>
   
   <url>
-    <loc>https://chopschips.net/blog/2015/08/24/hexo-theme-ingenuous/</loc>
+    <loc>https://chopschips.net/blog/2014/07/08/octopress-toc-improved/</loc>
     
     <lastmod>2017-10-23T13:42:11.000Z</lastmod>
     
