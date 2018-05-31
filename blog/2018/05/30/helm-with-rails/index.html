@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第六回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  はじめにHelmについて簡単に">
 <meta property="og:locale" content="ja">
-<meta property="og:updated_time" content="2018-05-31T15:15:29.092Z">
+<meta property="og:updated_time" content="2018-05-31T15:17:03.816Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Railsアプリ開発のためのDocker&#x2F;Kubernetes入門6 Helm編">
 <meta name="twitter:description" content="RailsアプリケーションをKubernetes(以後、k8s)で運用できるようにするための手順を書きます。 この記事はシリーズ連載記事の第六回です。  第一回 Docker編 第二回 Docker Compose/Dockerfile編 第三回 Kubernetes入門編 第四回 Kubernetes基礎編 第五回 Kubernetes応用編 第六回 Helm編  はじめにHelmについて簡単に">
@@ -761,7 +761,7 @@ cat *.yaml | sed s/\${MINIKUBE_IP}/$(MINIKUBE_IP)/ | kubectl apply --record -f -
                 <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> template "demoapp.rails<span class="token punctuation">-</span>env.name" . <span class="token punctuation">}</span><span class="token punctuation">}</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>このようにテンプレートでは<code>&#123;&#123; &#125;&#125;</code>の中にコード片を埋め込んでいきます。</p>
-<p>いっぱい差分があるように見えますが、書き換えられているものは次の三つです。</p>
+<p>いっぱい差分があるように見えますが、書き換えられているものは次の四つです。</p>
 <ul>
 <li>レプリカの数やイメージの名前など、パラメータ化されたもの</li>
 <li>オブジェクトの名前</li>
@@ -1414,7 +1414,7 @@ Docker/Kubernetesの基本と、小さなRailsアプリケーションをHelmで
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-id="cjhuojlib005gh1rclv4t4vi9" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-id="cjhuonzba005cr0rck6mk6tn7" class="article-share-link">Share</a>
       
       
       
