@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
 <meta property="og:locale" content="ja">
-<meta property="og:updated_time" content="2020-03-03T07:59:06.250Z">
+<meta property="og:updated_time" content="2020-03-03T08:25:32.190Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VSCodeでRustのテストコードをデバッグできない問題">
 <meta name="twitter:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
@@ -152,7 +152,7 @@ ga('send', 'pageview');
 ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。</p>
 <p>まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、
 相変わらずVSCode + LLDBという構成だと<strong>libクレートの単体テスト</strong>にブレークポイントが効かない。<strong>binクレートの単体テストだと効く。</strong>
-(日本語のドキュメントでこれに触れてるの見たことないんだけど、もしかして困っているのは私だけなのだろうか？)</p>
+(日本語の入門ドキュメントはだいたいサンプルがbinクレートなので、この問題を踏むのはその少し後)</p>
 <p>今回はちょっと時間を使って原因を調べてみることにしました。</p>
 <p>問題の再現手順とかワークアラウンドのスクリプトは下記のリポジトリにも置いてあります。</p>
 <p><a href="https://github.com/kwhrtsk/rust-lldb-workaround" target="_blank" rel="noopener">https://github.com/kwhrtsk/rust-lldb-workaround</a></p>
@@ -365,7 +365,7 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7blpx6z002fhkrcp6ixxega" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bmo0tt002dvkrclpsh29aq" class="article-share-link">Share</a>
       
       
       
