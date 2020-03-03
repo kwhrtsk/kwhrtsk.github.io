@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
 <meta property="og:locale" content="ja">
-<meta property="og:updated_time" content="2020-03-03T07:47:53.741Z">
+<meta property="og:updated_time" content="2020-03-03T07:49:04.102Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VSCodeでRustのテストコードをデバッグできない問題">
 <meta name="twitter:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
@@ -145,7 +145,7 @@ ga('send', 'pageview');
         
           <div class="toc-wrap">
             <h3> Table of Contents</h3>
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#問題の概要"><span class="toc-number">1.</span> <span class="toc-text">問題の概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#環境"><span class="toc-number">3.</span> <span class="toc-text">環境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#再現手順"><span class="toc-number">4.</span> <span class="toc-text">再現手順</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因-1"><span class="toc-number">5.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rust-llvmコマンドを直接実行する場合"><span class="toc-number">6.</span> <span class="toc-text">rust-llvmコマンドを直接実行する場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VSCode-CodeLLDB-の場合"><span class="toc-number">7.</span> <span class="toc-text">VSCode (CodeLLDB) の場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#終わりに"><span class="toc-number">8.</span> <span class="toc-text">終わりに</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#問題の概要"><span class="toc-number">1.</span> <span class="toc-text">問題の概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#環境"><span class="toc-number">3.</span> <span class="toc-text">環境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#再現手順"><span class="toc-number">4.</span> <span class="toc-text">再現手順</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#詳細"><span class="toc-number">5.</span> <span class="toc-text">詳細</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rust-llvmコマンドを直接実行する場合"><span class="toc-number">6.</span> <span class="toc-text">rust-llvmコマンドを直接実行する場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VSCode-CodeLLDB-の場合"><span class="toc-number">7.</span> <span class="toc-text">VSCode (CodeLLDB) の場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#終わりに"><span class="toc-number">8.</span> <span class="toc-text">終わりに</span></a></li></ol>
           </div>
         
         <p>2018エディションにNLLも入って久しいし、<a href="https://github.com/hyperium/tonic" target="_blank" rel="noopener">tonic</a>(async/await構文でgRPCサービスを書けるライブラリ)から
@@ -208,7 +208,7 @@ Current executable set to &#39;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/r
 (lldb) breakpoint set --name tests::it_works
 Breakpoint 1: no locations (pending).
 WARNING:  Unable to resolve breakpoint to any actual locations.
-</code></pre><h1 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h1><p>binクレートの場合、<code>cargo test</code>は<code>.dSYM</code>ファイルを<code>target/debug/</code>ディレクトリに作成します。
+</code></pre><h1 id="詳細"><a href="#詳細" class="headerlink" title="詳細"></a>詳細</h1><p>binクレートの場合、<code>cargo test</code>は<code>.dSYM</code>ファイルを<code>target/debug/</code>ディレクトリに作成します。
 このファイルは実際には<code>target/debug/deps/</code>以下のファイルへのシンボリックリンクです。</p>
 <pre><code>% cargo test --bins --no-run --message-format=json 2&gt; /dev/null | jq &#39;select(.target.kind | contains([&quot;bin&quot;])) | .filenames&#39;
 [
@@ -359,7 +359,7 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bii4v80027ztrcctp09a15" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7blcoka002gwxrci4304fch" class="article-share-link">Share</a>
       
       
       
