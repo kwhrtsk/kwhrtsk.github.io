@@ -7,17 +7,17 @@
   <title>VSCodeでRustのテストコードをデバッグできない問題 | 割り箸ポテチ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-    <meta name="keywords" content="割り箸ポテチ, 河原太介,rust,lldb,debug,vscode">
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,rust,lldb,rust-lldb,debug,debugger,vscode">
   
   <meta name="description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
-<meta name="keywords" content="rust,lldb,debug,vscode">
+<meta name="keywords" content="rust,lldb,rust-lldb,debug,debugger,vscode">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VSCodeでRustのテストコードをデバッグできない問題">
 <meta property="og:url" content="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/index.html">
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
 <meta property="og:locale" content="ja">
-<meta property="og:updated_time" content="2020-03-03T07:49:04.102Z">
+<meta property="og:updated_time" content="2020-03-03T07:59:06.250Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VSCodeでRustのテストコードをデバッグできない問題">
 <meta name="twitter:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ)から ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストにブレ">
@@ -145,7 +145,7 @@ ga('send', 'pageview');
         
           <div class="toc-wrap">
             <h3> Table of Contents</h3>
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#問題の概要"><span class="toc-number">1.</span> <span class="toc-text">問題の概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#環境"><span class="toc-number">3.</span> <span class="toc-text">環境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#再現手順"><span class="toc-number">4.</span> <span class="toc-text">再現手順</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#詳細"><span class="toc-number">5.</span> <span class="toc-text">詳細</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rust-llvmコマンドを直接実行する場合"><span class="toc-number">6.</span> <span class="toc-text">rust-llvmコマンドを直接実行する場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VSCode-CodeLLDB-の場合"><span class="toc-number">7.</span> <span class="toc-text">VSCode (CodeLLDB) の場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#終わりに"><span class="toc-number">8.</span> <span class="toc-text">終わりに</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#問題の概要"><span class="toc-number">1.</span> <span class="toc-text">問題の概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#環境"><span class="toc-number">3.</span> <span class="toc-text">環境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#再現手順"><span class="toc-number">4.</span> <span class="toc-text">再現手順</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#詳細"><span class="toc-number">5.</span> <span class="toc-text">詳細</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rust-lldbコマンドを直接実行する場合"><span class="toc-number">6.</span> <span class="toc-text">rust-lldbコマンドを直接実行する場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VSCode-CodeLLDB-の場合"><span class="toc-number">7.</span> <span class="toc-text">VSCode (CodeLLDB) の場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#終わりに"><span class="toc-number">8.</span> <span class="toc-text">終わりに</span></a></li></ol>
           </div>
         
         <p>2018エディションにNLLも入って久しいし、<a href="https://github.com/hyperium/tonic" target="_blank" rel="noopener">tonic</a>(async/await構文でgRPCサービスを書けるライブラリ)から
@@ -197,12 +197,15 @@ edition = "2018"
 
 rm -rf target
 bin=$(cargo test --lib --no-run --message-format=json | jq -r '.executable')
-lldb $bin <<- EOF
+rust-lldb $bin <<- EOF
 breakpoint set --name tests::it_works
 EOF
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <pre><code>   Compiling rust-lldb-workaround v0.1.0 (/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround)
-    Finished test [unoptimized + debuginfo] target(s) in 0.61s
+    Finished test [unoptimized + debuginfo] target(s) in 0.51s
+(lldb) command script import &quot;/Users/kawahara_taisuke/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/etc/lldb_rust_formatters.py&quot;
+(lldb) type summary add --no-value --python-function lldb_rust_formatters.print_val -x &quot;.*&quot; --category Rust
+(lldb) type category enable Rust
 (lldb) target create &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&quot;
 Current executable set to &#39;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&#39; (x86_64).
 (lldb) breakpoint set --name tests::it_works
@@ -256,9 +259,9 @@ drwxr-xr-x  3 kawahara_taisuke  staff      96  3  3 13:49 rust_lldb_workaround-6
 </ol>
 <p>1の方法はCodeLLDBなど使用するVSCode拡張全てに対処が必要で、あまり筋がよくないと思ったので除外しました。</p>
 <p>2と3は根本的に解決しようとすると両方とも<code>cargo</code>の動作を変える必要があるのですが、
-2については<code>cargo test</code>と<code>rust-llvm</code>の間にシンボリックリンクを作る処理を挟めば良いので簡単そうです。</p>
+2については<code>cargo test</code>と<code>rust-lldb</code>の間にシンボリックリンクを作る処理を挟めば良いので簡単そうです。</p>
 <p>この記事では2の方法でのワークアラウンドを示します。</p>
-<h1 id="rust-llvmコマンドを直接実行する場合"><a href="#rust-llvmコマンドを直接実行する場合" class="headerlink" title="rust-llvmコマンドを直接実行する場合"></a><code>rust-llvm</code>コマンドを直接実行する場合</h1><p>先ほどのシェルスクリプトを下記のように修正します。</p>
+<h1 id="rust-lldbコマンドを直接実行する場合"><a href="#rust-lldbコマンドを直接実行する場合" class="headerlink" title="rust-lldbコマンドを直接実行する場合"></a><code>rust-lldb</code>コマンドを直接実行する場合</h1><p>先ほどのシェルスクリプトを下記のように修正します。</p>
 <pre class="line-numbers language-sh"><code class="language-sh">#!/bin/bash
 
 rm -rf target
@@ -267,13 +270,16 @@ bin=$(cargo test --lib --no-run --message-format=json | jq -r '.executable')
 # .dSYMディレクトリへのシンボリックリンクを作成
 (cd target/debug && for d in deps/*.dSYM; do ln -sf $d ./; done)
 
-lldb $bin <<- EOF
+rust-lldb $bin <<- EOF
 breakpoint set --name tests::it_works
 EOF
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>ブレークポイントの設置が成功するようになります。</p>
 <pre><code>   Compiling rust-lldb-workaround v0.1.0 (/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround)
-    Finished test [unoptimized + debuginfo] target(s) in 0.76s
+    Finished test [unoptimized + debuginfo] target(s) in 0.53s
+(lldb) command script import &quot;/Users/kawahara_taisuke/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/etc/lldb_rust_formatters.py&quot;
+(lldb) type summary add --no-value --python-function lldb_rust_formatters.print_val -x &quot;.*&quot; --category Rust
+(lldb) type category enable Rust
 (lldb) target create &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&quot;
 Current executable set to &#39;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&#39; (x86_64).
 (lldb) breakpoint set --name tests::it_works
@@ -359,7 +365,7 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7blcoka002gwxrci4304fch" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7blpx6z002fhkrcp6ixxega" class="article-share-link">Share</a>
       
       
       
