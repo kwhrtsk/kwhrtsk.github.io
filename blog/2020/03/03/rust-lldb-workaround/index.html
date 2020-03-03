@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>rust-lldb-workaround | 割り箸ポテチ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="割り箸ポテチ, 河原太介,rust,lldb,debug,vscode">
+  
+  <meta name="description" content="2018エディションにNLLも入って久しいし、async/await構文でgRPCサービスを書ける tonic から ベータが取れたぞということで久しぶりに Rust やろうという気持ちが高まってきました。 で、よーし開発環境を整えるぞということで色々アップデートしていたのですが、 相変わらずVSCode + LLDBという構成だと lib クレートの単体テストにブレークポイントが効かない。 日本">
+<meta name="keywords" content="rust,lldb,debug,vscode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rust-lldb-workaround">
+<meta property="og:url" content="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/index.html">
+<meta property="og:site_name" content="割り箸ポテチ">
+<meta property="og:description" content="2018エディションにNLLも入って久しいし、async/await構文でgRPCサービスを書ける tonic から ベータが取れたぞということで久しぶりに Rust やろうという気持ちが高まってきました。 で、よーし開発環境を整えるぞということで色々アップデートしていたのですが、 相変わらずVSCode + LLDBという構成だと lib クレートの単体テストにブレークポイントが効かない。 日本">
+<meta property="og:locale" content="ja">
+<meta property="og:updated_time" content="2020-03-03T06:30:02.570Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rust-lldb-workaround">
+<meta name="twitter:description" content="2018エディションにNLLも入って久しいし、async/await構文でgRPCサービスを書ける tonic から ベータが取れたぞということで久しぶりに Rust やろうという気持ちが高まってきました。 で、よーし開発環境を整えるぞということで色々アップデートしていたのですが、 相変わらずVSCode + LLDBという構成だと lib クレートの単体テストにブレークポイントが効かない。 日本">
+<meta name="twitter:creator" content="@kwhrtsk">
+  
+    <link rel="alternative" href="/atom.xml" title="割り箸ポテチ" type="application/atom+xml">
+  
+  
+  <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51728803-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<!-- Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-1399812859740187",
+  enable_page_level_ads: true
+  });
+</script>
+<!-- End Google Adsense -->
+
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">割り箸ポテチ</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">ソフトウェアエンジニアリング一般についてのメモです。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chopschips.net"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-rust-lldb-workaround" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2020/03/03/rust-lldb-workaround/" class="article-date">
+  <time datetime="2020-03-03T05:52:17.000Z" itemprop="datePublished">2020-03-03</time>
+</a>
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/開発環境/">開発環境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      rust-lldb-workaround
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-sharing">
+  <ul>
+    <li>
+      <a href="http://b.hatena.ne.jp/entry/https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </li>
+    <li>
+      <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-via="{{ theme.twitter }}" data-counturl="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" >Tweet</a>
+    </li>
+    <li>
+      <div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false" data-font="verdana" data-href="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/"></div>
+    </li>
+  </ul>
+</div>
+
+      
+      
+        
+          <div class="toc-wrap">
+            <h3> Table of Contents</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#問題の概要"><span class="toc-number">1.</span> <span class="toc-text">問題の概要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#環境"><span class="toc-number">3.</span> <span class="toc-text">環境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#再現手順"><span class="toc-number">4.</span> <span class="toc-text">再現手順</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因-1"><span class="toc-number">5.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rust-llvmコマンドを直接実行する場合"><span class="toc-number">6.</span> <span class="toc-text">rust-llvmコマンドを直接実行する場合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VSCode-CodeLLDB-の場合"><span class="toc-number">7.</span> <span class="toc-text">VSCode (CodeLLDB) の場合</span></a></li></ol>
+          </div>
+        
+        <p>2018エディションにNLLも入って久しいし、async/await構文でgRPCサービスを書ける <a href="https://github.com/hyperium/tonic" target="_blank" rel="noopener">tonic</a> から
+ベータが取れたぞということで久しぶりに Rust やろうという気持ちが高まってきました。</p>
+<p>で、よーし開発環境を整えるぞということで色々アップデートしていたのですが、
+相変わらずVSCode + LLDBという構成だと lib クレートの単体テストにブレークポイントが効かない。
+日本語のドキュメントでこれに触れてるの見たことないんですが、もしかして私だけ？</p>
+<p>今回はちょっと時間を使って原因を調べてみることにしました。</p>
+<p>問題の再現手順とかワークアラウンドのスクリプトは下記のリポジトリにも置いてあります。</p>
+<p><a href="https://github.com/kwhrtsk/rust-lldb-workaround" target="_blank" rel="noopener">https://github.com/kwhrtsk/rust-lldb-workaround</a></p>
+<h1 id="問題の概要"><a href="#問題の概要" class="headerlink" title="問題の概要"></a>問題の概要</h1><p>macOSにおいて、<code>rust-lldb</code> でlibクレートのテストをデバッグしようとしたときに、ブレークポイントが効きません。
+VSCodeで <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">CodeLLDB</a> を使ってデバッグした場合も同様です。</p>
+<h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>原因は、<code>cargo test</code>に<code>--lib</code>オプションを付けるとLLDBのデバッグシンボル情報が書かれたファイル(<code>.dSYM</code>)が
+<code>target/debug/</code>ディレクトリに作成されないからでした。</p>
+<h1 id="環境"><a href="#環境" class="headerlink" title="環境"></a>環境</h1><ul>
+<li><strong>Operating system:</strong> macOS Catalina 10.15.3</li>
+<li><strong>Rust toolchain:</strong> stable-x86_64-apple-darwin</li>
+<li><strong>Rustc version:</strong> 1.41.1 (f3e1a954d 2020-02-24)</li>
+<li><strong>lldb:</strong> 9.0.1</li>
+<li><strong>VSCode:</strong> 1.42.1</li>
+<li><strong>CodeLLDB:</strong> 1.5.0</li>
+</ul>
+<h1 id="再現手順"><a href="#再現手順" class="headerlink" title="再現手順"></a>再現手順</h1><ul>
+<li><code>Cargo.toml</code></li>
+</ul>
+<pre class="line-numbers language-toml"><code class="language-toml">[package]
+name = "rust-lldb-workaround"
+version = "0.1.0"
+edition = "2018"
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><code>src/lib.rs</code></li>
+</ul>
+<pre class="line-numbers language-rust"><code class="language-rust"><span class="token attribute attr-name">#[cfg(test)]</span>
+<span class="token keyword">mod</span> tests <span class="token punctuation">{</span>
+    <span class="token attribute attr-name">#[test]</span>
+    <span class="token keyword">fn</span> <span class="token function">it_works</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">assert_eq!</span><span class="token punctuation">(</span><span class="token number">2</span> <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>it_works</code>にブレークポイントを仕掛けようとすると、下記のように失敗します。</p>
+<p>下記のようなシェルスクリプトを実行するとこの様子を確認できます。</p>
+<pre><code>#!/bin/bash
+
+rm -rf target
+bin=$(cargo test --lib --no-run --message-format=json | jq -r &#39;.executable&#39;)
+lldb $bin &lt;&lt;- EOF
+breakpoint set --name tests::it_works
+EOF
+</code></pre><pre><code>   Compiling rust-lldb-workaround v0.1.0 (/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround)
+    Finished test [unoptimized + debuginfo] target(s) in 0.61s
+(lldb) target create &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&quot;
+Current executable set to &#39;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&#39; (x86_64).
+(lldb) breakpoint set --name tests::it_works
+Breakpoint 1: no locations (pending).
+WARNING:  Unable to resolve breakpoint to any actual locations.
+</code></pre><h1 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h1><p>binクレートの場合、<code>cargo test</code>は<code>.dSYM</code>ファイルを<code>target/debug/</code>ディレクトリに作成します。
+このファイルは実際には<code>target/debug/deps/</code>以下のファイルへのシンボリックリンクです。</p>
+<pre><code>% cargo test --bins --no-run --message-format=json 2&gt; /dev/null | jq &#39;select(.target.kind | contains([&quot;bin&quot;])) | .filenames&#39;
+[
+  &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-4aae58342b9c3866&quot;,
+  &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-4aae58342b9c3866.dSYM&quot;
+]
+
+% ls -l target/debug
+total 1720
+drwxr-xr-x  2 kawahara_taisuke  staff      64  3  3 13:47 build
+drwxr-xr-x  8 kawahara_taisuke  staff     256  3  3 13:47 deps
+drwxr-xr-x  2 kawahara_taisuke  staff      64  3  3 13:47 examples
+drwxr-xr-x  4 kawahara_taisuke  staff     128  3  3 13:47 incremental
+-rwxr-xr-x  2 kawahara_taisuke  staff  874952  3  3 13:47 rust_lldb_workaround-4aae58342b9c3866
+-rw-r--r--  1 kawahara_taisuke  staff     282  3  3 13:47 rust_lldb_workaround-4aae58342b9c3866.d
+lrwxr-xr-x  1 kawahara_taisuke  staff      47  3  3 13:47 rust_lldb_workaround-4aae58342b9c3866.dSYM -&gt; deps/rust_lldb_workaround-4aae58342b9c3866.dSYM
+</code></pre><p>しかし、libクレートを対象とするとこのシンボリックリンクが作成されません。
+<code>rust-lldb</code>及びVSCodeのデバッガ(CodeLLDB)でブレー具ポイントが効かないのは直接的にはこれが原因です。</p>
+<pre><code>% cargo test --lib --no-run --message-format=json 2&gt; /dev/null | jq &#39;select(.target.kind | contains([&quot;lib&quot;])) | .filenames&#39;
+[
+  &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&quot;
+]
+
+% ls -l target/debug
+total 1720
+drwxr-xr-x  2 kawahara_taisuke  staff      64  3  3 13:49 build
+drwxr-xr-x  5 kawahara_taisuke  staff     160  3  3 13:49 deps
+drwxr-xr-x  2 kawahara_taisuke  staff      64  3  3 13:49 examples
+drwxr-xr-x  3 kawahara_taisuke  staff      96  3  3 13:49 incremental
+-rwxr-xr-x  2 kawahara_taisuke  staff  874968  3  3 13:49 rust_lldb_workaround-6e0ca18365abb7b9
+-rw-r--r--  1 kawahara_taisuke  staff     201  3  3 13:49 rust_lldb_workaround-6e0ca18365abb7b9.d
+
+% ls -l target/debug/deps
+total 1720
+-rwxr-xr-x  2 kawahara_taisuke  staff  874968  3  3 13:49 rust_lldb_workaround-6e0ca18365abb7b9
+-rw-r--r--  1 kawahara_taisuke  staff     290  3  3 13:49 rust_lldb_workaround-6e0ca18365abb7b9.d
+drwxr-xr-x  3 kawahara_taisuke  staff      96  3  3 13:49 rust_lldb_workaround-6e0ca18365abb7b9.dSYM
+</code></pre><p><code>cargo</code> の実装を見る限りこの挙動は意図したもので、テストの場合は<code>deps</code>の下を直接実行してもらう想定だったようです。(<a href="https://github.com/rust-lang/cargo/issues/7960" target="_blank" rel="noopener">参考</a>)</p>
+<p><a href="https://github.com/rust-lang/cargo/blob/e618d47a1765ca18d1601d4cf891a55a34d23aed/src/cargo/core/compiler/build_context/target_info.rs#L260-L269" target="_blank" rel="noopener">https://github.com/rust-lang/cargo/blob/e618d47a1765ca18d1601d4cf891a55a34d23aed/src/cargo/core/compiler/build_context/target_info.rs#L260-L269</a></p>
+<p>対処法としては次の2つの方法が考えられます。</p>
+<ol>
+<li><code>.dSYM</code>へのリンクを<code>target/debug/</code>以下に作る。</li>
+<li><code>cargo test --message-format=json</code>の出力する<code>executable</code>を<code>deps</code>の下に変更する。</li>
+</ol>
+<p>両方とも根本的には<code>cargo</code>の動作を変える必要があるのですが、前者については<code>cargo test</code>と<code>rust-llvm</code>の間に
+シンボリックリンクを作る処理を挟めば良いので、この記事ではこちらの方法でのワークアラウンドを示します。</p>
+<h1 id="rust-llvmコマンドを直接実行する場合"><a href="#rust-llvmコマンドを直接実行する場合" class="headerlink" title="rust-llvmコマンドを直接実行する場合"></a><code>rust-llvm</code>コマンドを直接実行する場合</h1><p>先ほどのシェルスクリプトを下記のように修正します。</p>
+<pre><code>#!/bin/bash
+
+rm -rf target
+bin=$(cargo test --lib --no-run --message-format=json | jq -r &#39;.executable&#39;)
+
+# create symlink of .dSYM directory
+(cd target/debug &amp;&amp; for d in deps/*.dSYM; do ln -sf $d ./; done)
+
+lldb $bin &lt;&lt;- EOF
+breakpoint set --name tests::it_works
+EOF
+</code></pre><p>ブレークポイントの設置が成功するようになります。</p>
+<pre><code>   Compiling rust-lldb-workaround v0.1.0 (/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround)
+    Finished test [unoptimized + debuginfo] target(s) in 0.76s
+(lldb) target create &quot;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&quot;
+Current executable set to &#39;/Users/kawahara_taisuke/.ghq/github.com/kwhrtsk/rust-lldb-workaround/target/debug/rust_lldb_workaround-6e0ca18365abb7b9&#39; (x86_64).
+(lldb) breakpoint set --name tests::it_works
+Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround::tests::it_works::h666f078a6b384dfd + 18 at lib.rs:7:8, address = 0x0000000100000cd2
+</code></pre><h1 id="VSCode-CodeLLDB-の場合"><a href="#VSCode-CodeLLDB-の場合" class="headerlink" title="VSCode (CodeLLDB) の場合"></a>VSCode (CodeLLDB) の場合</h1><p><code>launch.json</code> と <code>tasks.json</code> を修正して、<code>.dSYM</code>のシンボリックリンクを自動的に作成するようにします。</p>
+<ul>
+<li><code>.vscode/launch.json</code></li>
+</ul>
+<p>最後の行以外は <code>LLVM</code> テンプレートで作ったものそのままです。</p>
+<pre class="line-numbers language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.2.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"configurations"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"lldb"</span><span class="token punctuation">,</span>
+      <span class="token property">"request"</span><span class="token operator">:</span> <span class="token string">"launch"</span><span class="token punctuation">,</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Debug unit tests in library 'rust-lldb-workaround'"</span><span class="token punctuation">,</span>
+      <span class="token property">"cargo"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"args"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+          <span class="token string">"test"</span><span class="token punctuation">,</span>
+          <span class="token string">"--no-run"</span><span class="token punctuation">,</span>
+          <span class="token string">"--lib"</span><span class="token punctuation">,</span>
+          <span class="token string">"--package=rust-lldb-workaround"</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token property">"filter"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"rust-lldb-workaround"</span><span class="token punctuation">,</span>
+          <span class="token property">"kind"</span><span class="token operator">:</span> <span class="token string">"lib"</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">"args"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token property">"cwd"</span><span class="token operator">:</span> <span class="token string">"${workspaceFolder}"</span><span class="token punctuation">,</span>
+      // この行を追加
+      <span class="token property">"preLaunchTask"</span><span class="token operator">:</span> <span class="token string">"symlink dSYM"</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><code>.vscode/tasks.json</code></li>
+</ul>
+<p>このタスクでは、<code>target/debug</code>ディレクトリに移動して<code>target/debug/deps/</code>ディレクトリ以下の全ての<code>*.dSYM</code>のシンボリックリンクを作成します。
+<code>launch.json</code>でテストを実行すると、<code>cargo test</code>の後に自動で実行されます。</p>
+<pre class="line-numbers language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"2.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"tasks"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"label"</span><span class="token operator">:</span> <span class="token string">"symlink dSYM"</span><span class="token punctuation">,</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"shell"</span><span class="token punctuation">,</span>
+      <span class="token property">"command"</span><span class="token operator">:</span> <span class="token string">"sh"</span><span class="token punctuation">,</span>
+      <span class="token property">"args"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"-c"</span><span class="token punctuation">,</span>
+        <span class="token string">"cd ${workspaceFolder}/target/debug; for d in deps/*.dSYM; do ln -fs $d ./; done"</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>なお <a href="https://github.com/hdevalke/rust-test-lens" target="_blank" rel="noopener">Rust Test Lens</a> を使う場合は、上記のタスクを自動で挟み込むことができません。
+この場合は事前に一度 <code>cargo test --lib --no-run</code> を実行した後、手動で上記のタスクを実行して
+<code>.dSYM</code>のシンボリックリンクを作っておく必要があります。</p>
+
+      
+      
+        
+<div class="article-ad-unit">
+  <h5>
+    広告
+  </h5>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 記事内広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1399812859740187"
+     data-ad-slot="4997425139"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bii4v80027ztrcctp09a15" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lldb/">lldb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rust/">rust</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vscode/">vscode</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2018/05/30/helm-with-rails/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older Post</strong>
+      <div class="article-nav-title">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-about" class="widget-title">About</h3>
+    <div class="widget">
+      
+        <p> Kawahara Taisuke / 河原太介 </p>
+      
+      
+        <p> <a href="http://twitter.com/kwhrtsk">@kwhrtsk</a> </p>
+      
+      </p>
+      
+        <p> 京都でソフトウェアエンジニアをしています。興味の対象はインフラ、サーバアプリケーションからフロントエンドまでWebサービスに関わるエンジニアリング全般。最近は特にRails、Apache Spark、React、golang周辺。 </p>
+      
+      
+        <p> このブログは筆者の所属する企業およびその業務とは一切関係のない個人の活動です。 </p>
+      
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-recent-posts" class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2020/03/03/rust-lldb-workaround/">rust-lldb-workaround</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/helm-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門6 Helm編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/practical-kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門5 Kubernetes応用編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-with-rails/">Railsアプリ開発のためのDocker/Kubernetes入門4 Kubernetes基礎編</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/05/30/kubernetes-tutorial/">Railsアプリ開発のためのDocker/Kubernetes入門3 Kubernetes入門編</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tagcloud" class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/VirtualBox/" style="font-size: 10px;">VirtualBox</a> <a href="/tags/WOVN-io/" style="font-size: 10px;">WOVN.io</a> <a href="/tags/Yosemite/" style="font-size: 10px;">Yosemite</a> <a href="/tags/bash/" style="font-size: 10px;">bash</a> <a href="/tags/bento/" style="font-size: 10px;">bento</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/chef/" style="font-size: 15px;">chef</a> <a href="/tags/docker/" style="font-size: 18.33px;">docker</a> <a href="/tags/emoji/" style="font-size: 10px;">emoji</a> <a href="/tags/errbit/" style="font-size: 10px;">errbit</a> <a href="/tags/helm/" style="font-size: 10px;">helm</a> <a href="/tags/hexo/" style="font-size: 11.67px;">hexo</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/knife-zero/" style="font-size: 10px;">knife-zero</a> <a href="/tags/kubernetes/" style="font-size: 16.67px;">kubernetes</a> <a href="/tags/lldb/" style="font-size: 10px;">lldb</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/octopress/" style="font-size: 13.33px;">octopress</a> <a href="/tags/rails/" style="font-size: 20px;">rails</a> <a href="/tags/rbenv/" style="font-size: 10px;">rbenv</a> <a href="/tags/ruby/" style="font-size: 18.33px;">ruby</a> <a href="/tags/rust/" style="font-size: 10px;">rust</a> <a href="/tags/scala/" style="font-size: 10px;">scala</a> <a href="/tags/sidekiq/" style="font-size: 10px;">sidekiq</a> <a href="/tags/vagrant/" style="font-size: 13.33px;">vagrant</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/本/" style="font-size: 10px;">本</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-tag" class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VirtualBox/">VirtualBox</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOVN-io/">WOVN.io</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yosemite/">Yosemite</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash/">bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bento/">bento</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chef/">chef</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/emoji/">emoji</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/errbit/">errbit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/helm/">helm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/knife-zero/">knife-zero</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lldb/">lldb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rails/">rails</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rbenv/">rbenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ruby/">ruby</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rust/">rust</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sidekiq/">sidekiq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vagrant/">vagrant</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/">vscode</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zsh/">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/本/">本</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-category" class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Blog/">Blog</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Development/">Development</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/HowTo/">HowTo</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/I18n/">I18n</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Research/">Research</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/制作物/">制作物</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/書評/">書評</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/開発環境/">開発環境</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 id="widget-title-archive" class="widget-title" data-skip-mobile-nav="true">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">3月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">5月 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">4月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">8月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">4月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">3月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">9月 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">7月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">6月 2014</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      Copyrights &copy; 2020 Kawahara Taisuke / 河原太介 All Rights Reserved. <br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.
+      Themed by <a href="https://github.com/kwhrtsk/hexo-theme-ingenuous">Ingenuous</a> (based on <a href="https://github.com/hexojs/hexo-theme-landscape">Landscape</a>).
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
