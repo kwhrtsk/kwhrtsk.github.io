@@ -99,7 +99,7 @@ ga('send', 'pageview');
     <article id="post-rust-lldb-workaround" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/blog/2020/03/03/rust-lldb-workaround/" class="article-date">
-  <time datetime="2020-03-03T07:00:00.000Z" itemprop="datePublished">2020-03-03</time>
+  <time datetime="2020-03-03T07:45:00.000Z" itemprop="datePublished">2020-03-03</time>
 </a>
 
     
@@ -152,7 +152,7 @@ ga('send', 'pageview');
 ベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。</p>
 <p>まずは開発環境を整えるぞということで色々アップデートして動作を確認していたのですが、
 相変わらずVSCode + LLDBという構成だと<strong>libクレートの単体テスト</strong>にブレークポイントが効かない。<strong>binクレートの単体テストだと効く。</strong>
-日本語のドキュメントでこれに触れてるの見たことないんだけど、もしかして困っているのは私だけなのだろうか？</p>
+(日本語のドキュメントでこれに触れてるの見たことないんだけど、もしかして困っているのは私だけなのだろうか？)</p>
 <p>今回はちょっと時間を使って原因を調べてみることにしました。</p>
 <p>問題の再現手順とかワークアラウンドのスクリプトは下記のリポジトリにも置いてあります。</p>
 <p><a href="https://github.com/kwhrtsk/rust-lldb-workaround" target="_blank" rel="noopener">https://github.com/kwhrtsk/rust-lldb-workaround</a></p>
@@ -161,7 +161,9 @@ ga('send', 'pageview');
 VSCodeで <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">CodeLLDB</a> を使ってデバッグした場合も同様です。</p>
 <h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>直接の原因は、<code>cargo test</code>に<code>--lib</code>オプションを付けてテストバイナリをビルドすると、
 LLDBのデバッグシンボル情報が書かれたファイル(<code>.dSYM</code>)が<code>target/debug/</code>ディレクトリに作成されないことです。</p>
-<p>このため、ブレークポイントで指定したシンボル情報をLLDBが解決できず、デバッガが止まりません。</p>
+<p>このため、ブレークポイントとして指定したシンボル情報をLLDBが解決できず、デバッガがブレークポイントで止まりません。</p>
+<p><code>rust-lldb</code>を使った場合は、後述のようにエラーが表示されるのですが、
+VSCode上でデバッグしている場合、<code>lldb.verboseLogging</code>を有効にして出力ペインを注意深く見ていないと気づけないと思います。</p>
 <h1 id="環境"><a href="#環境" class="headerlink" title="環境"></a>環境</h1><ul>
 <li><strong>Operating system:</strong> macOS Catalina 10.15.3</li>
 <li><strong>Rust toolchain:</strong> stable-x86_64-apple-darwin</li>
@@ -338,7 +340,7 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bkwbip0029zqrc5tmj9f6q" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bii4v80027ztrcctp09a15" class="article-share-link">Share</a>
       
       
       
@@ -488,7 +490,7 @@ Dockerを使って自前で運用することもできます。</p>
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-id="ck7bkwbkt005vzqrc3as8hbvz" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/helm-with-rails/" data-id="ck7bii4ye005fztrc01w5b0s6" class="article-share-link">Share</a>
       
       
       
@@ -604,7 +606,7 @@ $ minikube dashboard
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" data-id="ck7bkwbit002czqrcqiwt08ed" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/practical-kubernetes-with-rails/" data-id="ck7bii4vb002bztrcplukhdfd" class="article-share-link">Share</a>
       
       
       
@@ -716,7 +718,7 @@ $ minikube dashboard
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" data-id="ck7bkwbif0023zqrcjizy7a47" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-with-rails/" data-id="ck7bii4vm002jztrcvxnr40h1" class="article-share-link">Share</a>
       
       
       
@@ -866,7 +868,7 @@ VMドライバとしてはVirtualBox、hyperkit、KVMなどがサポートされ
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" data-id="ck7bkwbic001zzqrckvp7ius8" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/kubernetes-tutorial/" data-id="ck7bii4uq001wztrct8qydvh5" class="article-share-link">Share</a>
       
       
       
@@ -983,7 +985,7 @@ $ open http://localhost:3000/
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" data-id="ck7bkwbia001wzqrczbxiuqny" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/docker-compose-with-rails/" data-id="ck7bii4v50025ztrc37d6ymkq" class="article-share-link">Share</a>
       
       
       
@@ -1275,7 +1277,7 @@ Docker Hub上のリポジトリは下記のページで探すことができま�
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/05/30/docker-with-rails/" data-id="ck7bkwbi5001szqrc1nvze5dr" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/05/30/docker-with-rails/" data-id="ck7bii4ve002eztrcpqgb8gb9" class="article-share-link">Share</a>
       
       
       
@@ -1363,7 +1365,7 @@ docker.zsh-completion
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="ck7bkwbij0026zqrc7zu4vcda" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/17/docker-completion/" data-id="ck7bii4vp002mztrcatccghmg" class="article-share-link">Share</a>
       
       
       
@@ -1468,7 +1470,7 @@ index 9088128..9c2f5d5 100644
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="ck7bkwbhz001kzqrcv3f5n434" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2018/04/11/rails-5-2-0/" data-id="ck7bii4uu001yztrcrn96c8l8" class="article-share-link">Share</a>
       
       
       
@@ -1557,7 +1559,7 @@ end
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/" data-id="ck7bkwbhe0014zqrc6nuqru4u" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2015/08/28/chef-vagrant-box-migrate-to-bento/" data-id="ck7bii4ts0013ztrcfd4h7krq" class="article-share-link">Share</a>
       
       
       
