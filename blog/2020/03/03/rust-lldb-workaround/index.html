@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="割り箸ポテチ">
 <meta property="og:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ) からベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を更新せねばということで諸々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストをデ">
 <meta property="og:locale" content="ja">
-<meta property="og:updated_time" content="2020-03-03T08:36:05.894Z">
+<meta property="og:updated_time" content="2020-03-06T12:25:26.349Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VSCodeでRustのテストコードをデバッグできない問題">
 <meta name="twitter:description" content="2018エディションにNLLも入って久しいし、tonic(async/await構文でgRPCサービスを書けるライブラリ) からベータが取れたぞということで久しぶりにRustやろうという気持ちが高まってきました(2年ぶり3回目)。 まずは開発環境を更新せねばということで諸々アップデートして動作を確認していたのですが、 相変わらずVSCode + LLDBという構成だとlibクレートの単体テストをデ">
@@ -161,6 +161,8 @@ ga('send', 'pageview');
 <p>解決方法だけ知りたい人は<a href="#VSCode-CodeLLDB-の場合">VSCode (CodeLLDB) の場合</a>を参照してください。</p>
 <h1 id="問題の概要"><a href="#問題の概要" class="headerlink" title="問題の概要"></a>問題の概要</h1><p>macOSにおいて、<code>rust-lldb</code> でlibクレートのテストをデバッグしようとしたときに、ブレークポイントが効きません。
 VSCodeで <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">CodeLLDB</a> を使ってデバッグした場合も同様です。</p>
+<p><strong>【2020-03-06:追記】</strong></p>
+<p>masterには修正が入りました。詳細は末尾の追記を参照してください。</p>
 <h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>直接の原因は、<code>cargo test</code>に<code>--lib</code>オプションを付けてテストバイナリをビルドすると、
 LLDBのデバッグシンボル情報が書かれたファイル(<code>.dSYM</code>)が<code>target/debug/</code>ディレクトリに作成されないことです。</p>
 <p>このため、ブレークポイントとして指定したシンボル情報をLLDBが解決できず、デバッガがブレークポイントで止まりません。</p>
@@ -342,6 +344,8 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
 この場合は事前に一度 <code>cargo test --lib --no-run</code> を実行した後、手動で上記のタスクを実行して
 <code>.dSYM</code>のシンボリックリンクを作っておく必要があります。</p>
 <h1 id="終わりに"><a href="#終わりに" class="headerlink" title="終わりに"></a>終わりに</h1><p>この問題は<a href="https://github.com/rust-lang/cargo/issues/7960" target="_blank" rel="noopener">rust-lang/cargo#7960</a>で既に起票されているので、将来的には修正されるかもしれません。</p>
+<p><strong>【2020-03-06:追記】</strong></p>
+<p><a href="https://github.com/rust-lang/cargo/pull/7965" target="_blank" rel="noopener">rust-lang/cargo#7965</a> で修正され、masterにもマージされました。<br>この修正は2020年4月23日リリース予定の <a href="https://github.com/rust-lang/cargo/blob/master/CHANGELOG.md#cargo-143-2020-04-23" target="_blank" rel="noopener">Cargo 1.43</a> に反映される見込みです。</p>
 
       
       
@@ -367,7 +371,7 @@ Breakpoint 1: where = rust_lldb_workaround-6e0ca18365abb7b9`rust_lldb_workaround
     </div>
     <footer class="article-footer">
       
-        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7bmyjkg005fpbrc7sq4juym" class="article-share-link">Share</a>
+        <a data-url="https://chopschips.net/blog/2020/03/03/rust-lldb-workaround/" data-id="ck7g5hl2100229ircnoa85brp" class="article-share-link">Share</a>
       
       
       
